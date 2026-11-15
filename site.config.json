@@ -1,0 +1,31 @@
+{
+  "siteName": "Maryland Recording Studio",
+  "brand": "Disco Sundays",
+  "legalName": "Disco Sundays LLC",
+  "siteUrl": "https://marylandrecordingstudio.com",
+  "locality": "Hanover",
+  "region": "MD",
+  "regionName": "Maryland",
+  "postalCode": "21076",
+  "country": "US",
+  "areaServed": ["Hanover", "Anne Arundel County", "Baltimore", "Washington, DC", "the DMV"],
+  "phone": "(443) 401-5425",
+  "phoneE164": "+14434015425",
+  "email": "ohitsdiscosundays@gmail.com",
+  "whatsapp": null,
+  "square": {
+    "merchantId": "fk5phm6o38fjpy",
+    "locationId": "LBRQ3J5MYKNYX",
+    "bookingBase": "https://book.squareup.com/appointments/fk5phm6o38fjpy/location/LBRQ3J5MYKNYX/services"
+  },
+  "social": {
+    "instagram": { "url": "https://www.instagram.com/discosundays", "handle": "@discosundays" },
+    "facebook": { "url": "https://www.facebook.com/discosundaysofficial/", "handle": "discosundaysofficial" },
+    "youtube": { "url": "https://www.youtube.com/channel/UCuiLXxntyyMegzINhvDn0aw", "channelId": "UCuiLXxntyyMegzINhvDn0aw" }
+  },
+  "analytics": {
+    "_comment": "Set one of these to turn on analytics. Events are always pushed to window.dataLayer.",
+    "plausibleDomain": "",
+    "ga4MeasurementId": ""
+  }
+}

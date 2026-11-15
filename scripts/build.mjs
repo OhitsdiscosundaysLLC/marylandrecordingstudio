@@ -1,0 +1,445 @@
+// Zero-dependency static site builder for Maryland Recording Studio.
+// Assembles src/pages/*.html into dist/, generates a page per Square service,
+// and writes sitemap.xml / robots.txt. Run: node scripts/build.mjs
+import { readFile, writeFile, mkdir, readdir, rm, cp } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const dist = path.join(root, 'dist');
+const readJSON = async (p) => JSON.parse(await readFile(path.join(root, p), 'utf8'));
+
+const config = await readJSON('site.config.json');
+const catalogue = await readJSON('data/services.json');
+const editorial = await readJSON('content/services-editorial.json');
+const media = await readJSON('content/media.json');
+const faqs = await readJSON('content/faq.json');
+
+const SITE_URL = (process.env.SITE_URL
+  || (process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)
+  || config.siteUrl).replace(/\/$/, '');
+const BUILD_ID = Date.now().toString(36);
+
+// ---------- helpers ----------
+const esc = (s = '') => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const slugify = (s) => String(s).toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const fmtDuration = (m) => {
+  if (!m) return '';
+  const h = Math.floor(m / 60), r = m % 60;
+  return [h ? `${h} hr` : '', r ? `${r} min` : ''].filter(Boolean).join(' ');
+};
+const RAINBOW = ['#ff5b2e', '#ff9f1c', '#ffd23f', '#3ddc84', '#22b8ff', '#7c5cff', '#ff4fa3'];
+
+// ---------- services ----------
+const usedSlugs = new Set();
+const services = catalogue.services.map((s, i) => {
+  const ed = editorial.services[s.id] || {};
+  let slug = ed.slug || slugify(s.name);
+  while (usedSlugs.has(slug)) slug += '-' + s.id.slice(0, 4).toLowerCase();
+  usedSlugs.add(slug);
+  const cat = catalogue.categories.find((c) => c.id === s.category) || { id: s.category, name: s.category };
+  const catLabel = editorial.categoryLabels?.[cat.id]?.label || cat.name;
+  return {
+    ...s,
+    slug,
+    featured: !!ed.featured,
+    order: ed.order ?? 100 + i,
+    tagline: ed.tagline || '',
+    seoDescription: ed.seoDescription || s.description,
+    image: ed.image || null,
+    categoryName: cat.name,
+    categoryLabel: catLabel,
+    bookUrl: `${config.square.bookingBase}/${s.id}`,
+    seed: i,
+  };
+}).sort((a, b) => a.order - b.order);
+// Square can list two services with the same name (e.g. different prices); add the price so each is distinct.
+const nameCount = services.reduce((m, s) => m.set(s.name, (m.get(s.name) || 0) + 1), new Map());
+for (const s of services) if (nameCount.get(s.name) > 1 && s.price?.display) s.name = `${s.name} (${s.price.display})`;
+
+const categories = catalogue.categories
+  .filter((c) => services.some((s) => s.category === c.id))
+  .map((c) => ({ ...c, label: editorial.categoryLabels?.[c.id]?.label || c.name, blurb: editorial.categoryLabels?.[c.id]?.blurb || '' }));
+
+// Generative brand artwork (used until real photography is supplied in content/media.json).
+function art(seed = 0, { bars = 42, className = 'art' } = {}) {
+  const w = 420, h = 260;
+  let rects = '';
+  for (let i = 0; i < bars; i++) {
+    const t = i / bars;
+    const v = Math.abs(Math.sin(i * 0.55 + seed * 1.7) * 0.55 + Math.sin(i * 0.21 + seed) * 0.35) + 0.08;
+    const bh = Math.min(h * 0.86, v * h * 0.9);
+    const x = 14 + t * (w - 28);
+    rects += `<rect x="${x.toFixed(1)}" y="${((h - bh) / 2).toFixed(1)}" width="${((w - 28) / bars * 0.56).toFixed(1)}" height="${bh.toFixed(1)}" rx="2"/>`;
+  }
+  const id = `g${seed}${bars}`;
+  const rot = (seed * 37) % 360;
+  return `<svg class="${className}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">${RAINBOW.map((c, i) => `<stop offset="${(i / (RAINBOW.length - 1)).toFixed(2)}" stop-color="${c}"/>`).join('')}</linearGradient>
+<radialGradient id="${id}r" cx="${30 + (seed * 13) % 40}%" cy="40%" r="75%"><stop offset="0" stop-color="hsl(${rot} 60% 18%)"/><stop offset="1" stop-color="#0b0b0c"/></radialGradient></defs>
+<rect width="${w}" height="${h}" fill="url(#${id}r)"/><g fill="url(#${id})" opacity=".9">${rects}</g></svg>`;
+}
+
+function picture(img, { sizes = '100vw', className = '', eager = false } = {}) {
+  if (!img) return '';
+  const src = typeof img === 'string' ? img : img.src;
+  const alt = typeof img === 'string' ? '' : (img.alt || '');
+  return `<img class="${className}" src="${esc(src)}" alt="${esc(alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" sizes="${sizes}"${img.width ? ` width="${img.width}" height="${img.height}"` : ''}>`;
+}
+
+const priceLine = (s) => [s.price?.display, fmtDuration(s.durationMinutes)].filter(Boolean).join(' · ');
+
+function serviceCard(s, { headingLevel = 3 } = {}) {
+  const H = `h${headingLevel}`;
+  const visual = s.image ? picture(s.image, { sizes: '(min-width: 900px) 33vw, 100vw' }) : art(s.seed);
+  const search = [s.name, s.description, s.categoryLabel, s.tagline].join(' ').toLowerCase();
+  return `<article class="svc-card reveal" data-category="${esc(s.category)}" data-search="${esc(search)}" data-id="${s.id}">
+  <a class="svc-card__media" href="/services/${s.slug}" tabindex="-1" aria-hidden="true">${visual}<span class="svc-card__cat">${esc(s.categoryLabel)}</span></a>
+  <div class="svc-card__body">
+    <${H} class="svc-card__title"><a href="/services/${s.slug}" data-track="service_card_click" data-label="${esc(s.name)}">${esc(s.name)}</a></${H}>
+    <p class="svc-card__meta">${esc(priceLine(s))}</p>
+    <p class="svc-card__desc">${esc(s.tagline || s.description)}</p>
+    <div class="svc-card__actions">
+      <a class="btn btn--primary btn--sm" href="/book?service=${s.slug}" data-track="book_cta_click" data-label="${esc(s.name)}">Book this service</a>
+      <a class="btn btn--ghost btn--sm" href="/services/${s.slug}">Details<span class="sr-only"> about ${esc(s.name)}</span></a>
+    </div>
+  </div>
+</article>`;
+}
+
+function catalogueUI() {
+  return `<div class="catalogue" data-catalogue>
+  <div class="catalogue__bar">
+    <div class="chips" role="group" aria-label="Filter services by category">
+      <button type="button" class="chip is-active" data-filter="all" aria-pressed="true">All <span class="chip__count">${services.length}</span></button>
+      ${categories.map((c) => `<button type="button" class="chip" data-filter="${esc(c.id)}" aria-pressed="false">${esc(c.label)} <span class="chip__count">${services.filter((s) => s.category === c.id).length}</span></button>`).join('')}
+    </div>
+    <label class="search"><span class="sr-only">Search services</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="search" placeholder="Search services" data-search-input autocomplete="off">
+    </label>
+  </div>
+  <p class="catalogue__status" role="status" aria-live="polite" data-status>${services.length} services</p>
+  <div class="svc-grid" data-grid>${services.map((s) => serviceCard(s)).join('\n')}</div>
+  <div class="empty" data-empty hidden><p>No services match that search.</p><button type="button" class="btn btn--ghost btn--sm" data-reset>Clear filters</button></div>
+</div>`;
+}
+
+const featured = services.filter((s) => s.featured).slice(0, 4);
+
+function ctaBand(title = 'Your next session starts here.', copy = 'Pick a service, choose a time and get your confirmation from Square in minutes.') {
+  return `<section class="cta-band reveal" aria-labelledby="cta-${slugify(title)}">
+  <div class="cta-band__glow" aria-hidden="true"></div>
+  <div class="container cta-band__inner">
+    <h2 id="cta-${slugify(title)}" class="display-2">${esc(title)}</h2>
+    <p class="lead">${esc(copy)}</p>
+    <div class="btn-row">
+      <a class="btn btn--primary btn--lg" href="/book" data-track="book_cta_click" data-label="cta_band">Book your session</a>
+      <a class="btn btn--ghost btn--lg" href="/services">Explore available services</a>
+    </div>
+  </div>
+</section>`;
+}
+
+function faqList(items) {
+  return `<div class="faq">${items.map((f, i) => `<details class="faq__item reveal"${i === 0 ? ' open' : ''}><summary><span>${esc(f.q)}</span><span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__a">${f.a.map((p) => `<p>${p}</p>`).join('')}</div></details>`).join('')}</div>`;
+}
+
+function studioPanels() {
+  if (media.studio?.length) {
+    return `<div class="bento">${media.studio.map((m, i) => `<figure class="bento__item bento__item--${(i % 5) + 1} reveal">${picture(m, { sizes: '(min-width: 900px) 50vw, 100vw' })}${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ''}</figure>`).join('')}</div>`;
+  }
+  const panels = [
+    ['Record', 'Book studio time by the hour, from one to four hours, with up to four hours a day on the Unlimited membership.'],
+    ['Engineer', 'Creator members get a personal audio engineer who handles all of their audio needs.'],
+    ['Mix', 'Creator Membership sessions include mixing.'],
+    ['Perform', 'Creator Membership sessions include live video performance.'],
+    ['Develop', 'Artist development sessions, course training and the Crash Test evaluation map out your next move.'],
+  ];
+  return `<div class="bento">${panels.map(([t, d], i) => `<figure class="bento__item bento__item--${i + 1} reveal">${art(i + 20, { bars: 30 + i * 6 })}<figcaption><strong>${t}</strong><span>${d}</span></figcaption></figure>`).join('')}</div>`;
+}
+
+function galleryGrid() {
+  if (!media.gallery?.length) {
+    return `<div class="notice-card reveal">
+  <div><h3>Studio photos live on Instagram</h3><p>Our latest sessions, artists and behind-the-scenes moments are posted to <a href="${config.social.instagram.url}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="instagram">${config.social.instagram.handle}</a>. Book a free studio visit to see the room in person.</p></div>
+  <div class="btn-row"><a class="btn btn--ghost" href="${config.social.instagram.url}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="instagram">Open Instagram</a><a class="btn btn--primary" href="/book?service=visit-studio" data-track="book_cta_click" data-label="gallery_visit">Book a free visit</a></div>
+</div>`;
+  }
+  return `<div class="masonry">${media.gallery.map((m) => `<figure class="masonry__item reveal">${picture(m, { sizes: '(min-width: 900px) 33vw, 50vw' })}${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ''}</figure>`).join('')}</div>`;
+}
+
+function heroMedia() {
+  const h = media.hero || {};
+  if (h.video) {
+    return `<video class="hero__video" autoplay muted loop playsinline preload="none" ${h.image ? `poster="${esc(h.image)}"` : ''} data-hero-video aria-hidden="true"><source src="${esc(h.video)}" type="video/mp4"></video>`;
+  }
+  if (h.image) return picture({ src: h.image, alt: h.alt }, { className: 'hero__img', eager: true });
+  return '';
+}
+
+function socialLinks(className = 'social-links') {
+  const s = config.social;
+  const icon = {
+    instagram: '<path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4ZM17.3 5.5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Z"/><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+    facebook: '<path d="M14 8.5V6.8c0-.8.5-1 .9-1h2.3V2.1L14 2c-3.5 0-4.3 2.6-4.3 4.3v2.2H7.5v3.8h2.2V22H14v-9.7h3l.4-3.8H14Z"/>',
+    youtube: '<path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 0 0 2.4 7.2 27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8ZM10 15.1V8.9l5.2 3.1L10 15.1Z"/>',
+  };
+  return `<ul class="${className}">${['instagram', 'facebook', 'youtube'].map((k) => `<li><a href="${s[k].url}" target="_blank" rel="noopener" aria-label="Disco Sundays on ${k[0].toUpperCase() + k.slice(1)} (opens in a new tab)" data-track="social_profile_click" data-label="${k}"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">${icon[k]}</svg></a></li>`).join('')}</ul>`;
+}
+
+// ---------- layout ----------
+const NAV = [
+  ['/', 'Home'], ['/studio', 'The Studio'], ['/services', 'Services'], ['/gallery', 'Gallery'],
+  ['/social', 'Social'], ['/about', 'About'], ['/contact', 'Contact'],
+];
+
+const businessLD = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${SITE_URL}/#business`,
+  name: `${config.siteName} by ${config.brand}`,
+  legalName: config.legalName,
+  url: SITE_URL + '/',
+  image: `${SITE_URL}/assets/brand/og-image.jpg`,
+  logo: `${SITE_URL}/assets/brand/icon-512.png`,
+  telephone: config.phoneE164,
+  email: config.email,
+  address: { '@type': 'PostalAddress', addressLocality: config.locality, addressRegion: config.region, postalCode: config.postalCode, addressCountry: config.country },
+  areaServed: config.areaServed.map((n) => ({ '@type': 'Place', name: n })),
+  sameAs: Object.values(config.social).map((s) => s.url),
+  potentialAction: { '@type': 'ReserveAction', target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/book`, actionPlatform: ['http://schema.org/DesktopWebPlatform', 'http://schema.org/MobileWebPlatform'] }, result: { '@type': 'Reservation', name: 'Studio session' } },
+};
+
+function analyticsTags() {
+  const a = config.analytics || {};
+  let out = '';
+  if (a.plausibleDomain) out += `<script defer data-domain="${esc(a.plausibleDomain)}" src="https://plausible.io/js/script.js"></script>`;
+  if (a.ga4MeasurementId) out += `<script async src="https://www.googletagmanager.com/gtag/js?id=${esc(a.ga4MeasurementId)}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${esc(a.ga4MeasurementId)}',{anonymize_ip:true});</script>`;
+  return out;
+}
+
+function layout({ title, description, pathname, body, scripts = [], jsonld = [], bodyClass = '', ogImage, noindex = false, hideStickyCta = false }) {
+  const canonical = SITE_URL + (pathname === '/' ? '/' : pathname);
+  const fullTitle = pathname === '/' ? title : `${title} | ${config.siteName}`;
+  const img = ogImage || `${SITE_URL}/assets/brand/og-image.jpg`;
+  const navItems = NAV.map(([href, label]) => {
+    const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
+    return `<li><a href="${href}"${active ? ' aria-current="page"' : ''}>${label}</a></li>`;
+  }).join('');
+  return `<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>${esc(fullTitle)}</title>
+<meta name="description" content="${esc(description)}">
+<link rel="canonical" href="${canonical}">
+${noindex ? '<meta name="robots" content="noindex">' : ''}
+<meta name="theme-color" content="#0a0a0b">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="${esc(config.siteName)}">
+<meta property="og:title" content="${esc(fullTitle)}">
+<meta property="og:description" content="${esc(description)}">
+<meta property="og:url" content="${canonical}">
+<meta property="og:image" content="${img}">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(fullTitle)}">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="${img}">
+<link rel="icon" href="/assets/brand/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/assets/css/site.css?v=${BUILD_ID}">
+<script>document.documentElement.classList.add('js')</script>
+${[businessLD, ...jsonld].map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
+${analyticsTags()}
+</head>
+<body class="${bodyClass}">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <a class="brand" href="/" aria-label="${esc(config.siteName)}, home">
+      <img src="/assets/brand/logo-on-dark-200.webp" alt="" width="200" height="121">
+      <span class="brand__text"><span class="brand__name">Maryland Recording Studio</span><span class="brand__sub">by Disco Sundays · Hanover, MD</span></span>
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>${navItems}</ul>
+    </nav>
+    <a class="btn btn--primary btn--sm site-header__cta" href="/book" data-track="book_cta_click" data-label="header">Book now</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle><span class="sr-only">Open menu</span><span class="menu-toggle__bars" aria-hidden="true"></span></button>
+  </div>
+</header>
+<div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
+  <nav aria-label="Mobile">
+    <ul>${navItems}<li><a href="/faq"${pathname === '/faq' ? ' aria-current="page"' : ''}>FAQ</a></li></ul>
+  </nav>
+  <a class="btn btn--primary btn--lg btn--block" href="/book" data-track="book_cta_click" data-label="mobile_menu">Book your session</a>
+  <div class="mobile-menu__contact"><a href="tel:${config.phoneE164}" data-track="phone_click">${config.phone}</a>${socialLinks()}</div>
+</div>
+<main id="main" tabindex="-1">
+${body}
+</main>
+<footer class="site-footer">
+  <div class="rainbow-rule" aria-hidden="true"></div>
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <img src="/assets/brand/logo-on-dark-200.webp" alt="Disco Sundays" width="160" height="97" loading="lazy">
+      <p>Maryland Recording Studio by ${esc(config.legalName)}. A members' recording studio in ${config.locality}, ${config.regionName}.</p>
+      ${socialLinks()}
+    </div>
+    <nav aria-label="Footer">
+      <h2 class="footer-h">Explore</h2>
+      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/book">Book now</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/social">Social</a></li></ul>
+    </nav>
+    <nav aria-label="Studio information">
+      <h2 class="footer-h">Studio</h2>
+      <ul><li><a href="/about">About</a></li><li><a href="/faq">FAQ</a></li><li><a href="/contact">Contact</a></li><li><a href="/services/visit-studio">Visit the studio</a></li></ul>
+    </nav>
+    <div>
+      <h2 class="footer-h">Get in touch</h2>
+      <ul class="footer-contact">
+        <li><a href="tel:${config.phoneE164}" data-track="phone_click">${config.phone}</a></li>
+        <li><a href="mailto:${config.email}" data-track="email_click">${config.email}</a></li>
+        <li>${config.locality}, ${config.region} ${config.postalCode}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="container site-footer__legal"><p>© <span data-year>${new Date().getFullYear()}</span> ${esc(config.legalName)}. Bookings and payments are processed securely by Square.</p></div>
+</footer>
+${hideStickyCta ? '' : `<div class="sticky-cta" data-sticky-cta><a class="btn btn--primary btn--block" href="/book" data-track="book_cta_click" data-label="sticky_mobile">Book a session</a></div>`}
+<script src="/assets/js/main.js?v=${BUILD_ID}" defer></script>
+${scripts.map((s) => `<script src="/assets/js/${s}?v=${BUILD_ID}" defer></script>`).join('\n')}
+</body>
+</html>`;
+}
+
+// ---------- page tokens ----------
+const tokens = {
+  featuredServices: () => `<div class="svc-grid svc-grid--featured">${featured.map((s) => serviceCard(s)).join('')}</div>`,
+  catalogue: catalogueUI,
+  ctaBand: () => ctaBand(),
+  ctaVisit: () => ctaBand('See the room before you book.', 'Studio visits are free and take 30 minutes. Pick a time that suits you.'),
+  faqAll: () => faqList(faqs.flatMap((g) => g.items)),
+  faqGrouped: () => faqs.map((g) => `<section class="faq-group" aria-labelledby="faq-${slugify(g.group)}"><h2 id="faq-${slugify(g.group)}" class="h3">${esc(g.group)}</h2>${faqList(g.items)}</section>`).join(''),
+  faqTop: () => faqList(faqs.flatMap((g) => g.items).filter((f) => f.top)),
+  studioPanels,
+  galleryGrid,
+  heroMedia,
+  heroArt: () => art(7, { bars: 64, className: 'hero__art' }),
+  socialLinks: () => socialLinks(),
+  serviceCount: () => String(services.length),
+  categoryCount: () => String(categories.length),
+  phone: () => config.phone,
+  phoneE164: () => config.phoneE164,
+  email: () => config.email,
+  bookingBase: () => config.square.bookingBase,
+  instagramUrl: () => config.social.instagram.url,
+  facebookUrl: () => config.social.facebook.url,
+  youtubeUrl: () => config.social.youtube.url,
+  instagramHandle: () => config.social.instagram.handle,
+  facebookPluginSrc: () => esc(`https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(config.social.facebook.url)}&tabs=timeline&width=500&height=640&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false`),
+  servicePicker: () => categories.map((c) => `<div class="picker__group"><h3 class="picker__h">${esc(c.label)}</h3><ul>${services.filter((s) => s.category === c.id).map((s) => `<li><button type="button" class="picker__item" data-pick="${s.slug}" data-id="${s.id}" aria-pressed="false"><span class="picker__name">${esc(s.name)}</span><span class="picker__meta">${esc(priceLine(s))}</span></button></li>`).join('')}</ul></div>`).join(''),
+  serviceOptions: () => `<option value="">All services</option>` + categories.map((c) => `<optgroup label="${esc(c.label)}">${services.filter((s) => s.category === c.id).map((s) => `<option value="${s.slug}">${esc(s.name)} (${esc(priceLine(s))})</option>`).join('')}</optgroup>`).join(''),
+  contactServiceOptions: () => `<option value="">Choose a service (optional)</option>` + services.map((s) => `<option>${esc(s.name)}</option>`).join('') + '<option>Something else</option>',
+};
+
+function render(tpl, extra = {}) {
+  const all = { ...tokens, ...extra };
+  return tpl.replace(/\{\{\s*([\w]+)\s*\}\}/g, (m, k) => {
+    if (!(k in all)) throw new Error(`Unknown template token {{${k}}}`);
+    const v = all[k];
+    return typeof v === 'function' ? v() : v;
+  });
+}
+
+// ---------- write ----------
+async function writePage(pathname, html) {
+  const dir = path.join(dist, pathname === '/' ? '' : pathname);
+  await mkdir(dir, { recursive: true });
+  await writeFile(path.join(dir, 'index.html'), html);
+}
+
+await rm(dist, { recursive: true, force: true });
+await mkdir(dist, { recursive: true });
+await cp(path.join(root, 'assets'), path.join(dist, 'assets'), { recursive: true });
+await mkdir(path.join(dist, 'data'), { recursive: true });
+
+// Public, client-side copy of the catalogue (used for booking deep links and live refresh).
+const publicCatalogue = {
+  syncedAt: catalogue.syncedAt,
+  bookingBase: config.square.bookingBase,
+  categories: categories.map(({ id, name, label }) => ({ id, name, label })),
+  services: services.map((s) => ({ id: s.id, slug: s.slug, name: s.name, category: s.category, categoryLabel: s.categoryLabel, description: s.description, tagline: s.tagline, price: s.price, durationMinutes: s.durationMinutes, bookUrl: s.bookUrl, featured: s.featured })),
+};
+await writeFile(path.join(dist, 'data/services.json'), JSON.stringify(publicCatalogue));
+
+const sitemap = [];
+const pageFiles = (await readdir(path.join(root, 'src/pages'))).filter((f) => f.endsWith('.html'));
+for (const f of pageFiles) {
+  const raw = await readFile(path.join(root, 'src/pages', f), 'utf8');
+  const m = raw.match(/^<!--\s*(\{[\s\S]*?\})\s*-->\n?/);
+  if (!m) throw new Error(`${f}: missing meta header`);
+  const meta = JSON.parse(m[1]);
+  const body = render(raw.slice(m[0].length));
+  const jsonld = [];
+  if (meta.faqSchema) jsonld.push({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.flatMap((g) => g.items).map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: x.a.join(' ').replace(/<[^>]+>/g, '') } })) });
+  if (meta.path === '/services') jsonld.push({ '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: services.map((s, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE_URL}/services/${s.slug}`, name: s.name })) });
+  const html = layout({ ...meta, pathname: meta.path, body, jsonld });
+  if (meta.path === '/404') await writeFile(path.join(dist, '404.html'), html);
+  else { await writePage(meta.path, html); if (!meta.noindex) sitemap.push(meta.path); }
+}
+
+// Individual service pages, generated from the Square catalogue.
+const svcTpl = await readFile(path.join(root, 'src/templates/service.html'), 'utf8');
+for (const s of services) {
+  const related = services.filter((o) => o.id !== s.id && o.category === s.category).slice(0, 3);
+  const fill = related.length < 3 ? services.filter((o) => o.id !== s.id && o.featured && !related.includes(o)).slice(0, 3 - related.length) : [];
+  const relatedHtml = [...related, ...fill].map((o) => serviceCard(o)).join('');
+  const relevantFaqs = faqs.flatMap((g) => g.items).filter((x) => (x.services || []).some((tag) => tag === s.slug || tag === s.category || (tag === 'membership' && s.membershipTerms)));
+  const body = render(svcTpl, {
+    svcName: esc(s.name),
+    svcSlug: s.slug,
+    svcId: s.id,
+    svcCategory: esc(s.categoryLabel),
+    svcTagline: esc(s.tagline || ''),
+    svcPrice: esc(s.price?.display || ''),
+    svcDuration: esc(fmtDuration(s.durationMinutes)),
+    svcVisual: s.image ? picture(s.image, { eager: true, sizes: '(min-width: 900px) 50vw, 100vw' }) : art(s.seed, { bars: 56 }),
+    svcDescription: [s.description, ...(s.longDescription || [])].map((p) => `<p>${esc(p)}</p>`).join(''),
+    svcIncludes: s.includes ? `<h2 class="h3">During your session</h2><ul class="ticks">${s.includes.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : '',
+    svcOutcome: s.outcome ? `<p class="callout">${esc(s.outcome)}</p>` : '',
+    svcVariations: s.variations?.length ? `<div class="variations"><h2 class="h3">Options</h2><p>Choose one of these options when you book. Pricing for each option is shown in the booking step.</p><ul class="pill-list">${s.variations.map((v) => `<li>${esc(v.name)}</li>`).join('')}</ul></div>` : '',
+    svcTerms: s.membershipTerms ? `<details class="terms"><summary>Membership terms at a glance</summary><ul><li>Memberships are billed monthly and renew automatically unless canceled before the renewal date. Fees are non-refundable once charged.</li><li>Each membership includes a set number of studio hours per month. Hours must be used within the billing cycle and don't roll over unless agreed in writing.</li><li>Sessions are booked through the official Disco Sundays scheduling system. Booking priority and advance windows vary by tier, and availability isn't guaranteed.</li><li>Members are responsible for their conduct and for any damage to studio property.</li><li>Engineering, production, premium equipment and other add-ons may cost extra.</li></ul><p>The full terms are shown on the service in the booking step.</p></details>` : '',
+    svcFaq: relevantFaqs.length ? `<section class="section section--tight"><div class="container narrow"><h2 class="h2">Questions about this service</h2>${faqList(relevantFaqs)}</div></section>` : '',
+    svcRelated: relatedHtml,
+    svcBookUrl: s.bookUrl,
+  });
+  const jsonld = [
+    { '@context': 'https://schema.org', '@type': 'Service', name: s.name, description: s.description, serviceType: 'Recording studio service', provider: { '@id': `${SITE_URL}/#business` }, areaServed: `${config.locality}, ${config.regionName}`, url: `${SITE_URL}/services/${s.slug}`, ...(typeof s.price?.amount === 'number' ? { offers: { '@type': 'Offer', price: (s.price.amount / 100).toFixed(2), priceCurrency: s.price.currency, url: `${SITE_URL}/book?service=${s.slug}` } } : {}) },
+    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL + '/' }, { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}/services` }, { '@type': 'ListItem', position: 3, name: s.name, item: `${SITE_URL}/services/${s.slug}` }] },
+  ];
+  const html = layout({
+    title: `${s.name} in Hanover, MD`,
+    description: (s.seoDescription || s.description).slice(0, 158),
+    pathname: `/services/${s.slug}`,
+    body,
+    jsonld,
+    scripts: ['service.js'],
+  });
+  await writePage(`/services/${s.slug}`, html);
+  sitemap.push(`/services/${s.slug}`);
+}
+
+// Static extras.
+await writeFile(path.join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
+const today = new Date().toISOString().slice(0, 10);
+await writeFile(path.join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemap.map((p) => `  <url><loc>${SITE_URL}${p === '/' ? '/' : p}</loc><lastmod>${today}</lastmod><priority>${p === '/' ? '1.0' : p.startsWith('/services/') ? '0.7' : '0.8'}</priority></url>`).join('\n')}\n</urlset>\n`);
+await writeFile(path.join(dist, 'site.webmanifest'), JSON.stringify({ name: config.siteName, short_name: 'Disco Sundays', start_url: '/', display: 'standalone', background_color: '#0a0a0b', theme_color: '#0a0a0b', icons: [{ src: '/assets/brand/icon-512.png', sizes: '512x512', type: 'image/png' }] }));
+
+console.log(`[build] ${pageFiles.length} pages + ${services.length} service pages → dist/ (site URL ${SITE_URL})`);
