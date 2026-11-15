@@ -870,3 +870,6 @@ html.radio-on .site-footer { padding-bottom: 110px; }
 
 /* Ultrawide: keep proportions */
 @media (min-width: 1700px) { :root { --container: 1360px; } .hero__title { font-size: 6rem; } }
+/* Feed: text cards get two rows so their buttons never spill into the next tile */
+.feed .tile--card { grid-row: span 2; justify-content: flex-end; }
+@media (max-width: 560px) { .feed .tile--card { grid-row: auto; } }
