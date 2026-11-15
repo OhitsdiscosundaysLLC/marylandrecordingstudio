@@ -1,0 +1,42 @@
+<!-- {"path":"/book","title":"Book a Session","description":"Book studio time, memberships, artist development and free studio visits at Disco Sundays in Hanover, MD. Choose your time and get instant confirmation.","scripts":["book.js"],"bodyClass":"page-book","hideStickyCta":true} -->
+<section class="book" aria-labelledby="book-title">
+  <div class="container book__head">
+    <div>
+      <p class="eyebrow">Book now</p>
+      <h1 id="book-title" class="display-2" data-book-title>Reserve your studio time.</h1>
+      <p class="lead" data-book-sub>Choose a service, then pick your date and time. Payments and confirmations are handled securely by Square.</p>
+    </div>
+    <ol class="book__steps" aria-label="How booking works">
+      <li><span>1</span>Choose a service</li>
+      <li><span>2</span>Pick a time</li>
+      <li><span>3</span>Get your confirmation</li>
+    </ol>
+  </div>
+  <div class="container book__layout">
+    <aside class="picker" aria-label="Services">
+      <label class="picker__select"><span class="label">Service</span>
+        <select data-service-select>{{serviceOptions}}</select>
+      </label>
+      <div class="picker__list" data-picker>
+        <button type="button" class="picker__item picker__item--all" data-pick="" aria-pressed="true"><span class="picker__name">All services</span><span class="picker__meta">Browse everything in the booking panel</span></button>
+        {{servicePicker}}
+      </div>
+    </aside>
+    <div class="booking-panel">
+      <div class="booking-panel__bar">
+        <p class="booking-panel__title"><span class="dot" aria-hidden="true"></span><span data-panel-title>All services</span></p>
+        <a class="booking-panel__ext" href="{{bookingBase}}" target="_blank" rel="noopener" data-external-link data-track="square_booking_visit" data-label="open_new_tab">Open in a new tab<span class="sr-only"> (opens Square booking)</span></a>
+      </div>
+      <div class="booking-panel__frame" data-frame-wrap>
+        <div class="booking-panel__loading" data-loading><div class="spinner" aria-hidden="true"></div><p>Loading live availability…</p></div>
+        <iframe data-booking-frame title="Book with Disco Sundays (secure booking by Square)" src="about:blank" loading="eager" allow="payment" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+      <div class="booking-panel__fallback" data-fallback hidden role="status">
+        <p><strong>Booking taking a while to load?</strong> Some browsers block embedded booking. You can finish in a new tab instead. It's the same secure booking page.</p>
+        <a class="btn btn--primary" href="{{bookingBase}}" target="_blank" rel="noopener" data-external-link data-track="square_booking_visit" data-label="fallback">Continue booking in a new tab</a>
+      </div>
+      <p class="booking-panel__note">Need help? Call or text <a href="tel:{{phoneE164}}" data-track="phone_click">{{phone}}</a>.</p>
+    </div>
+  </div>
+  <noscript><div class="container"><p class="callout">JavaScript is off, so the embedded booking can't load. <a href="{{bookingBase}}">Open the booking page</a>.</p></div></noscript>
+</section>

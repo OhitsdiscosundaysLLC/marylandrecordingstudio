@@ -1,0 +1,26 @@
+<!-- {"path":"/gallery","title":"Gallery: Photos & Videos","description":"Photos and videos from the Disco Sundays recording studio in Hanover, Maryland.","scripts":["social.js"]} -->
+<section class="page-hero page-hero--compact">
+  <div class="container">
+    <p class="eyebrow">Gallery</p>
+    <h1 class="display-1">Sessions, sounds and moments.</h1>
+    <p class="lead">Videos from the Disco Sundays channel and photos from the studio.</p>
+  </div>
+</section>
+<section class="section section--flush-top" aria-labelledby="videos-title">
+  <div class="container">
+    <div class="section-head section-head--split reveal">
+      <div><h2 id="videos-title" class="display-2">Videos</h2></div>
+      <div><a class="link-arrow" href="{{youtubeUrl}}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="youtube">Watch on YouTube</a></div>
+    </div>
+    <div class="video-strip video-strip--grid" data-youtube-strip data-limit="9" data-featured="true" aria-live="polite">
+      <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+    </div>
+  </div>
+</section>
+<section class="section" aria-labelledby="photos-title">
+  <div class="container">
+    <div class="section-head reveal"><h2 id="photos-title" class="display-2">Photos</h2></div>
+    {{galleryGrid}}
+  </div>
+</section>
+{{ctaVisit}}
