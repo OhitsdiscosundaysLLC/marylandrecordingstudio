@@ -41,7 +41,7 @@ const DEVICES = {
 const CLEAN = () => {
   for (const el of document.querySelectorAll('body *')) {
     const cs = getComputedStyle(el);
-    if (cs.position === 'fixed' && /Edit with|Points earned|pays for itself|Membership pays|cookie/i.test(el.innerText || '')) el.style.setProperty('display', 'none', 'important');
+    if ((cs.position === 'fixed' || cs.position === 'sticky') && /Edit with|Points earned|pays for itself|Membership pays|first access|Professional equipment|cookie/i.test(el.innerText || '') && !/Home\s*Book\s*Rewards/.test(el.innerText || '')) el.style.setProperty('display', 'none', 'important');
   }
   document.querySelectorAll('[data-sonner-toaster],[role=status],[role=alert]').forEach((e) => e.style.setProperty('display', 'none', 'important'));
 };
@@ -57,7 +57,20 @@ for (const s of SHOTS) {
     await page.goto(s.url, { waitUntil: 'networkidle', timeout: 60000 });
   } catch { /* SPA may keep connections open; continue after the wait below */ }
   await page.waitForTimeout(3000);
-  if (s.click) { await page.getByText(s.click, { exact: true }).last().click(); await page.waitForTimeout(2500); }
+  // Dismiss first-visit onboarding and promo banners the way a visitor would.
+  await page.getByText('Skip', { exact: true }).first().click({ timeout: 2000 }).catch(() => {});
+  await page.waitForTimeout(500);
+  await page.evaluate(() => {
+    document.querySelectorAll('button').forEach((b) => {
+      const label = (b.getAttribute('aria-label') || b.textContent || '').trim();
+      const box = b.closest('[class*="fixed"],[class*="toast"],[class*="banner"]') || b.parentElement;
+      if (/^(×|✕|x)$/i.test(label) || /close|dismiss/i.test(label)) {
+        if (box && /first access|equipment|pays for itself|points earned|Get the App/i.test(box.innerText || '')) b.click();
+      }
+    });
+  });
+  await page.waitForTimeout(700);
+  if (s.click) { await page.getByText(s.click, { exact: true }).last().click(); await page.waitForTimeout(4500); }
   if (s.scrollTo) {
     await page.evaluate(([y, inner]) => (inner ? document.querySelector(inner) : document.scrollingElement).scrollTo(0, y), [s.scrollTo, s.inner || null]);
     await page.waitForTimeout(1500);
