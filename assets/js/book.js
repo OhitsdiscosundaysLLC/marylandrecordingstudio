@@ -55,7 +55,7 @@
     if (s) {
       panelTitle.textContent = `${s.name}${s.price?.display ? ' · ' + s.price.display : ''}`;
       title.textContent = s.name;
-      sub.textContent = 'Pick your date and time below. Payments and confirmations are handled securely by Square.';
+      sub.textContent = 'Choose a team member below, then press Book to pick your time in Square\'s secure booking page.';
       document.title = `Book ${s.name} | Maryland Recording Studio`;
     } else {
       panelTitle.textContent = p.get('id') ? 'Selected service' : 'All services';
