@@ -55,7 +55,7 @@ try {
   });
 
   await t('all main routes resolve', async () => {
-    for (const r of ['/', '/studio', '/services', '/book', '/gallery', '/social', '/about', '/contact', '/faq']) assert.ok(seen.has(r), `missing ${r}`);
+    for (const r of ['/', '/studio', '/services', '/book', '/gallery', '/radio', '/explore', '/about', '/contact', '/faq']) assert.ok(seen.has(r), `missing ${r}`);
   });
 
   await t('unknown routes return the 404 page', async () => {

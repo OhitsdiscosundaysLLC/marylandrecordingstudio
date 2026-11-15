@@ -1,26 +1,27 @@
-<!-- {"path":"/gallery","title":"Gallery: Photos & Videos","description":"Photos and videos from the Disco Sundays recording studio in Hanover, Maryland.","scripts":["social.js"]} -->
+<!-- {"path":"/gallery","title":"Gallery: Sessions, Videos & Social","description":"Videos, reels and moments from Disco Sundays and the Maryland Recording Studio in Hanover, MD, from Instagram, Facebook and YouTube in one place.","scripts":["social.js"]} -->
 <section class="page-hero page-hero--compact">
   <div class="container">
     <p class="eyebrow">Gallery</p>
-    <h1 class="display-1">Sessions, sounds and moments.</h1>
-    <p class="lead">Videos from the Disco Sundays channel and photos from the studio.</p>
+    <h1 class="display-1">The visual archive.</h1>
+    <p class="lead">Sessions, performances, reels and behind-the-scenes from across our channels. Tap anything to watch it here or open the original.</p>
+    {{followButtons}}
   </div>
 </section>
-<section class="section section--flush-top" aria-labelledby="videos-title">
+<section class="section section--flush-top">
   <div class="container">
-    <div class="section-head section-head--split reveal">
-      <div><h2 id="videos-title" class="display-2">Videos</h2></div>
-      <div><a class="link-arrow" href="{{youtubeUrl}}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="youtube">Watch on YouTube</a></div>
+    <div class="gallery-bar">
+      <div class="chips" role="group" aria-label="Filter by platform" data-wall-filters>
+        <button type="button" class="chip is-active" data-platform="all" aria-pressed="true">All</button>
+        <button type="button" class="chip" data-platform="instagram" aria-pressed="false">Instagram</button>
+        <button type="button" class="chip" data-platform="facebook" aria-pressed="false">Facebook</button>
+        <button type="button" class="chip" data-platform="youtube" aria-pressed="false">YouTube</button>
+      </div>
+      <p class="gallery-bar__status" role="status" aria-live="polite" data-wall-status></p>
     </div>
-    <div class="video-strip video-strip--grid" data-youtube-strip data-limit="9" data-featured="true" aria-live="polite">
-      <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+    <div class="wall" data-wall>
+      <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
     </div>
-  </div>
-</section>
-<section class="section" aria-labelledby="photos-title">
-  <div class="container">
-    <div class="section-head reveal"><h2 id="photos-title" class="display-2">Photos</h2></div>
-    {{galleryGrid}}
   </div>
 </section>
 {{ctaVisit}}
+{{socialData}}

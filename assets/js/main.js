@@ -72,15 +72,31 @@
   });
   matchMedia('(min-width: 1081px)').addEventListener('change', (m) => { if (m.matches) setMenu(false); });
 
-  // ---- Reveal on scroll ----
-  const reveals = $$('.reveal');
-  if (!('IntersectionObserver' in window) || reduceMotion) reveals.forEach((el) => el.classList.add('is-in'));
-  else {
-    const io = new IntersectionObserver((entries) => {
+  // ---- Reveal on scroll (re-runnable after in-place page loads) ----
+  let io = null;
+  function initReveal() {
+    const reveals = $$('.reveal:not(.is-in)');
+    if (!('IntersectionObserver' in window) || reduceMotion) { reveals.forEach((el) => el.classList.add('is-in')); return; }
+    io ||= new IntersectionObserver((entries) => {
       entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
     reveals.forEach((el) => io.observe(el));
   }
+  initReveal();
+  window.mrsRefresh = () => { initReveal(); onScroll(); setExplore(false); };
+
+  // ---- Explore Disco Sundays dropdown ----
+  const exBtn = $('[data-explore-toggle]');
+  const exMenu = $('[data-explore-menu]');
+  function setExplore(open) {
+    if (!exBtn) return;
+    exBtn.setAttribute('aria-expanded', String(open));
+    exMenu.hidden = !open;
+  }
+  exBtn?.addEventListener('click', () => setExplore(exBtn.getAttribute('aria-expanded') !== 'true'));
+  document.addEventListener('click', (e) => { if (exBtn && !e.target.closest('.has-menu')) setExplore(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && exBtn?.getAttribute('aria-expanded') === 'true') { setExplore(false); exBtn.focus(); } });
+  exMenu?.addEventListener('focusout', (e) => { if (!e.relatedTarget || !e.relatedTarget.closest('.has-menu')) setExplore(false); });
 
   // ---- Hero video: only on larger screens, never with reduced motion or data saver ----
   const vid = $('[data-hero-video]');

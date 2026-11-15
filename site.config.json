@@ -2,13 +2,19 @@
   "siteName": "Maryland Recording Studio",
   "brand": "Disco Sundays",
   "legalName": "Disco Sundays LLC",
-  "siteUrl": "https://marylandrecordingstudio.com",
+  "siteUrl": "https://marylandrecordingstudio.vercel.app",
   "locality": "Hanover",
   "region": "MD",
   "regionName": "Maryland",
   "postalCode": "21076",
   "country": "US",
-  "areaServed": ["Hanover", "Anne Arundel County", "Baltimore", "Washington, DC", "the DMV"],
+  "areaServed": [
+    "Hanover",
+    "Anne Arundel County",
+    "Baltimore",
+    "Washington, DC",
+    "the DMV"
+  ],
   "phone": "(443) 401-5425",
   "phoneE164": "+14434015425",
   "email": "ohitsdiscosundays@gmail.com",
@@ -19,13 +25,73 @@
     "bookingBase": "https://book.squareup.com/appointments/fk5phm6o38fjpy/location/LBRQ3J5MYKNYX/services"
   },
   "social": {
-    "instagram": { "url": "https://www.instagram.com/discosundays", "handle": "@discosundays" },
-    "facebook": { "url": "https://www.facebook.com/discosundaysofficial/", "handle": "discosundaysofficial" },
-    "youtube": { "url": "https://www.youtube.com/channel/UCuiLXxntyyMegzINhvDn0aw", "channelId": "UCuiLXxntyyMegzINhvDn0aw" }
+    "instagram": {
+      "url": "https://www.instagram.com/discosundays",
+      "handle": "@discosundays"
+    },
+    "facebook": {
+      "url": "https://www.facebook.com/discosundaysofficial/",
+      "handle": "discosundaysofficial"
+    },
+    "youtube": {
+      "url": "https://www.youtube.com/channel/UCuiLXxntyyMegzINhvDn0aw",
+      "channelId": "UCuiLXxntyyMegzINhvDn0aw"
+    }
   },
   "analytics": {
     "_comment": "Set one of these to turn on analytics. Events are always pushed to window.dataLayer.",
     "plausibleDomain": "",
     "ga4MeasurementId": ""
-  }
+  },
+  "radio": {
+    "name": "Disco Sundays Radio",
+    "streamUrl": "https://discosundaysradio.out.airtime.pro/discosundaysradio_a",
+    "liveInfoUrl": "https://discosundaysradio.airtime.pro/api/live-info",
+    "appUrl": "https://discosundays-radio-drops.base44.app/",
+    "tagline": "Music \u00b7 Artists \u00b7 Live Shows \u00b7 Podcasts"
+  },
+  "ecosystem": [
+    {
+      "id": "app",
+      "name": "The Disco Sundays App",
+      "kicker": "Our app",
+      "url": "https://disco-sundays-app.base44.app/",
+      "description": "Book sessions, renew your membership, catch the latest drops and keep the whole studio in your pocket. Add it to your home screen.",
+      "cta": "Open the app"
+    },
+    {
+      "id": "rewards",
+      "name": "Disco Rewards",
+      "kicker": "Rewards program",
+      "url": "https://disco-sundaysllc-club.base44.app/",
+      "description": "Where studio time pays you back. Earn points on sessions, memberships, events and referrals, then redeem them for studio credit and experiences.",
+      "cta": "Start earning"
+    },
+    {
+      "id": "radio",
+      "name": "Disco Sundays Radio",
+      "kicker": "Radio",
+      "url": "https://discosundays-radio-drops.base44.app/",
+      "description": "Live 24/7: music, artists, live shows and podcasts from the studio. Listen right here or on Radio Drops.",
+      "cta": "Listen live",
+      "internal": "/radio"
+    },
+    {
+      "id": "rap",
+      "name": "RAP Program",
+      "kicker": "Artist development",
+      "url": "https://disco-rap-flow.base44.app/",
+      "description": "Create. Record. Perform. Grow. A production and artist development program for young artists, starting with a free one-hour introductory session.",
+      "cta": "View the program"
+    },
+    {
+      "id": "studio",
+      "name": "Maryland Recording Studio",
+      "kicker": "You are here",
+      "url": "/",
+      "description": "Our recording studio in Hanover, MD. Browse every service and book your session online.",
+      "cta": "Book a session",
+      "internal": "/book"
+    }
+  ]
 }

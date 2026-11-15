@@ -15,6 +15,7 @@ const catalogue = await readJSON('data/services.json');
 const editorial = await readJSON('content/services-editorial.json');
 const media = await readJSON('content/media.json');
 const faqs = await readJSON('content/faq.json');
+const social = await readJSON('content/social.json');
 
 const SITE_URL = (process.env.SITE_URL
   || (process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)
@@ -191,9 +192,52 @@ function socialLinks(className = 'social-links') {
 
 // ---------- layout ----------
 const NAV = [
-  ['/', 'Home'], ['/studio', 'The Studio'], ['/services', 'Services'], ['/gallery', 'Gallery'],
-  ['/social', 'Social'], ['/about', 'About'], ['/contact', 'Contact'],
+  ['/studio', 'The Studio'], ['/services', 'Services'], ['/gallery', 'Gallery'],
+  ['/radio', 'Radio'], ['/about', 'About'], ['/contact', 'Contact'],
 ];
+const ECO = config.ecosystem;
+const extIcon = '<svg class="ext" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ecoIcon = {
+  app: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 18.5h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  rewards: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v10H4zM2.5 6.5h19V10h-19zM12 6.5V20M12 6.5C10 3 6.5 3.5 7 5.5c.4 1.4 5 1 5 1Zm0 0c2-3.5 5.5-3 5-1-.4 1.4-5 1-5 1Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  radio: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.2" fill="currentColor"/><path d="M8 8a5.6 5.6 0 0 0 0 8m8-8a5.6 5.6 0 0 1 0 8M5 5a9.9 9.9 0 0 0 0 14M19 5a9.9 9.9 0 0 1 0 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  rap: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21m-3.5 0h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  studio: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9.5L12 4l8 5.5V20M9 20v-5.5h6V20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+};
+const ecoHref = (e) => e.internal || e.url;
+const ecoExternal = (e) => !e.internal && /^https?:/.test(e.url);
+
+function logo({ size = 'md', eager = false } = {}) {
+  const w = { sm: 160, md: 160, lg: 320 }[size];
+  return `<span class="logo-plate logo-plate--${size}"><img src="/assets/brand/logo-${w}.webp" srcset="/assets/brand/logo-160.webp 160w, /assets/brand/logo-320.webp 320w, /assets/brand/logo.png 382w" sizes="${size === 'lg' ? '(min-width: 700px) 300px, 60vw' : '120px'}" alt="Disco Sundays" width="382" height="231"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"></span>`;
+}
+
+function ecosystemGrid({ heading = true } = {}) {
+  return `<div class="eco-grid">${ECO.map((e) => `<a class="eco-card eco-card--${e.id} reveal" href="${ecoHref(e)}"${ecoExternal(e) ? ' target="_blank" rel="noopener"' : ''} data-track="ecosystem_click" data-label="${e.id}">
+    <span class="eco-card__icon">${ecoIcon[e.id] || ''}</span>
+    <span class="eco-card__kicker">${esc(e.kicker)}</span>
+    <${heading ? 'h3' : 'span'} class="eco-card__name">${esc(e.name)}</${heading ? 'h3' : 'span'}>
+    <span class="eco-card__desc">${esc(e.description)}</span>
+    <span class="eco-card__cta">${esc(e.cta)}${ecoExternal(e) ? extIcon + '<span class="sr-only"> (opens in a new tab)</span>' : ' <span aria-hidden="true">→</span>'}</span>
+  </a>`).join('')}</div>`;
+}
+
+function radioPlayer({ compact = false } = {}) {
+  return `<div class="radio-player${compact ? ' radio-player--compact' : ''}" data-radio-player>
+  <div class="radio-player__art" aria-hidden="true"><span class="radio-player__ring"></span>${logo({ size: 'sm' })}</div>
+  <div class="radio-player__main">
+    <p class="radio-player__station"><span class="live-dot" aria-hidden="true"></span>${esc(config.radio.name)} <span class="radio-player__badge">Live 24/7</span></p>
+    <p class="radio-player__now" data-radio-now aria-live="polite">${esc(config.radio.tagline)}</p>
+    <p class="radio-player__status" data-radio-status role="status">Press play to listen</p>
+    <div class="radio-player__controls">
+      <button type="button" class="play-btn" data-radio-toggle aria-label="Play ${esc(config.radio.name)}"><span class="play-btn__icon" aria-hidden="true"></span></button>
+      <label class="vol"><span class="sr-only">Volume</span><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input type="range" min="0" max="1" step="0.05" value="0.8" data-radio-volume></label>
+      <a class="radio-player__ext" href="${config.radio.appUrl}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="radio_app">Open Radio Drops${extIcon}<span class="sr-only"> (opens in a new tab)</span></a>
+    </div>
+  </div>
+  <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+</div>`;
+}
 
 const businessLD = {
   '@context': 'https://schema.org',
@@ -208,7 +252,7 @@ const businessLD = {
   email: config.email,
   address: { '@type': 'PostalAddress', addressLocality: config.locality, addressRegion: config.region, postalCode: config.postalCode, addressCountry: config.country },
   areaServed: config.areaServed.map((n) => ({ '@type': 'Place', name: n })),
-  sameAs: Object.values(config.social).map((s) => s.url),
+  sameAs: [...Object.values(config.social).map((s) => s.url), ...ECO.filter(ecoExternal).map((e) => e.url)],
   potentialAction: { '@type': 'ReserveAction', target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/book`, actionPlatform: ['http://schema.org/DesktopWebPlatform', 'http://schema.org/MobileWebPlatform'] }, result: { '@type': 'Reservation', name: 'Studio session' } },
 };
 
@@ -224,10 +268,8 @@ function layout({ title, description, pathname, body, scripts = [], jsonld = [],
   const canonical = SITE_URL + (pathname === '/' ? '/' : pathname);
   const fullTitle = pathname === '/' ? title : `${title} | ${config.siteName}`;
   const img = ogImage || `${SITE_URL}/assets/brand/og-image.jpg`;
-  const navItems = NAV.map(([href, label]) => {
-    const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
-    return `<li><a href="${href}"${active ? ' aria-current="page"' : ''}>${label}</a></li>`;
-  }).join('');
+  const navItems = NAV.map(([href, label]) => `<li><a href="${href}"${pathname.startsWith(href) ? ' aria-current="page"' : ''}>${label}</a></li>`).join('');
+  const ecoMenu = ECO.filter((e) => e.id !== 'studio').map((e) => `<li><a href="${ecoHref(e)}"${ecoExternal(e) ? ' target="_blank" rel="noopener"' : ''} data-track="ecosystem_click" data-label="${e.id}"><span class="menu-icon">${ecoIcon[e.id]}</span><span><strong>${esc(e.name)}</strong><small>${esc(e.kicker)}</small></span>${ecoExternal(e) ? extIcon : ''}</a></li>`).join('');
   return `<!doctype html>
 <html lang="en-US">
 <head>
@@ -254,7 +296,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/assets/css/site.css?v=${BUILD_ID}">
 <script>document.documentElement.classList.add('js')</script>
 ${[businessLD, ...jsonld].map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
@@ -264,57 +306,82 @@ ${analyticsTags()}
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" data-header>
   <div class="container site-header__inner">
-    <a class="brand" href="/" aria-label="${esc(config.siteName)}, home">
-      <img src="/assets/brand/logo-on-dark-200.webp" alt="" width="200" height="121">
-      <span class="brand__text"><span class="brand__name">Maryland Recording Studio</span><span class="brand__sub">by Disco Sundays · Hanover, MD</span></span>
+    <a class="brand" href="/" aria-label="${esc(config.siteName)} by Disco Sundays, home">
+      ${logo({ size: 'sm', eager: true })}
+      <span class="brand__text"><span class="brand__name">Maryland Recording Studio</span><span class="brand__sub">Hanover, MD · Est. by Disco Sundays</span></span>
     </a>
     <nav class="site-nav" aria-label="Main">
-      <ul>${navItems}</ul>
+      <ul data-nav-list>${navItems}
+        <li class="has-menu"><button type="button" class="nav-explore" aria-expanded="false" aria-controls="explore-menu" data-explore-toggle>Explore <span aria-hidden="true" class="chev"></span></button>
+          <div class="explore-menu" id="explore-menu" hidden data-explore-menu><p class="explore-menu__h">Explore Disco Sundays</p><ul>${ecoMenu}</ul><a class="explore-menu__all" href="/explore">See the whole ecosystem →</a></div>
+        </li>
+      </ul>
     </nav>
     <a class="btn btn--primary btn--sm site-header__cta" href="/book" data-track="book_cta_click" data-label="header">Book now</a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle><span class="sr-only">Open menu</span><span class="menu-toggle__bars" aria-hidden="true"></span></button>
   </div>
 </header>
 <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
-  <nav aria-label="Mobile">
-    <ul>${navItems}<li><a href="/faq"${pathname === '/faq' ? ' aria-current="page"' : ''}>FAQ</a></li></ul>
-  </nav>
   <a class="btn btn--primary btn--lg btn--block" href="/book" data-track="book_cta_click" data-label="mobile_menu">Book your session</a>
+  <nav aria-label="Mobile">
+    <ul class="mobile-menu__main"><li><a href="/"${pathname === '/' ? ' aria-current="page"' : ''}>Home</a></li>${navItems}<li><a href="/faq"${pathname === '/faq' ? ' aria-current="page"' : ''}>FAQ</a></li></ul>
+    <p class="mobile-menu__h">Explore Disco Sundays</p>
+    <ul class="mobile-menu__eco">${ecoMenu}</ul>
+  </nav>
   <div class="mobile-menu__contact"><a href="tel:${config.phoneE164}" data-track="phone_click">${config.phone}</a>${socialLinks()}</div>
 </div>
-<main id="main" tabindex="-1">
+<main id="main" tabindex="-1" data-page="${esc(pathname)}">
 ${body}
 </main>
 <footer class="site-footer">
   <div class="rainbow-rule" aria-hidden="true"></div>
-  <div class="container site-footer__grid">
+  <div class="container site-footer__top">
     <div class="site-footer__brand">
-      <img src="/assets/brand/logo-on-dark-200.webp" alt="Disco Sundays" width="160" height="97" loading="lazy">
+      <a href="/" aria-label="Home">${logo({ size: 'lg' })}</a>
       <p>Maryland Recording Studio by ${esc(config.legalName)}. A members' recording studio in ${config.locality}, ${config.regionName}.</p>
       ${socialLinks()}
     </div>
-    <nav aria-label="Footer">
-      <h2 class="footer-h">Explore</h2>
-      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/book">Book now</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/social">Social</a></li></ul>
-    </nav>
-    <nav aria-label="Studio information">
+    <div class="site-footer__cta">
+      <p class="footer-big">Ready when you are.</p>
+      <div class="btn-row"><a class="btn btn--primary btn--lg" href="/book" data-track="book_cta_click" data-label="footer">Book a session</a><a class="btn btn--ghost btn--lg" href="/book?service=visit-studio" data-track="book_cta_click" data-label="footer_visit">Free studio visit</a></div>
+    </div>
+  </div>
+  <div class="container site-footer__grid">
+    <nav aria-label="Studio">
       <h2 class="footer-h">Studio</h2>
-      <ul><li><a href="/about">About</a></li><li><a href="/faq">FAQ</a></li><li><a href="/contact">Contact</a></li><li><a href="/services/visit-studio">Visit the studio</a></li></ul>
+      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/book">Book now</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
+    </nav>
+    <nav aria-label="Explore Disco Sundays">
+      <h2 class="footer-h">Explore Disco Sundays</h2>
+      <ul>${ECO.filter((e) => e.id !== 'studio').map((e) => `<li><a href="${ecoHref(e)}"${ecoExternal(e) ? ' target="_blank" rel="noopener"' : ''} data-track="ecosystem_click" data-label="${e.id}">${esc(e.name)}${ecoExternal(e) ? extIcon : ''}</a></li>`).join('')}</ul>
+    </nav>
+    <nav aria-label="Company">
+      <h2 class="footer-h">Company</h2>
+      <ul><li><a href="/about">About</a></li><li><a href="/contact">Contact</a></li><li><a href="/explore">Ecosystem</a></li><li><a href="/radio">Radio</a></li></ul>
     </nav>
     <div>
       <h2 class="footer-h">Get in touch</h2>
       <ul class="footer-contact">
         <li><a href="tel:${config.phoneE164}" data-track="phone_click">${config.phone}</a></li>
+        <li><a href="sms:${config.phoneE164}" data-track="phone_click" data-label="sms">Text us</a></li>
         <li><a href="mailto:${config.email}" data-track="email_click">${config.email}</a></li>
         <li>${config.locality}, ${config.region} ${config.postalCode}</li>
       </ul>
     </div>
   </div>
-  <div class="container site-footer__legal"><p>© <span data-year>${new Date().getFullYear()}</span> ${esc(config.legalName)}. Bookings and payments are processed securely by Square.</p></div>
+  <div class="container site-footer__legal"><p>© <span data-year>${new Date().getFullYear()}</span> ${esc(config.legalName)}. Bookings and payments are processed securely by Square.</p><p><a href="/faq">Booking &amp; membership FAQ</a></p></div>
 </footer>
+<div class="mini-player" data-mini-player hidden>
+  <button type="button" class="play-btn play-btn--sm" data-radio-toggle aria-label="Pause ${esc(config.radio.name)}"><span class="play-btn__icon" aria-hidden="true"></span></button>
+  <div class="mini-player__text"><strong>${esc(config.radio.name)}</strong><span data-radio-now>${esc(config.radio.tagline)}</span></div>
+  <a class="mini-player__link" href="/radio" aria-label="Open the radio page">Radio</a>
+  <button type="button" class="mini-player__close" data-radio-close aria-label="Stop and close the radio player">×</button>
+</div>
 ${hideStickyCta ? '' : `<div class="sticky-cta" data-sticky-cta><a class="btn btn--primary btn--block" href="/book" data-track="book_cta_click" data-label="sticky_mobile">Book a session</a></div>`}
+<script>window.MRS_RADIO=${JSON.stringify({ stream: config.radio.streamUrl, info: config.radio.liveInfoUrl, name: config.radio.name, tagline: config.radio.tagline })}</script>
 <script src="/assets/js/main.js?v=${BUILD_ID}" defer></script>
-${scripts.map((s) => `<script src="/assets/js/${s}?v=${BUILD_ID}" defer></script>`).join('\n')}
+<script src="/assets/js/radio.js?v=${BUILD_ID}" defer></script>
+${scripts.map((s) => `<script src="/assets/js/${s}?v=${BUILD_ID}" defer data-page-script></script>`).join('\n')}
 </body>
 </html>`;
 }
@@ -333,6 +400,20 @@ const tokens = {
   heroMedia,
   heroArt: () => art(7, { bars: 64, className: 'hero__art' }),
   socialLinks: () => socialLinks(),
+  ecosystem: () => ecosystemGrid(),
+  radioPlayer: () => radioPlayer(),
+  logoLg: () => logo({ size: 'lg' }),
+  serviceRows: () => `<ol class="svc-rows">${services.filter((s) => s.featured).map((s, i) => `<li class="svc-row reveal"><a href="/services/${s.slug}" data-track="service_card_click" data-label="${esc(s.name)}">
+      <span class="svc-row__num">${String(i + 1).padStart(2, '0')}</span>
+      <span class="svc-row__main"><span class="svc-row__cat">${esc(s.categoryLabel)}</span><span class="svc-row__name">${esc(s.name)}</span><span class="svc-row__tag">${esc(s.tagline || s.description)}</span></span>
+      <span class="svc-row__meta">${esc(priceLine(s))}</span>
+      <span class="svc-row__art" aria-hidden="true">${s.image ? picture(s.image) : art(s.seed, { bars: 28 })}</span>
+      <span class="svc-row__go" aria-hidden="true">→</span></a></li>`).join('')}</ol>`,
+  quickBook: () => ['visit-studio', 'crash-test-artist-evaluation', 'unlimited-membership'].map((slug) => services.find((s) => s.slug === slug)).filter(Boolean).map((s) => `<li><a href="/book?service=${s.slug}" data-track="book_cta_click" data-label="hero_quick_${s.slug}"><span class="qb__name">${esc(s.name.replace('Disco Sundays ', ''))}</span><span class="qb__meta">${esc(priceLine(s))}</span><span class="qb__go" aria-hidden="true">→</span></a></li>`).join(''),
+  socialData: () => `<script type="application/json" id="social-data">${JSON.stringify({ instagram: social.instagram, facebook: config.social.facebook.url, instagramProfile: config.social.instagram.url, youtube: config.social.youtube.url, photos: (media.gallery || []).concat(media.studio || []) }).replace(/</g, '\\u003c')}</script>`,
+  followButtons: () => `<div class="follow-row">${['instagram', 'facebook', 'youtube'].map((k) => `<a class="follow follow--${k}" href="${config.social[k].url}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="${k}">Follow on ${k === 'youtube' ? 'YouTube' : k[0].toUpperCase() + k.slice(1)}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')}</div>`,
+  radioAppUrl: () => config.radio.appUrl,
+
   serviceCount: () => String(services.length),
   categoryCount: () => String(categories.length),
   phone: () => config.phone,
