@@ -23,37 +23,12 @@ const SITE_URL = (process.env.SITE_URL
   || config.siteUrl).replace(/\/$/, '');
 const BUILD_ID = Date.now().toString(36);
 
-// Fonts: self-host at build time (Vercel builds have network access) so pages make no
-// third-party font requests. Falls back to Google Fonts if the download fails.
-const FONT_CSS_URL = 'https://fonts.googleapis.com/css2?family=Anton&family=Unbounded:wght@700&family=Inter:wght@400;600&display=swap';
-let FONT_HEAD = `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="${FONT_CSS_URL}">`;
+// Fonts: self-hosted from assets/fonts (vendored by scripts/vendor-fonts.mjs), inlined @font-face
+// and preloaded, so pages make no third-party font requests.
+let FONT_HEAD = '';
 async function selfHostFonts() {
-  try {
-    const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
-    const css = await (await fetch(FONT_CSS_URL, { headers: { 'User-Agent': ua }, signal: AbortSignal.timeout(8000) })).text();
-    // Keep only the latin subsets.
-    const blocks = css.split('/* ').filter((b) => b.startsWith('latin */'));
-    if (!blocks.length) throw new Error('no latin font faces');
-    await mkdir(path.join(dist, 'assets/fonts'), { recursive: true });
-    let out = '';
-    const preload = [];
-    for (const b of blocks) {
-      const url = b.match(/url\((https:[^)]+\.woff2)\)/)?.[1];
-      const fam = b.match(/font-family: '([^']+)'/)?.[1];
-      const wt = b.match(/font-weight: (\d+)/)?.[1];
-      if (!url) continue;
-      const name = `${fam.toLowerCase()}-${wt}.woff2`;
-      const buf = Buffer.from(await (await fetch(url, { signal: AbortSignal.timeout(8000) })).arrayBuffer());
-      await writeFile(path.join(dist, 'assets/fonts', name), buf);
-      out += '/* ' + b.replace(url, `/assets/fonts/${name}`).replace('font-display: swap', fam === 'Inter' ? 'font-display: optional' : 'font-display: swap');
-      if ((fam === 'Unbounded' && wt === '700') || (fam === 'Inter' && wt === '400')) preload.push(name);
-    }
-    await writeFile(path.join(dist, 'assets/fonts/fonts.css'), out);
-    FONT_HEAD = preload.map((n) => `<link rel="preload" href="/assets/fonts/${n}" as="font" type="font/woff2" crossorigin>`).join('') + `<style>${out.replace(/\s+/g, ' ')}</style>`;
-    console.log(`[build] self-hosted ${blocks.length} font files`);
-  } catch (err) {
-    console.log('[build] font self-hosting skipped (using Google Fonts):', err.message);
-  }
+  const css = (await readFile(path.join(root, 'assets/fonts/fonts.css'), 'utf8')).replace(/\/\*[^*]*\*\//g, '').replace(/\s+/g, ' ').trim();
+  FONT_HEAD = ['unbounded-700', 'inter-400'].map((n) => `<link rel="preload" href="/assets/fonts/${n}.woff2" as="font" type="font/woff2" crossorigin>`).join('') + `<style>${css}</style>`;
 }
 
 // ---------- helpers ----------
