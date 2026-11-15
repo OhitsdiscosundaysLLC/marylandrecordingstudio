@@ -44,7 +44,7 @@ async function selfHostFonts() {
       const name = `${fam.toLowerCase()}-${wt}.woff2`;
       const buf = Buffer.from(await (await fetch(url, { signal: AbortSignal.timeout(8000) })).arrayBuffer());
       await writeFile(path.join(dist, 'assets/fonts', name), buf);
-      out += '/* ' + b.replace(url, `/assets/fonts/${name}`);
+      out += '/* ' + b.replace(url, `/assets/fonts/${name}`).replace('font-display: swap', fam === 'Inter' ? 'font-display: optional' : 'font-display: swap');
       if ((fam === 'Unbounded' && wt === '700') || (fam === 'Inter' && wt === '400')) preload.push(name);
     }
     await writeFile(path.join(dist, 'assets/fonts/fonts.css'), out);
@@ -242,7 +242,7 @@ const ecoExternal = (e) => !e.internal && /^https?:/.test(e.url);
 
 function logo({ size = 'md', eager = false } = {}) {
   const w = { sm: 160, md: 160, lg: 320 }[size];
-  return `<span class="logo-plate logo-plate--${size}"><img src="/assets/brand/logo-${w}.webp" srcset="/assets/brand/logo-160.webp 160w, /assets/brand/logo-320.webp 320w, /assets/brand/logo.png 382w" sizes="${size === 'lg' ? '(min-width: 700px) 300px, 60vw' : '120px'}" alt="Disco Sundays" width="382" height="231"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"></span>`;
+  return `<span class="logo-plate logo-plate--${size}"><img src="/assets/brand/logo-${w}.webp" srcset="/assets/brand/logo-96.webp 96w, /assets/brand/logo-160.webp 160w, /assets/brand/logo-320.webp 320w, /assets/brand/logo.png 382w" sizes="${size === 'lg' ? '(min-width: 700px) 240px, 180px' : '72px'}" alt="Disco Sundays" width="382" height="231"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"></span>`;
 }
 
 function ecosystemGrid({ heading = true } = {}) {
@@ -445,7 +445,7 @@ const tokens = {
   socialData: () => `<script type="application/json" id="social-data">${JSON.stringify({ instagram: social.instagram, facebook: config.social.facebook.url, instagramProfile: config.social.instagram.url, youtube: config.social.youtube.url, photos: (media.gallery || []).concat(media.studio || []) }).replace(/</g, '\\u003c')}</script>`,
   followButtons: () => `<div class="follow-row">${['instagram', 'facebook', 'youtube'].map((k) => `<a class="follow follow--${k}" href="${config.social[k].url}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="${k}">Follow on ${k === 'youtube' ? 'YouTube' : k[0].toUpperCase() + k.slice(1)}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')}</div>`,
   radioAppUrl: () => config.radio.appUrl,
-  partners: () => `<section class="partners" aria-labelledby="partners-title"><div class="container"><h2 id="partners-title" class="partners__h">${esc(config.partners.heading)}</h2><ul class="partners__list">${config.partners.logos.map((l) => `<li class="partner" style="--pbg:${l.bg}"><img src="${l.src240 || l.src}"${l.src240 ? ` srcset="${l.src240} 240w, ${l.src} ${l.w}w" sizes="(min-width: 1024px) 140px, (min-width: 480px) 28vw, 40vw"` : ''} alt="${esc(l.name)}" width="${l.w}" height="${l.h}" loading="lazy" decoding="async"></li>`).join('')}</ul></div></section>`,
+  partners: () => `<section class="partners" aria-labelledby="partners-title"><div class="container"><h2 id="partners-title" class="partners__h">${esc(config.partners.heading)}</h2><ul class="partners__list">${config.partners.logos.map((l) => `<li class="partner" style="--pbg:${l.bg}"><img src="${l.src240 || l.src}"${l.src240 ? ` srcset="${l.src240} ${l.src240.includes('-160') ? 160 : 240}w, ${l.src} ${l.w}w" sizes="(min-width: 1024px) 140px, (min-width: 480px) 28vw, 40vw"` : ''} alt="${esc(l.name)}" width="${l.w}" height="${l.h}" loading="lazy" decoding="async"></li>`).join('')}</ul></div></section>`,
   rapProgram: () => { const r = ECO.find((e) => e.id === 'rap'); return `<section class="rap" aria-labelledby="rap-title"><div class="container rap__grid">
     <div class="rap__copy reveal"><p class="eyebrow">RAP Program</p><h2 id="rap-title" class="display-2">Create. Record. <em>Perform. Grow.</em></h2>
       <p class="lead">A music production and artist development program that helps young artists turn talent into professionally recorded music, creative projects and performance opportunities.</p>

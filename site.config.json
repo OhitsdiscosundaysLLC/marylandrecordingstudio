@@ -142,7 +142,8 @@
         "src": "/assets/partners/cashmere-b-productions.webp",
         "w": 225,
         "h": 225,
-        "bg": "#010101"
+        "bg": "#010101",
+        "src240": "/assets/partners/cashmere-b-productions-160.webp"
       }
     ]
   }

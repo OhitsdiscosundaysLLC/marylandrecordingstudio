@@ -79,7 +79,7 @@ main:focus { outline: none; }
 .btn--primary:hover { --bg: #ffb74f; box-shadow: 0 14px 40px -10px rgba(255, 166, 48, .7); }
 .btn--ghost { border-color: var(--line-strong); color: var(--text); background: rgba(255, 255, 255, .03); backdrop-filter: blur(8px); }
 .btn--ghost:hover { border-color: rgba(255, 255, 255, .4); background: rgba(255, 255, 255, .07); }
-.btn--sm { min-height: 40px; padding: 0 16px; font-size: .9rem; }
+.btn--sm { min-height: 44px; padding: 0 16px; font-size: .9rem; }
 .btn--lg { min-height: 56px; padding: 0 28px; font-size: 1.02rem; }
 .btn--block { width: 100%; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
