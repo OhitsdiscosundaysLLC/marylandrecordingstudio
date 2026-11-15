@@ -43,6 +43,12 @@ const CLEAN = () => {
     const cs = getComputedStyle(el);
     if ((cs.position === 'fixed' || cs.position === 'sticky') && /Edit with|Points earned|pays for itself|Membership pays|first access|Professional equipment|cookie/i.test(el.innerText || '') && !/Home\s*Book\s*Rewards/.test(el.innerText || '')) el.style.setProperty('display', 'none', 'important');
   }
+  // Rotating promo toasts: small fixed cards with a close button, never the bottom navigation.
+  for (const el of document.querySelectorAll('body *')) {
+    const cs = getComputedStyle(el);
+    const t = (el.innerText || '').trim();
+    if (cs.position === 'fixed' && el.querySelector('button') && t.length > 0 && t.length < 100 && !/Home|Book|Rewards|More/.test(t)) el.style.setProperty('display', 'none', 'important');
+  }
   document.querySelectorAll('[data-sonner-toaster],[role=status],[role=alert]').forEach((e) => e.style.setProperty('display', 'none', 'important'));
 };
 
