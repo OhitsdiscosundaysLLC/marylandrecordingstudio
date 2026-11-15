@@ -83,7 +83,18 @@
     reveals.forEach((el) => io.observe(el));
   }
   initReveal();
-  window.mrsRefresh = () => { initReveal(); onScroll(); setExplore(false); };
+
+  // ---- Pause decorative animations while off screen (saves CPU/battery) ----
+  let animIO = null;
+  function initAnim() {
+    const els = $$('[data-anim]');
+    if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in-view')); return; }
+    animIO ||= new IntersectionObserver((en) => en.forEach((x) => x.target.classList.toggle('in-view', x.isIntersecting)), { rootMargin: '100px' });
+    els.forEach((e) => animIO.observe(e));
+  }
+  initAnim();
+  document.addEventListener('visibilitychange', () => document.documentElement.classList.toggle('tab-hidden', document.hidden));
+  window.mrsRefresh = () => { initReveal(); initAnim(); onScroll(); setExplore(false); };
 
   // ---- Explore Disco Sundays dropdown ----
   const exBtn = $('[data-explore-toggle]');

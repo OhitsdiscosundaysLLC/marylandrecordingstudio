@@ -93,5 +93,52 @@
       "cta": "Book a session",
       "internal": "/book"
     }
-  ]
+  ],
+  "partners": {
+    "heading": "Brands we've worked with",
+    "logos": [
+      {
+        "name": "NASCAR",
+        "src": "/assets/partners/nascar.webp",
+        "w": 480,
+        "h": 236,
+        "bg": "#000000"
+      },
+      {
+        "name": "SiriusXM",
+        "src": "/assets/partners/siriusxm.webp",
+        "w": 480,
+        "h": 570,
+        "bg": "#ffffff"
+      },
+      {
+        "name": "PBS Kids",
+        "src": "/assets/partners/pbs-kids.webp",
+        "w": 400,
+        "h": 400,
+        "bg": "#ffffff"
+      },
+      {
+        "name": "Coca-Cola",
+        "src": "/assets/partners/coca-cola.webp",
+        "w": 480,
+        "h": 150,
+        "bg": "#ffffff"
+      },
+      {
+        "name": "Volition Sound Branding",
+        "src": "/assets/partners/volition-sound-branding.webp",
+        "w": 480,
+        "h": 498,
+        "bg": "#ffffff"
+      },
+      {
+        "name": "Cashmere B Productions",
+        "src": "/assets/partners/cashmere-b-productions.webp",
+        "w": 225,
+        "h": 225,
+        "bg": "#010101"
+      }
+    ]
+  }
 }

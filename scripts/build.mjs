@@ -22,6 +22,39 @@ const SITE_URL = (process.env.SITE_URL
   || config.siteUrl).replace(/\/$/, '');
 const BUILD_ID = Date.now().toString(36);
 
+// Fonts: self-host at build time (Vercel builds have network access) so pages make no
+// third-party font requests. Falls back to Google Fonts if the download fails.
+const FONT_CSS_URL = 'https://fonts.googleapis.com/css2?family=Unbounded:wght@700&family=Inter:wght@400;600&display=swap';
+let FONT_HEAD = `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="${FONT_CSS_URL}">`;
+async function selfHostFonts() {
+  try {
+    const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
+    const css = await (await fetch(FONT_CSS_URL, { headers: { 'User-Agent': ua }, signal: AbortSignal.timeout(8000) })).text();
+    // Keep only the latin subsets.
+    const blocks = css.split('/* ').filter((b) => b.startsWith('latin */'));
+    if (!blocks.length) throw new Error('no latin font faces');
+    await mkdir(path.join(dist, 'assets/fonts'), { recursive: true });
+    let out = '';
+    const preload = [];
+    for (const b of blocks) {
+      const url = b.match(/url\((https:[^)]+\.woff2)\)/)?.[1];
+      const fam = b.match(/font-family: '([^']+)'/)?.[1];
+      const wt = b.match(/font-weight: (\d+)/)?.[1];
+      if (!url) continue;
+      const name = `${fam.toLowerCase()}-${wt}.woff2`;
+      const buf = Buffer.from(await (await fetch(url, { signal: AbortSignal.timeout(8000) })).arrayBuffer());
+      await writeFile(path.join(dist, 'assets/fonts', name), buf);
+      out += '/* ' + b.replace(url, `/assets/fonts/${name}`);
+      if ((fam === 'Unbounded' && wt === '700') || (fam === 'Inter' && wt === '400')) preload.push(name);
+    }
+    await writeFile(path.join(dist, 'assets/fonts/fonts.css'), out);
+    FONT_HEAD = preload.map((n) => `<link rel="preload" href="/assets/fonts/${n}" as="font" type="font/woff2" crossorigin>`).join('') + `<style>${out.replace(/\s+/g, ' ')}</style>`;
+    console.log(`[build] self-hosted ${blocks.length} font files`);
+  } catch (err) {
+    console.log('[build] font self-hosting skipped (using Google Fonts):', err.message);
+  }
+}
+
 // ---------- helpers ----------
 const esc = (s = '') => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const slugify = (s) => String(s).toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -223,7 +256,7 @@ function ecosystemGrid({ heading = true } = {}) {
 }
 
 function radioPlayer({ compact = false } = {}) {
-  return `<div class="radio-player${compact ? ' radio-player--compact' : ''}" data-radio-player>
+  return `<div data-anim class="radio-player${compact ? ' radio-player--compact' : ''}" data-radio-player>
   <div class="radio-player__art" aria-hidden="true"><span class="radio-player__ring"></span>${logo({ size: 'sm' })}</div>
   <div class="radio-player__main">
     <p class="radio-player__station"><span class="live-dot" aria-hidden="true"></span>${esc(config.radio.name)} <span class="radio-player__badge">Live 24/7</span></p>
@@ -295,8 +328,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="icon" href="/assets/brand/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap">
+${FONT_HEAD}
 <link rel="stylesheet" href="/assets/css/site.css?v=${BUILD_ID}">
 <script>document.documentElement.classList.add('js')</script>
 ${[businessLD, ...jsonld].map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
@@ -413,6 +445,13 @@ const tokens = {
   socialData: () => `<script type="application/json" id="social-data">${JSON.stringify({ instagram: social.instagram, facebook: config.social.facebook.url, instagramProfile: config.social.instagram.url, youtube: config.social.youtube.url, photos: (media.gallery || []).concat(media.studio || []) }).replace(/</g, '\\u003c')}</script>`,
   followButtons: () => `<div class="follow-row">${['instagram', 'facebook', 'youtube'].map((k) => `<a class="follow follow--${k}" href="${config.social[k].url}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="${k}">Follow on ${k === 'youtube' ? 'YouTube' : k[0].toUpperCase() + k.slice(1)}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')}</div>`,
   radioAppUrl: () => config.radio.appUrl,
+  partners: () => `<section class="partners" aria-labelledby="partners-title"><div class="container"><h2 id="partners-title" class="partners__h">${esc(config.partners.heading)}</h2><ul class="partners__list">${config.partners.logos.map((l) => `<li class="partner" style="--pbg:${l.bg}"><img src="${l.src}" alt="${esc(l.name)}" width="${l.w}" height="${l.h}" loading="lazy" decoding="async"></li>`).join('')}</ul></div></section>`,
+  rapProgram: () => { const r = ECO.find((e) => e.id === 'rap'); return `<section class="rap" aria-labelledby="rap-title"><div class="container rap__grid">
+    <div class="rap__copy reveal"><p class="eyebrow">RAP Program</p><h2 id="rap-title" class="display-2">Create. Record. <em>Perform. Grow.</em></h2>
+      <p class="lead">A music production and artist development program that helps young artists turn talent into professionally recorded music, creative projects and performance opportunities.</p>
+      <div class="btn-row"><a class="btn btn--primary btn--lg" href="${r.url}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="rap_home">Explore the RAP Program<span class="sr-only"> (opens in a new tab)</span></a></div></div>
+    <ol class="rap__steps reveal"><li><span>01</span><strong>Register</strong><p>Tell us about your musical goals.</p></li><li><span>02</span><strong>Free first hour</strong><p>A one-time introductory session to explore your talent.</p></li><li><span>03</span><strong>Choose a package</strong><p>Single, EP, LP, Star Pack or Superstar.</p></li><li><span>04</span><strong>Create &amp; release</strong><p>Develop, record and release with the RAP team.</p></li></ol>
+  </div></section>`; },
 
   serviceCount: () => String(services.length),
   categoryCount: () => String(categories.length),
@@ -450,6 +489,7 @@ await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
 await cp(path.join(root, 'assets'), path.join(dist, 'assets'), { recursive: true });
 await mkdir(path.join(dist, 'data'), { recursive: true });
+await selfHostFonts();
 
 // Public, client-side copy of the catalogue (used for booking deep links and live refresh).
 const publicCatalogue = {

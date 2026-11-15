@@ -62,8 +62,9 @@
     if (item.kind === 'ig-embed') {
       el.classList.add('tile--embed');
       el.innerHTML = `<div class="tile__head">${badge('instagram')}<button type="button" class="tile__expand" aria-label="Open this Instagram post larger">Expand</button></div>
-        <div class="tile__embed"><iframe src="${esc(item.embed)}" title="Instagram post from Disco Sundays" loading="lazy" scrolling="no" allowtransparency="true"></iframe></div>`;
+        <div class="tile__embed"><iframe data-src="${esc(item.embed)}" title="Instagram post from Disco Sundays" scrolling="no" allowtransparency="true"></iframe></div>`;
       el.querySelector('.tile__expand').addEventListener('click', () => openLightbox(item));
+      lazyFrame(el.querySelector('iframe'));
       return el;
     }
     if (item.kind === 'facebook') {
@@ -81,13 +82,20 @@
     }
     // Native media tile (YouTube thumbnail, Instagram API image, studio photo).
     el.innerHTML = `<button type="button" class="tile__media" aria-label="${item.kind === 'youtube' ? 'Play video' : 'View'}: ${esc(item.title || LABEL[item.platform] + ' post')}">
-        <img src="${esc(item.image)}" alt="" loading="lazy" decoding="async"${item.kind === 'youtube' ? ' width="480" height="360"' : ''}>
+        <img src="${esc(item.image)}"${item.kind === 'youtube' ? ` srcset="https://i.ytimg.com/vi/${esc(item.id)}/mqdefault.jpg 320w, https://i.ytimg.com/vi/${esc(item.id)}/hqdefault.jpg 480w" sizes="${cls.includes('tile--feature') ? '(min-width: 1000px) 600px, 100vw' : '(min-width: 1000px) 300px, (min-width: 560px) 50vw, 100vw'}" width="480" height="360"` : ''} alt="" loading="lazy" decoding="async">
         ${item.kind === 'youtube' || item.video ? '<span class="tile__play" aria-hidden="true"></span>' : ''}
         <span class="tile__overlay">${badge(item.platform)}<span class="tile__caption">${esc(item.title || '')}</span>${item.date ? `<span class="tile__date">${esc(fmtDate(item.date))}</span>` : ''}</span>
       </button>`;
     el.querySelector('.tile__media').addEventListener('click', () => openLightbox(item));
     return el;
   }
+
+  // Instagram embeds are heavy (~1 MB each): only load one when it's about to scroll into view.
+  const frameIO = 'IntersectionObserver' in window ? new IntersectionObserver((en) => en.forEach((x) => {
+    if (!x.isIntersecting) return;
+    x.target.src = x.target.dataset.src; frameIO.unobserve(x.target);
+  }), { rootMargin: '300px 0px' }) : null;
+  function lazyFrame(f) { if (frameIO) frameIO.observe(f); else f.src = f.dataset.src; }
 
   function igEmbedUrl(u) {
     const m = String(u).match(/instagram\.com\/(?:[^/]+\/)?(p|reel|tv)\/([A-Za-z0-9_-]+)/);
