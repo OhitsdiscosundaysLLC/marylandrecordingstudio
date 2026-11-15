@@ -140,9 +140,9 @@ body.menu-open { overflow: hidden; }
 .hero__inner { position: relative; }
 .hero__title { max-width: 14ch; margin-bottom: 24px; }
 .hero__title .line { display: inline; }
-.js .hero__title .line { display: inline-block; opacity: 0; transform: translateY(30px); animation: rise .9s var(--ease) forwards; }
-.js .hero__title .line:nth-child(2) { animation-delay: .12s; }
-.js .hero__title .line:nth-child(3) { animation-delay: .24s; }
+.js .hero__title .line { display: inline-block; opacity: 0; transform: translateY(24px); animation: rise .6s var(--ease) forwards; }
+.js .hero__title .line:nth-child(2) { animation-delay: .08s; }
+.js .hero__title .line:nth-child(3) { animation-delay: .16s; }
 @keyframes rise { to { opacity: 1; transform: none; } }
 .hero__lead { margin-bottom: 32px; }
 .hero__facts { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin-top: 56px; max-width: 760px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--line); }
@@ -562,7 +562,8 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .hero__radio-label { font-weight: 600; font-size: .9rem; white-space: nowrap; }
 .hero__radio-now { color: var(--muted); font-size: .86rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px; }
 .hero__radio.is-playing { background: rgba(61,220,132,.1); border-color: rgba(61,220,132,.5); }
-.live-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--r4); box-shadow: 0 0 0 0 rgba(61,220,132,.6); animation: pulse 2s infinite; flex-shrink: 0; }
+.live-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--r4); box-shadow: 0 0 0 3px rgba(61,220,132,.2); flex-shrink: 0; }
+html.radio-on .live-dot { animation: pulse 2s infinite; }
 @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(61,220,132,0); } 100% { box-shadow: 0 0 0 0 rgba(61,220,132,0); } }
 .qb { position: relative; padding: 24px; border-radius: 26px; background: linear-gradient(160deg, rgba(36,30,24,.82), rgba(16,16,18,.88)); border: 1px solid var(--line-strong); backdrop-filter: blur(16px); box-shadow: 0 40px 100px -40px rgba(0,0,0,.9); }
 .qb::before { content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; background: linear-gradient(140deg, rgba(255,166,48,.6), transparent 40%, rgba(124,92,255,.45)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }

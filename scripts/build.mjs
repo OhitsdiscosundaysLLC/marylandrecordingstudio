@@ -445,7 +445,7 @@ const tokens = {
   socialData: () => `<script type="application/json" id="social-data">${JSON.stringify({ instagram: social.instagram, facebook: config.social.facebook.url, instagramProfile: config.social.instagram.url, youtube: config.social.youtube.url, photos: (media.gallery || []).concat(media.studio || []) }).replace(/</g, '\\u003c')}</script>`,
   followButtons: () => `<div class="follow-row">${['instagram', 'facebook', 'youtube'].map((k) => `<a class="follow follow--${k}" href="${config.social[k].url}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="${k}">Follow on ${k === 'youtube' ? 'YouTube' : k[0].toUpperCase() + k.slice(1)}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')}</div>`,
   radioAppUrl: () => config.radio.appUrl,
-  partners: () => `<section class="partners" aria-labelledby="partners-title"><div class="container"><h2 id="partners-title" class="partners__h">${esc(config.partners.heading)}</h2><ul class="partners__list">${config.partners.logos.map((l) => `<li class="partner" style="--pbg:${l.bg}"><img src="${l.src}" alt="${esc(l.name)}" width="${l.w}" height="${l.h}" loading="lazy" decoding="async"></li>`).join('')}</ul></div></section>`,
+  partners: () => `<section class="partners" aria-labelledby="partners-title"><div class="container"><h2 id="partners-title" class="partners__h">${esc(config.partners.heading)}</h2><ul class="partners__list">${config.partners.logos.map((l) => `<li class="partner" style="--pbg:${l.bg}"><img src="${l.src240 || l.src}"${l.src240 ? ` srcset="${l.src240} 240w, ${l.src} ${l.w}w" sizes="(min-width: 1024px) 140px, (min-width: 480px) 28vw, 40vw"` : ''} alt="${esc(l.name)}" width="${l.w}" height="${l.h}" loading="lazy" decoding="async"></li>`).join('')}</ul></div></section>`,
   rapProgram: () => { const r = ECO.find((e) => e.id === 'rap'); return `<section class="rap" aria-labelledby="rap-title"><div class="container rap__grid">
     <div class="rap__copy reveal"><p class="eyebrow">RAP Program</p><h2 id="rap-title" class="display-2">Create. Record. <em>Perform. Grow.</em></h2>
       <p class="lead">A music production and artist development program that helps young artists turn talent into professionally recorded music, creative projects and performance opportunities.</p>
@@ -488,6 +488,18 @@ async function writePage(pathname, html) {
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
 await cp(path.join(root, 'assets'), path.join(dist, 'assets'), { recursive: true });
+// Minify CSS (comments + whitespace); JS is small and served compressed.
+{
+  const cssPath = path.join(dist, 'assets/css/site.css');
+  const css = (await readFile(cssPath, 'utf8'))
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([{}:;,>])\s*/g, '$1')
+    .replace(/;}/g, '}')
+    .replace(/ !important/g, '!important')
+    .trim();
+  await writeFile(cssPath, css);
+}
 await mkdir(path.join(dist, 'data'), { recursive: true });
 await selfHostFonts();
 
