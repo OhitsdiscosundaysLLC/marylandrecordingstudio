@@ -16,6 +16,7 @@ const editorial = await readJSON('content/services-editorial.json');
 const media = await readJSON('content/media.json');
 const faqs = await readJSON('content/faq.json');
 const social = await readJSON('content/social.json');
+const ecoShots = existsSync(path.join(root, 'content/ecosystem-shots.json')) ? await readJSON('content/ecosystem-shots.json') : { shots: [] };
 
 const SITE_URL = (process.env.SITE_URL
   || (process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)
@@ -24,7 +25,7 @@ const BUILD_ID = Date.now().toString(36);
 
 // Fonts: self-host at build time (Vercel builds have network access) so pages make no
 // third-party font requests. Falls back to Google Fonts if the download fails.
-const FONT_CSS_URL = 'https://fonts.googleapis.com/css2?family=Unbounded:wght@700&family=Inter:wght@400;600&display=swap';
+const FONT_CSS_URL = 'https://fonts.googleapis.com/css2?family=Anton&family=Unbounded:wght@700&family=Inter:wght@400;600&display=swap';
 let FONT_HEAD = `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="${FONT_CSS_URL}">`;
 async function selfHostFonts() {
   try {
@@ -418,6 +419,67 @@ ${scripts.map((s) => `<script src="/assets/js/${s}?v=${BUILD_ID}" defer data-pag
 </html>`;
 }
 
+// ---------- real product screenshots (captured by scripts/capture-ecosystem.mjs) ----------
+function shot(name, { sizes, eager = false } = {}) {
+  const sh = ecoShots.shots.find((x) => x.name === name);
+  if (!sh) return '';
+  const small = sh.device === 'phone' ? 390 : 800;
+  const base = sh.webp.replace(/\.webp$/, '');
+  const set = (ext) => `${base}-${small}.${ext} ${small}w, ${base}.${ext} ${sh.width}w`;
+  return `<picture><source type="image/avif" srcset="${set('avif')}" sizes="${sizes}"><source type="image/webp" srcset="${set('webp')}" sizes="${sizes}"><img src="${sh.webp}" alt="${esc(sh.alt)}" width="${sh.width}" height="${sh.height}" ${eager ? '' : 'loading="lazy" '}decoding="async"></picture>`;
+}
+const phone = (name, cls = '') => `<figure class="device phone ${cls}"><span class="phone__notch" aria-hidden="true"></span><div class="phone__screen">${shot(name, { sizes: '(min-width: 1000px) 270px, (min-width: 600px) 30vw, 46vw' })}</div></figure>`;
+const browserFrame = (name, url, cls = '') => `<figure class="device browser ${cls}"><div class="browser__bar" aria-hidden="true"><span></span><span></span><span></span><em>${esc(url.replace(/^https?:\/\//, '').replace(/\/$/, ''))}</em></div><div class="browser__screen">${shot(name, { sizes: '(min-width: 1000px) 720px, 92vw' })}</div></figure>`;
+const ecoUrl = (id) => ECO.find((e) => e.id === id)?.url;
+
+function showcaseApp() {
+  const url = ecoUrl('app');
+  return `<section class="showcase showcase--app" aria-labelledby="sc-app"><div class="container showcase__grid">
+    <div class="showcase__copy reveal">
+      <p class="eyebrow eyebrow--dark">The Disco Sundays App</p>
+      <h2 id="sc-app" class="display-2">The whole studio, in your pocket.</h2>
+      <p class="lead">Start from what you're working on (recording, mixing, mastering or membership), book through Square, catch the latest drops and radio, and check your rewards. Add it to your home screen in one tap.</p>
+      <ul class="ticks"><li>Book sessions and renew your membership</li><li>RAP Program, Radio and Artist Showcase in one place</li><li>Rewards built in</li></ul>
+      <a class="btn btn--primary btn--lg" href="${url}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="app_showcase">Open app<span class="sr-only"> (opens in a new tab)</span></a>
+    </div>
+    <div class="showcase__stage showcase__stage--phones reveal" aria-label="Screens from the Disco Sundays app">
+      ${phone('app-rap-and-radio', 'phone--back phone--left')}${phone('app-home', 'phone--front')}${phone('app-rewards-tab', 'phone--back phone--right')}
+    </div>
+  </div></section>`;
+}
+function showcaseRewards() {
+  const url = ecoUrl('rewards');
+  return `<section class="showcase showcase--rewards" aria-labelledby="sc-rewards"><div class="container showcase__grid showcase__grid--flip">
+    <div class="showcase__stage showcase__stage--combo reveal" aria-label="Screens from Disco Rewards">
+      ${browserFrame('rewards-desktop', url)}${phone('rewards-levels', 'phone--overlap')}
+    </div>
+    <div class="showcase__copy reveal">
+      <p class="eyebrow">Disco Rewards</p>
+      <h2 id="sc-rewards" class="display-2">Studio time that <em>pays you back.</em></h2>
+      <p class="lead">Book on Square like always, and points stack up automatically on every session, renewal, performance and referral.</p>
+      <ol class="levels"><li><strong>Newcomer</strong><span>0–99 pts</span></li><li><strong>Studio Regular</strong><span>100–299</span></li><li><strong>Studio Insider</strong><span>300–599</span></li><li><strong>Disco VIP</strong><span>600–999</span></li><li><strong>Disco Legend</strong><span>1000+</span></li></ol>
+      <p class="muted">Redeem points for studio credit, event tickets and VIP experiences.</p>
+      <a class="btn btn--primary btn--lg" href="${url}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="rewards_showcase">Explore rewards<span class="sr-only"> (opens in a new tab)</span></a>
+    </div>
+  </div></section>`;
+}
+function showcaseRap() {
+  const url = ecoUrl('rap');
+  return `<section class="showcase showcase--rap" aria-labelledby="sc-rap"><div class="container">
+    <div class="rap-show__head reveal">
+      <p class="rap-show__kicker">Create. Record. Perform. Grow.</p>
+      <h2 id="sc-rap" class="rap-show__title">RAP Program</h2>
+      <p class="lead">A music production and artist development program that helps young artists turn talent into professionally recorded music, creative projects and performance opportunities. Your first hour is free (a one-time introductory session).</p>
+      <div class="btn-row"><a class="btn btn--rap btn--lg" href="${url}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="rap_showcase">Explore RAP Program<span class="sr-only"> (opens in a new tab)</span></a><a class="btn btn--ghost btn--lg" href="${url}packages" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="rap_packages">View packages<span class="sr-only"> (opens in a new tab)</span></a></div>
+    </div>
+    <div class="rap-show__stage reveal" aria-label="Screens from the RAP Program website">
+      ${browserFrame('rap-desktop', url, 'browser--rap')}
+      <div class="rap-show__phones">${phone('rap-home')}${phone('rap-packages')}</div>
+    </div>
+    <ol class="rap-show__steps"><li><span>01</span>Register</li><li><span>02</span>Free first hour</li><li><span>03</span>Choose a package</li><li><span>04</span>Create, record &amp; grow</li></ol>
+  </div></section>`;
+}
+
 // ---------- page tokens ----------
 const tokens = {
   featuredServices: () => `<div class="svc-grid svc-grid--featured">${featured.map((s) => serviceCard(s)).join('')}</div>`,
@@ -433,6 +495,7 @@ const tokens = {
   heroArt: () => art(7, { bars: 64, className: 'hero__art' }),
   socialLinks: () => socialLinks(),
   ecosystem: () => ecosystemGrid(),
+  showcaseApp, showcaseRewards, showcaseRap,
   radioPlayer: () => radioPlayer(),
   logoLg: () => logo({ size: 'lg' }),
   serviceRows: () => `<ol class="svc-rows">${services.filter((s) => s.featured).map((s, i) => `<li class="svc-row reveal"><a href="/services/${s.slug}" data-track="service_card_click" data-label="${esc(s.name)}">

@@ -97,6 +97,10 @@ for (const s of SHOTS) {
   const avif = await img.clone().avif({ quality: 58, effort: 6 }).toBuffer();
   await writeFile(path.join(outDir, `${s.name}.webp`), webp);
   await writeFile(path.join(outDir, `${s.name}.avif`), avif);
+  const small = d.out === 780 ? 390 : 800;
+  const sm = sharp(png).resize({ width: small });
+  await writeFile(path.join(outDir, `${s.name}-${small}.webp`), await sm.clone().webp({ quality: 80, effort: 6 }).toBuffer());
+  await writeFile(path.join(outDir, `${s.name}-${small}.avif`), await sm.clone().avif({ quality: 60, effort: 6 }).toBuffer());
   const meta = await sharp(webp).metadata();
   manifest.shots.push({ product: s.product, name: s.name, device: s.device, alt: s.alt, source: s.url, width: meta.width, height: meta.height, webp: `/assets/ecosystem/${s.product}/${s.name}.webp`, avif: `/assets/ecosystem/${s.product}/${s.name}.avif` });
   console.log(`captured ${s.product}/${s.name} ${meta.width}x${meta.height} webp ${webp.length} avif ${avif.length}`);

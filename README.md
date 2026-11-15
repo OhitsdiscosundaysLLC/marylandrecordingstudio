@@ -36,6 +36,16 @@ There's no stock photography. Until real photos are added, the site uses generat
 2. List them in `content/media.json`: `hero.image` / `hero.video` (MP4, which only plays on larger screens and never with reduced motion), `studio[]` for the bento grid (`{ "src": "/assets/photos/control-room.webp", "alt": "...", "caption": "..." }`), and `gallery[]`.
 3. Optionally set `"image"` on a service in `content/services-editorial.json`.
 
+## App, Rewards and RAP Program screenshots
+
+The Explore page and homepage show real screenshots of the Disco Sundays App, Disco Rewards and the RAP Program. They're captured with Playwright by `scripts/capture-ecosystem.mjs`, which runs in GitHub Actions (**Actions → Capture ecosystem screenshots → Run workflow**) and commits:
+
+- `assets/ecosystem/<app|rewards|rap-program>/*.webp|.avif`: optimised images used by the site (phone captures at 3× pixel density, desktop at 2×)
+- `media-originals/ecosystem/**.png`: full-resolution originals (not deployed)
+- `content/ecosystem-shots.json`: the manifest the build reads (alt text, sizes, source URL)
+
+Re-run the workflow whenever those apps change. Login-only screens, such as the Rewards member dashboard, aren't captured.
+
 ## Environment variables
 
 See `.env.example`. Everything works without them; each one turns on a live integration.
