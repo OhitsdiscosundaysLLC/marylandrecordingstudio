@@ -117,6 +117,8 @@
     syncVolume();
   });
 
+  document.addEventListener('mrs:media-play', () => { if (state === 'playing' || state === 'loading') stop(); });
+
   if ('mediaSession' in navigator) {
     navigator.mediaSession.setActionHandler('play', () => start());
     navigator.mediaSession.setActionHandler('pause', () => stop());

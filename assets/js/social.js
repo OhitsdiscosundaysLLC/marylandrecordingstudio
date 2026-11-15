@@ -48,6 +48,8 @@
     }
     foot.innerHTML = `${badge(item.platform)}<p>${esc(item.title || '')}</p>${item.url ? `<a class="btn btn--ghost btn--sm" href="${esc(item.url)}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="${item.platform}_original">Open on ${LABEL[item.platform] === 'Studio' ? 'site' : LABEL[item.platform]}${extArrow}</a>` : ''}`;
     document.documentElement.classList.add('lb-open');
+    // Pause the radio so a video and the stream never play over each other.
+    if (item.kind === 'youtube' || item.video || item.kind === 'ig-embed') document.dispatchEvent(new CustomEvent('mrs:media-play'));
     dlg.showModal();
     track('gallery_open', { platform: item.platform, label: item.title || item.url || '' });
   }
