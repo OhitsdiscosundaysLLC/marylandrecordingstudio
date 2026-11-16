@@ -3,6 +3,7 @@
 // If email isn't configured it returns 503, and the form tells the visitor to email or call instead.
 // It never pretends a message was sent.
 import { send, readJSONBody } from './_lib/http.js';
+import { rpc, dbConfigured } from './_lib/db.js';
 
 const hits = new Map(); // best-effort per-instance rate limit
 const WINDOW = 10 * 60 * 1000, MAX = 5;
@@ -48,7 +49,18 @@ export default async function handler(req, res) {
 
   const key = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL;
-  if (!key || !to) return send(res, 503, { ok: false, error: 'not_configured' });
+  // Every enquiry is saved to the private dashboard (Leads), so nothing is lost even without email.
+  let saved = false;
+  if (dbConfigured()) {
+    try {
+      const svc = data.service.toLowerCase();
+      const service = /member/.test(svc) ? 'membership' : /mix/.test(svc) ? 'mixing' : /master/.test(svc) ? 'mastering' : /record|session/.test(svc) ? 'recording' : /podcast/.test(svc) ? 'podcast' : /voice/.test(svc) ? 'voice-over' : 'other';
+      await rpc('mrs_lead', { p: { name: data.name, email: data.email, phone: data.phone, service, project: `${data.service ? data.service + ': ' : ''}${data.message}`, preferred_date: data.preferredDate, stage: 'new', priority: data.phone ? 'medium' : 'normal', consent_contact: true, consent_marketing: false, source: 'contact_form' } });
+      await rpc('mrs_track', { p: { type: 'contact_submit', path: '/contact', label: service, visitor_id: String(body.visitor_id || '').slice(0, 64) } });
+      saved = true;
+    } catch (e) { console.error('[api/contact] db', e.message); }
+  }
+  if (!key || !to) return saved ? send(res, 200, { ok: true }) : send(res, 503, { ok: false, error: 'not_configured' });
 
   recent.push(now);
   hits.set(ip, recent);
@@ -74,6 +86,6 @@ export default async function handler(req, res) {
     return send(res, 200, { ok: true });
   } catch (err) {
     console.error('[api/contact]', err.message);
-    return send(res, 502, { ok: false, error: 'send_failed' });
+    return saved ? send(res, 200, { ok: true }) : send(res, 502, { ok: false, error: 'send_failed' });
   }
 }

@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 execFileSync('node', ['scripts/build.mjs'], { cwd: root, stdio: 'inherit' });
 const PORT = 3999;
-const server = spawn('node', ['scripts/serve.mjs'], { cwd: root, env: { ...process.env, PORT: String(PORT), RESEND_API_KEY: '', CONTACT_TO_EMAIL: '' }, stdio: 'ignore' });
+const server = spawn('node', ['scripts/serve.mjs'], { cwd: root, env: { ...process.env, PORT: String(PORT), RESEND_API_KEY: '', CONTACT_TO_EMAIL: '', OPENAI_API_KEY: '', SUPABASE_URL: '', SUPABASE_ANON_KEY: '', DB_API_SECRET: '', ADMIN_PASSWORD: '', ADMIN_PATH: '', ADMIN_SESSION_SECRET: '' }, stdio: 'ignore' });
 const base = `http://localhost:${PORT}`;
 await new Promise((r) => setTimeout(r, 600));
 
@@ -55,7 +55,7 @@ try {
   });
 
   await t('all main routes resolve', async () => {
-    for (const r of ['/', '/studio', '/services', '/book', '/gallery', '/radio', '/explore', '/about', '/contact', '/faq']) assert.ok(seen.has(r), `missing ${r}`);
+    for (const r of ['/', '/studio', '/services', '/book', '/gallery', '/radio', '/explore', '/about', '/contact', '/faq', '/members', '/submit-project']) assert.ok(seen.has(r), `missing ${r}`);
   });
 
   await t('unknown routes return the 404 page', async () => {
@@ -109,6 +109,48 @@ try {
   await t('POST /api/contact rejects cross-site origins', async () => {
     const r = await fetch(base + '/api/contact', { method: 'POST', headers: { 'content-type': 'application/json', origin: 'https://evil.example' }, body: '{}' });
     assert.equal(r.status, 403);
+  });
+
+  const post = (u, body, headers = {}) => fetch(base + u, { method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body: JSON.stringify(body) });
+  await t('AI chat reports missing OpenAI key honestly (503, no fake answer)', async () => {
+    const r = await post('/api/ai/chat', { messages: [{ role: 'user', content: 'hi' }] });
+    assert.equal(r.status, 503); assert.match((await r.json()).error, /OPENAI_API_KEY/);
+  });
+  await t('AI voice session reports missing key honestly', async () => {
+    const r = await post('/api/ai/realtime', {}); assert.equal(r.status, 503);
+  });
+  await t('GET /api/settings falls back to safe defaults', async () => {
+    const d = await (await fetch(base + '/api/settings')).json();
+    assert.equal(d.ai.enabled, false); assert.equal(typeof d.motion.magneticButtons, 'boolean');
+  });
+  await t('POST /api/track accepts events without a database', async () => {
+    const r = await post('/api/track', { type: 'page_view', path: '/' }); assert.ok([200, 204].includes(r.status));
+  });
+  await t('Project upload reports not configured without storage', async () => {
+    const r = await post('/api/projects?action=submit', { name: 'x' }); assert.equal(r.status, 503);
+  });
+  await t('Project upload rejects cross-site origins', async () => {
+    const r = await post('/api/projects?action=submit', {}, { origin: 'https://evil.example' }); assert.equal(r.status, 403);
+  });
+  await t('WhatsApp webhook stays off until credentials exist', async () => {
+    const r = await fetch(base + '/api/integrations/whatsapp'); assert.equal(r.status, 503);
+    assert.ok((await r.json()).missing.includes('WHATSAPP_TOKEN'));
+  });
+  await t('Phone receptionist webhook stays off until connected', async () => {
+    const r = await post('/api/integrations/phone', {}); assert.equal(r.status, 503);
+  });
+  await t('Dashboard is hidden when not configured', async () => {
+    assert.equal((await fetch(base + '/api/admin?action=stats')).status, 404);
+    assert.equal((await fetch(base + '/hq-123456')).status, 404);
+  });
+  await t('Dashboard is not linked or listed anywhere', async () => {
+    for (const [p, html] of pages) assert.ok(!/hq-[a-z0-9]{6,}/.test(html), `dashboard path leaked on ${p}`);
+    assert.ok(!(await (await fetch(base + '/sitemap.xml')).text()).includes('hq-'));
+  });
+  await t('Estimator uses real catalogue prices', async () => {
+    const html = pages.find(([p]) => p === '/services')[1];
+    const m = html.match(/data-prices='([^']+)'/); assert.ok(m, 'estimator missing');
+    const P = JSON.parse(m[1]); assert.deepEqual([P.member, P.hour, P.mix, P.master], [200, 60, 75, 50]);
   });
 
   await t('GET /api/instagram reports configuration honestly', async () => {

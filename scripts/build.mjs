@@ -177,6 +177,7 @@ function primaryTrio() {
     <h2 id="trio-x" class="trio__title">Mixing &amp; mastering</h2>
     <dl class="trio__menu"><div><dt>Mixing session</dt><dd>${esc(priceLine(mix))}</dd></div>${mas ? `<div><dt>Mastering</dt><dd>${esc(priceLine(mas))}</dd></div>` : ''}</dl>
     <div class="btn-row"><a class="btn btn--primary btn--lg" href="/book?service=${mix.slug}" data-track="book_cta_click" data-label="trio_mixing">Book mixing</a>${mas ? `<a class="btn btn--ghost btn--lg" href="/book?service=${mas.slug}" data-track="book_cta_click" data-label="trio_mastering">Book mastering</a>` : ''}</div>
+    <a class="link-arrow trio__upload" href="/submit-project" data-track="ecosystem_click" data-label="trio_upload">Send us your files first</a>
     <button type="button" class="trio__ask" data-ai-inline hidden data-ai-open="chat" data-ai-topic="I have a project that needs mixing. Can you help me figure out what to book?">Not sure what you need? Ask our AI studio assistant →</button>
   </article>
 </div>`;
@@ -322,7 +323,8 @@ function layout({ title, description, pathname, body, scripts = [], jsonld = [],
   const fullTitle = pathname === '/' ? title : `${title} | ${config.siteName}`;
   const img = ogImage || `${SITE_URL}/assets/brand/og-image.jpg`;
   const navItems = NAV.map(([href, label]) => `<li><a href="${href}"${pathname.startsWith(href) ? ' aria-current="page"' : ''}>${label}</a></li>`).join('');
-  const ecoMenu = ECO.filter((e) => e.id !== 'studio').map((e) => `<li><a href="${ecoHref(e)}"${ecoExternal(e) ? ' target="_blank" rel="noopener"' : ''} data-track="ecosystem_click" data-label="${e.id}"><span class="menu-icon">${ecoIcon[e.id]}</span><span><strong>${esc(e.name)}</strong><small>${esc(e.kicker)}</small></span>${ecoExternal(e) ? extIcon : ''}</a></li>`).join('');
+  const memberMenu = `<li><a href="/members" data-track="ecosystem_click" data-label="members"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5Z"/></svg></span><span><strong>Members area</strong><small>Portal, member sessions, projects</small></span></a></li><li><a href="/submit-project" data-track="ecosystem_click" data-label="submit_project"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M11 16V7.8l-3.3 3.3-1.4-1.4L12 4l5.7 5.7-1.4 1.4L13 7.8V16h-2Zm-6 4v-5h2v3h10v-3h2v5H5Z"/></svg></span><span><strong>Send us your project</strong><small>Upload tracks for mixing or mastering</small></span></a></li>`;
+  const ecoMenu = memberMenu + ECO.filter((e) => e.id !== 'studio').map((e) => `<li><a href="${ecoHref(e)}"${ecoExternal(e) ? ' target="_blank" rel="noopener"' : ''} data-track="ecosystem_click" data-label="${e.id}"><span class="menu-icon">${ecoIcon[e.id]}</span><span><strong>${esc(e.name)}</strong><small>${esc(e.kicker)}</small></span>${ecoExternal(e) ? extIcon : ''}</a></li>`).join('');
   return `<!doctype html>
 <html lang="en-US">
 <head>
@@ -376,7 +378,7 @@ ${analyticsTags()}
 <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
   <a class="btn btn--primary btn--lg btn--block" href="/book" data-track="book_cta_click" data-label="mobile_menu">Book your session</a>
   <nav aria-label="Mobile">
-    <ul class="mobile-menu__main"><li><a href="/"${pathname === '/' ? ' aria-current="page"' : ''}>Home</a></li>${navItems}<li><a href="/faq"${pathname === '/faq' ? ' aria-current="page"' : ''}>FAQ</a></li></ul>
+    <ul class="mobile-menu__main"><li><a href="/"${pathname === '/' ? ' aria-current="page"' : ''}>Home</a></li>${navItems}<li><a href="/members"${pathname === '/members' ? ' aria-current="page"' : ''}>Members area</a></li><li><a href="/faq"${pathname === '/faq' ? ' aria-current="page"' : ''}>FAQ</a></li></ul>
     <p class="mobile-menu__h">Explore Disco Sundays</p>
     <ul class="mobile-menu__eco">${ecoMenu}</ul>
   </nav>
@@ -401,7 +403,7 @@ ${body}
   <div class="container site-footer__grid">
     <nav aria-label="Studio">
       <h2 class="footer-h">Studio</h2>
-      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/book">Book now</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
+      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/book">Book now</a></li><li><a href="/members">Members area</a></li><li><a href="/submit-project">Send us your project</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
     </nav>
     <nav aria-label="Explore Disco Sundays">
       <h2 class="footer-h">Explore Disco Sundays</h2>
@@ -527,6 +529,30 @@ const tokens = {
       <span class="svc-row__go" aria-hidden="true">→</span></a></li>`).join('')}</ol>`,
   quickBook: () => [['unlimited-membership', 'Unlimited membership'], ['recording-session-1-hour', 'Recording session'], ['mixing', 'Mixing']].map(([slug, label]) => [services.find((s) => s.slug === slug), label]).filter(([s]) => s).map(([s, label]) => `<li><a href="${s.purchase ? s.purchase.url : '/book?service=' + s.slug}"${s.purchase ? ' target="_blank" rel="noopener" data-track="membership_checkout_click"' : ' data-track="book_cta_click"'} data-label="hero_quick_${s.slug}"><span class="qb__name">${esc(label)}</span><span class="qb__meta">${esc(priceLine(s))}${s.purchase ? ' · no booking needed' : ''}</span><span class="qb__go" aria-hidden="true">→</span></a></li>`).join(''),
   primaryTrio,
+  estimator: () => {
+    const bySlug = (x) => services.find((s) => s.slug === x);
+    const m = bySlug('unlimited-membership'), r1 = bySlug('recording-session-1-hour'), mix = bySlug('mixing'), mas = bySlug('mastering');
+    const P = { member: m.price.amount / 100, hour: r1.price.amount / 100 / (r1.durationMinutes / 60), mix: mix.price.amount / 100, master: mas.price.amount / 100, tax: 0.06 };
+    return `<section class="est reveal" data-estimator data-prices='${JSON.stringify(P)}' aria-labelledby="est-title">
+  <div class="est__in">
+    <div class="est__copy"><p class="eyebrow">Estimator</p><h2 id="est-title" class="h2">Pay per session or become a member?</h2><p>Move the sliders to match how you work. Uses our real Square prices: recording $${P.hour}/hour, mixing $${P.mix} per 1-hour session, mastering $${P.master}, membership $${P.member}/month.</p></div>
+    <div class="est__controls">
+      <label class="est__ctl"><span>Studio hours a month <output data-out="hours">8</output></span><input type="range" min="1" max="40" value="8" data-in="hours"></label>
+      <label class="est__ctl"><span>Mixing sessions a month <output data-out="mix">1</output></span><input type="range" min="0" max="10" value="1" data-in="mix"></label>
+      <label class="est__ctl"><span>Masters a month <output data-out="master">1</output></span><input type="range" min="0" max="10" value="1" data-in="master"></label>
+    </div>
+    <div class="est__result" aria-live="polite">
+      <div class="est__col"><span>Pay as you go</span><strong data-out="payg">$0</strong><small data-out="payg-note"></small></div>
+      <div class="est__col est__col--m"><span>Unlimited membership</span><strong data-out="mem">$0</strong><small data-out="mem-note"></small></div>
+      <p class="est__verdict" data-out="verdict"></p>
+      <div class="btn-row"><a class="btn btn--primary" href="${m.purchase.url}" target="_blank" rel="noopener" data-track="membership_checkout_click" data-label="estimator" data-est-join>Join for $${P.member}/month<span class="sr-only"> (opens secure Square checkout)</span></a><a class="btn btn--ghost" href="/book?service=${r1.slug}" data-track="book_cta_click" data-label="estimator">Book a session</a></div>
+      <p class="est__fine">Estimate only. Membership covers studio time (up to 4 hours a day, one location) and adds Maryland sales tax at checkout (shown here). Mixing and mastering are booked separately at the prices above. Final prices are always shown in Square.</p>
+    </div>
+  </div>
+</section>`;
+  },
+  memberSessions: () => `<ul class="member-sessions">${services.filter((s) => s.category === 'member-sessions' && s.slug !== 'visit-studio').map((s) => `<li><a href="/book?service=${s.slug}" data-track="book_cta_click" data-label="members_${s.slug}"><strong>${esc(s.name)}</strong><span>Members only · ${esc(fmtDuration(s.durationMinutes))}</span><span class="member-sessions__go" aria-hidden="true">Book →</span></a></li>`).join('')}</ul>`,
+  rewardsUrl: () => ECO.find((e) => e.id === 'rewards').url,
   socialData: () => `<script type="application/json" id="social-data">${JSON.stringify({ instagram: social.instagram, facebook: config.social.facebook.url, instagramProfile: config.social.instagram.url, youtube: config.social.youtube.url, photos: (media.gallery || []).concat(media.studio || []) }).replace(/</g, '\\u003c')}</script>`,
   followButtons: () => `<div class="follow-row">${['instagram', 'facebook', 'youtube'].map((k) => `<a class="follow follow--${k}" href="${config.social[k].url}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="${k}">Follow on ${k === 'youtube' ? 'YouTube' : k[0].toUpperCase() + k.slice(1)}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')}</div>`,
   radioAppUrl: () => config.radio.appUrl,
@@ -643,6 +669,7 @@ for (const s of services) {
     svcFaq: relevantFaqs.length ? `<section class="section section--tight"><div class="container narrow"><h2 class="h2">Questions about this service</h2>${faqList(relevantFaqs)}</div></section>` : '',
     svcRelated: relatedHtml,
     svcBookUrl: s.bookUrl,
+    svcExtra: s.primary === 'membership' ? `<section class="section section--tight"><div class="container">${tokens.estimator()}</div></section>` : '',
   });
   const jsonld = [
     { '@context': 'https://schema.org', '@type': 'Service', name: s.name, description: s.description, serviceType: 'Recording studio service', provider: { '@id': `${SITE_URL}/#business` }, areaServed: `${config.locality}, ${config.regionName}`, url: `${SITE_URL}/services/${s.slug}`, ...(typeof s.price?.amount === 'number' ? { offers: { '@type': 'Offer', price: (s.price.amount / 100).toFixed(2), priceCurrency: s.price.currency, url: `${SITE_URL}/book?service=${s.slug}` } } : {}) },
@@ -654,7 +681,7 @@ for (const s of services) {
     pathname: `/services/${s.slug}`,
     body,
     jsonld,
-    scripts: ['service.js'],
+    scripts: s.primary === 'membership' ? ['service.js', 'estimator.js'] : ['service.js'],
   });
   await writePage(`/services/${s.slug}`, html);
   sitemap.push(`/services/${s.slug}`);

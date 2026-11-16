@@ -1,0 +1,50 @@
+<!-- {"path":"/submit-project","title":"Send Us Your Project","description":"Upload your stems, vocals or rough mix for mixing and mastering at Disco Sundays in Hanover, MD. Private, secure file upload straight to the studio team.","scripts":["project.js"]} -->
+<section class="page-hero page-hero--compact">
+  <div class="container">
+    <p class="eyebrow">Projects</p>
+    <h1 class="display-1">Send us your project.</h1>
+    <p class="lead">Upload your stems, vocals or rough mix and tell us what you need. Files go to a private folder that only the studio team can open, and we'll get back to you with next steps. Prefer to book first? <a href="/book?service=mixing" data-track="book_cta_click" data-label="project_intro">Book mixing</a>.</p>
+  </div>
+</section>
+<section class="section section--flush-top">
+  <div class="container contact">
+    <form class="form" data-project-form novalidate>
+      <div class="form__row">
+        <div class="field"><label for="pf-name">Name <span aria-hidden="true">*</span></label><input id="pf-name" name="name" autocomplete="name" required maxlength="120"><p class="field__err" data-err="name"></p></div>
+        <div class="field"><label for="pf-email">Email <span aria-hidden="true">*</span></label><input id="pf-email" name="email" type="email" autocomplete="email" required maxlength="200"><p class="field__err" data-err="email"></p></div>
+      </div>
+      <div class="form__row">
+        <div class="field"><label for="pf-phone">Phone <span class="optional">(optional)</span></label><input id="pf-phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
+        <div class="field"><label for="pf-service">What do you need? <span aria-hidden="true">*</span></label><select id="pf-service" name="service" required><option value="">Choose…</option><option>Mixing</option><option>Mastering</option><option>Mixing and mastering</option><option>Recording session prep</option><option>Artist development feedback</option><option>Something else</option></select><p class="field__err" data-err="service"></p></div>
+      </div>
+      <div class="form__row">
+        <div class="field"><label for="pf-title">Song or project title <span class="optional">(optional)</span></label><input id="pf-title" name="title" maxlength="200"></div>
+        <div class="field"><label for="pf-deadline">Deadline <span class="optional">(optional)</span></label><input id="pf-deadline" name="deadline" type="date"></div>
+      </div>
+      <div class="field">
+        <span class="label" id="pf-files-label">Files</span>
+        <label class="drop" data-drop>
+          <input type="file" multiple data-files aria-labelledby="pf-files-label" accept=".wav,.aif,.aiff,.mp3,.m4a,.flac,.ogg,.zip,.rar,.7z,.pdf,.txt,.mid,.midi,.als,.logicx,.ptx,.flp">
+          <strong>Drop files here or tap to choose</strong>
+          <span>WAV, AIFF, MP3, FLAC, M4A, ZIP, MIDI, PDF or project files · up to 50 MB each</span>
+        </label>
+        <ul class="upl" data-upl></ul>
+        <p class="field__err" data-err="files"></p>
+      </div>
+      <div class="field"><label for="pf-link">Or paste a link to your files <span class="optional">(Google Drive, Dropbox, WeTransfer)</span></label><input id="pf-link" name="link" type="url" inputmode="url" maxlength="500" placeholder="https://"></div>
+      <div class="field"><label for="pf-ref">Reference track <span class="optional">(optional link)</span></label><input id="pf-ref" name="reference" type="url" inputmode="url" maxlength="500" placeholder="https://"></div>
+      <div class="field"><label for="pf-notes">Notes for the engineer <span class="optional">(optional)</span></label><textarea id="pf-notes" name="notes" rows="5" maxlength="4000" placeholder="Number of tracks, BPM and key, the vibe you're going for…"></textarea></div>
+      <label class="checkline"><input type="checkbox" name="consent_contact" required> <span>The studio team can contact me about this project. <span aria-hidden="true">*</span></span></label>
+      <p class="field__err" data-err="consent_contact"></p>
+      <label class="checkline"><input type="checkbox" name="consent_marketing"> <span>Send me occasional studio news and offers (optional).</span></label>
+      <div class="hp" aria-hidden="true"><label for="pf-website">Leave empty</label><input id="pf-website" name="website" tabindex="-1" autocomplete="off"></div>
+      <button class="btn btn--primary btn--lg" type="submit" data-submit>Send project</button>
+      <div class="form__status" role="status" aria-live="polite" data-status></div>
+    </form>
+    <aside class="contact__aside">
+      <div class="contact-card"><h2 class="h3">What happens next</h2><ol class="steps-sm"><li>We listen and check your files.</li><li>We contact you with the right service and next steps.</li><li>You book and pay securely in Square.</li></ol></div>
+      <div class="contact-card"><h2 class="h3">Prices</h2><p>Mixing Session: $75 (1 hour)<br>Mastering: $50</p><p class="muted">Members and pay-as-you-go artists welcome.</p></div>
+      <div class="contact-card"><h2 class="h3">Questions?</h2><p><a href="tel:{{phoneE164}}" data-track="phone_click">{{phone}}</a><br><a href="mailto:{{email}}" data-track="email_click">{{email}}</a></p></div>
+    </aside>
+  </div>
+</section>

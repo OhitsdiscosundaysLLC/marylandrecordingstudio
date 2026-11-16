@@ -31,6 +31,7 @@
       "maxDuration": 15
     },
     "api/admin.js": {
+      "includeFiles": "{data/**,content/**,site.config.json}",
       "maxDuration": 60
     },
     "api/track.js": {
@@ -41,6 +42,17 @@
     },
     "api/hq.js": {
       "maxDuration": 5
+    },
+    "api/projects.js": {
+      "maxDuration": 20
+    },
+    "api/integrations/whatsapp.js": {
+      "includeFiles": "{data/**,content/**,site.config.json}",
+      "maxDuration": 30
+    },
+    "api/integrations/phone.js": {
+      "includeFiles": "{data/**,content/**,site.config.json}",
+      "maxDuration": 15
     }
   },
   "headers": [

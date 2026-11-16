@@ -37,7 +37,7 @@
     const label = btn.textContent;
     btn.textContent = 'Sending…';
     status.className = 'form__status'; status.textContent = '';
-    const payload = Object.fromEntries(new FormData(form).entries());
+    const payload = { ...Object.fromEntries(new FormData(form).entries()), visitor_id: (window.mrsVisitor || {}).vid };
     const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent('Studio enquiry from ' + payload.name)}&body=${encodeURIComponent(payload.message)}`;
     try {
       const res = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });

@@ -39,7 +39,7 @@
 
   function cardHTML(c) {
     const ext = c.external ? ' target="_blank" rel="noopener"' : '';
-    const tr = c.type === 'purchase' ? 'membership_checkout_click' : 'book_cta_click';
+    const tr = c.type === 'purchase' ? 'membership_checkout_click' : c.type === 'page' ? 'ecosystem_click' : 'book_cta_click';
     return `<div class="ai-card"><div><strong>${esc(c.name)}</strong><span>${esc(c.price || '')}${c.duration ? ` · ${c.duration >= 60 ? c.duration / 60 + ' hr' : c.duration + ' min'}` : ''}${c.type === 'purchase' ? ' · no booking needed' : ''}</span></div>
       <a class="btn btn--primary btn--sm" href="${esc(c.url)}"${ext} data-track="${tr}" data-via="ai" data-label="ai_${esc(c.slug)}">${esc(c.label)}</a></div>`;
   }

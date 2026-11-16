@@ -54,6 +54,9 @@ FAQ AND POLICIES:
 ${faq}
 
 CONTACT: call or text ${settings.ai.handoffPhone}, email ${settings.ai.handoffEmail}. Website: ${config.siteUrl}.
+WEBSITE PAGES YOU CAN OFFER (use show_booking_options with these slugs too): 'submit-project' = upload files/stems for mixing or mastering (private, up to 50 MB per file or a Drive/Dropbox link); 'members' = members area (portal, member sessions, help); 'rewards' = Disco Rewards customer portal sign-in.
+Existing members book free member sessions (1-hour-membership-session, 2-hour-membership-session, 3-hour-membership-session, 4-hour-membership-session) after signing in with the username/password they created at checkout.
+Changing/cancelling a booking or receipts: handled by Square (confirmation email) or the team; you cannot see or change bookings.
 DISCO SUNDAYS ECOSYSTEM (the Rewards program is also the customer portal / member login):
 ${eco}
 ${settings.ai.extraKnowledge ? `\nADDITIONAL VERIFIED INFORMATION FROM THE OWNER:\n${settings.ai.extraKnowledge}\n` : ''}
@@ -72,7 +75,7 @@ export const TOOLS = [
   {
     name: 'show_booking_options',
     description: 'Show the visitor tappable buttons for specific services (booking links or membership checkout). Use whenever you recommend services.',
-    parameters: { type: 'object', properties: { slugs: { type: 'array', items: { type: 'string' }, description: 'Service slugs from the list, best first (max 4).' }, reason: { type: 'string', description: 'One short line on why these fit.' } }, required: ['slugs'] },
+    parameters: { type: 'object', properties: { slugs: { type: 'array', items: { type: 'string' }, description: 'Service slugs from the list, or page slugs submit-project / members / rewards. Best first (max 4).' }, reason: { type: 'string', description: 'One short line on why these fit.' } }, required: ['slugs'] },
   },
   {
     name: 'capture_lead',
@@ -92,9 +95,14 @@ export const TOOLS = [
   },
 ];
 
+const PAGES = {
+  'submit-project': { slug: 'submit-project', name: 'Send us your project', price: 'Upload files for mixing or mastering', type: 'page', label: 'Upload files', url: '/submit-project', external: false, page: '/submit-project' },
+  members: { slug: 'members', name: 'Members area', price: 'Portal, member sessions, help', type: 'page', label: 'Open', url: '/members', external: false, page: '/members' },
+  rewards: { slug: 'rewards', name: 'Disco Rewards (customer portal)', price: 'Sign in, points and rewards', type: 'page', label: 'Open portal', url: 'https://disco-sundaysllc-club.base44.app/', external: true, page: 'https://disco-sundaysllc-club.base44.app/' },
+};
 export function bookingCards(slugs = []) {
   const { services } = catalogue();
-  return slugs.slice(0, 4).map((slug) => services.find((s) => s.slug === slug)).filter(Boolean).map((s) => ({
+  return [...new Set(slugs)].slice(0, 4).map((slug) => PAGES[slug] || services.find((s) => s.slug === slug)).filter(Boolean).map((s) => s.type === 'page' ? s : ({
     slug: s.slug, name: s.name, price: s.price, duration: s.durationMinutes, type: s.action.type,
     label: s.action.type === 'purchase' ? 'Join now' : (s.primary === 'recording' || s.category === 'recording' ? 'Book recording' : s.primary === 'mixing' ? 'Book mixing' : 'Book'),
     url: s.action.url, external: s.action.type === 'purchase', page: s.page,

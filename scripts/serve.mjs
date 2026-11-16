@@ -15,8 +15,9 @@ async function tryFile(p) { try { const s = await stat(p); return s.isFile() ? p
 http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   try {
+    if (/^\/hq-[a-z0-9]+$/.test(url.pathname)) { req.url = `/api/hq?slug=${url.pathname.slice(1)}`; const mod = await import(pathToFileURL(path.join(root, 'api', 'hq.js')).href); return await mod.default(req, res); }
     if (url.pathname.startsWith('/api/')) {
-      const name = url.pathname.slice(5).replace(/[^a-z0-9-]/gi, '');
+      const name = url.pathname.slice(5).replace(/[^a-z0-9/-]/gi, '').replace(/\/+/g, '/').replace(/^\/|\/$/g, '');
       const file = await tryFile(path.join(root, 'api', `${name}.js`));
       if (!file) { res.statusCode = 404; return res.end('{"error":"not_found"}'); }
       const mod = await import(pathToFileURL(file).href);
