@@ -6,7 +6,26 @@
 
   // ---- Analytics: one function for every provider; always pushes to dataLayer ----
   window.dataLayer = window.dataLayer || [];
+  // First-party analytics for the private dashboard: anonymous random IDs, no cookies, no personal data.
+  const SERVER = new Set(['page_view', 'book_cta_click', 'square_booking_visit', 'membership_checkout_click', 'interest_select', 'ai_open', 'voice_start', 'phone_click', 'email_click', 'whatsapp_click', 'radio_play', 'ecosystem_click', 'contact_submit']);
+  const rid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+  const store = (s, k) => { try { let v = s.getItem(k); if (!v) { v = rid(); s.setItem(k, v); } return v; } catch { return ''; } };
+  const visitorId = store(localStorage, 'mrs_vid'); const sid = store(sessionStorage, 'mrs_sid');
+  const params = new URLSearchParams(location.search);
+  let source = '';
+  try {
+    source = sessionStorage.getItem('mrs_src') || params.get('utm_source') || (document.referrer && new URL(document.referrer).host !== location.host ? new URL(document.referrer).host.replace(/^www\./, '') : '') || 'direct';
+    sessionStorage.setItem('mrs_src', source);
+  } catch { source = 'direct'; }
+  window.mrsVisitor = { vid: visitorId, sid, source };
+  const beacon = (type, props) => {
+    if (!SERVER.has(type) || navigator.webdriver) return;
+    const { page, label, ...rest } = props;
+    const body = JSON.stringify({ type, visitor_id: visitorId, session_id: sid, path: page || location.pathname, label: label || '', source, referrer: type === 'page_view' ? document.referrer.slice(0, 300) : '', meta: rest });
+    try { if (!navigator.sendBeacon || !navigator.sendBeacon('/api/track', new Blob([body], { type: 'application/json' }))) fetch('/api/track', { method: 'POST', body, keepalive: true, headers: { 'Content-Type': 'application/json' } }); } catch (_) {}
+  };
   const track = (event, props = {}) => {
+    beacon(event, props);
     try {
       window.dataLayer.push({ event, ...props });
       if (typeof window.plausible === 'function') window.plausible(event, { props });
@@ -14,13 +33,14 @@
     } catch (_) { /* never break the page for analytics */ }
   };
   window.mrsTrack = track;
+  track('page_view', { page: location.pathname });
 
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a, button');
     if (!a) return;
     const href = a.getAttribute('href') || '';
     const label = a.dataset.label || a.textContent.trim().slice(0, 60);
-    if (a.dataset.track) track(a.dataset.track, { label, href, page: location.pathname });
+    if (a.dataset.track) track(a.dataset.track, { label, href, page: location.pathname, ...(a.dataset.via ? { via: a.dataset.via } : {}) });
     else if (href.startsWith('tel:')) track('phone_click', { label, page: location.pathname });
     else if (href.startsWith('mailto:')) track('email_click', { label, page: location.pathname });
     else if (href.includes('wa.me') || href.includes('whatsapp')) track('whatsapp_click', { label, page: location.pathname });

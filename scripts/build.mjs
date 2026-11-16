@@ -177,7 +177,7 @@ function primaryTrio() {
     <h2 id="trio-x" class="trio__title">Mixing &amp; mastering</h2>
     <dl class="trio__menu"><div><dt>Mixing session</dt><dd>${esc(priceLine(mix))}</dd></div>${mas ? `<div><dt>Mastering</dt><dd>${esc(priceLine(mas))}</dd></div>` : ''}</dl>
     <div class="btn-row"><a class="btn btn--primary btn--lg" href="/book?service=${mix.slug}" data-track="book_cta_click" data-label="trio_mixing">Book mixing</a>${mas ? `<a class="btn btn--ghost btn--lg" href="/book?service=${mas.slug}" data-track="book_cta_click" data-label="trio_mastering">Book mastering</a>` : ''}</div>
-    <button type="button" class="trio__ask" data-ai-open="I have a project that needs mixing. Can you help me figure out what to book?">Not sure what you need? Ask our AI studio assistant →</button>
+    <button type="button" class="trio__ask" data-ai-inline hidden data-ai-open="chat" data-ai-topic="I have a project that needs mixing. Can you help me figure out what to book?">Not sure what you need? Ask our AI studio assistant →</button>
   </article>
 </div>`;
 }
@@ -423,6 +423,7 @@ ${body}
   </div>
   <div class="container site-footer__legal"><p>© <span data-year>${new Date().getFullYear()}</span> ${esc(config.legalName)}. Bookings and payments are processed securely by Square.</p><p><a href="/faq">Booking &amp; membership FAQ</a></p></div>
 </footer>
+<button type="button" class="ai-launch" data-ai-launch data-ai-open="chat" hidden><span class="ai-orb" aria-hidden="true"></span><span class="ai-launch__text">Ask our AI</span><span class="sr-only"> studio assistant</span></button>
 <div class="mini-player" data-mini-player hidden>
   <button type="button" class="play-btn play-btn--sm" data-radio-toggle aria-label="Pause ${esc(config.radio.name)}"><span class="play-btn__icon" aria-hidden="true"></span></button>
   <div class="mini-player__text"><strong>${esc(config.radio.name)}</strong><span data-radio-now>${esc(config.radio.tagline)}</span></div>
@@ -433,6 +434,7 @@ ${hideStickyCta ? '' : `<div class="sticky-cta" data-sticky-cta><a class="btn bt
 <script>window.MRS_RADIO=${JSON.stringify({ stream: config.radio.streamUrl, info: config.radio.liveInfoUrl, name: config.radio.name, tagline: config.radio.tagline })}</script>
 <script src="/assets/js/main.js?v=${BUILD_ID}" defer></script>
 <script src="/assets/js/radio.js?v=${BUILD_ID}" defer></script>
+<script src="/assets/js/alive.js?v=${BUILD_ID}" defer></script>
 ${scripts.map((s) => `<script src="/assets/js/${s}?v=${BUILD_ID}" defer data-page-script></script>`).join('\n')}
 </body>
 </html>`;
@@ -517,7 +519,7 @@ const tokens = {
   showcaseApp, showcaseRewards, showcaseRap,
   radioPlayer: () => radioPlayer(),
   logoLg: () => logo({ size: 'lg' }),
-  serviceRows: () => `<ol class="svc-rows">${services.filter((s) => s.featured).map((s, i) => `<li class="svc-row reveal"><a href="/services/${s.slug}" data-track="service_card_click" data-label="${esc(s.name)}">
+  serviceRows: () => `<ol class="svc-rows">${services.filter((s) => s.featured).map((s, i) => `<li class="svc-row reveal"${s.primary ? ` data-primary="${s.primary}"` : ''}><a href="/services/${s.slug}" data-track="service_card_click" data-label="${esc(s.name)}">
       <span class="svc-row__num">${String(i + 1).padStart(2, '0')}</span>
       <span class="svc-row__main"><span class="svc-row__cat">${esc(s.categoryLabel)}</span><span class="svc-row__name">${esc(s.name)}</span><span class="svc-row__tag">${esc(s.tagline || s.description)}</span></span>
       <span class="svc-row__meta">${esc(priceLine(s))}</span>
