@@ -1,0 +1,113 @@
+// Builds the AI's knowledge from the site's own verified data files, so the assistant
+// only ever quotes real services, prices, policies and links.
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
+const read = (p) => JSON.parse(readFileSync(path.join(process.cwd(), p), 'utf8'));
+let built = null;
+
+export function catalogue() {
+  if (built) return built;
+  const config = read('site.config.json');
+  const data = read('data/services.json');
+  const ed = read('content/services-editorial.json');
+  const faqs = read('content/faq.json');
+  const services = data.services.map((s) => {
+    const e = ed.services[s.id] || {};
+    const base = s.bookingBase || config.square.bookingBase;
+    const hideDuration = !!e.hideDuration;
+    const price = e.priceSuffix && s.price?.display ? s.price.display.replace(/\.00$/, '') + e.priceSuffix : s.price?.display;
+    return {
+      id: s.id, slug: e.slug || s.id, name: s.name, category: s.category,
+      categoryLabel: ed.categoryLabels?.[s.category]?.label || s.category,
+      price, durationMinutes: hideDuration ? null : s.durationMinutes,
+      description: [s.description, ...(s.longDescription || [])].join(' '),
+      includes: s.includes || [], primary: e.primary || null, order: e.order ?? 99,
+      action: e.purchase ? { type: 'purchase', label: e.purchase.label, url: e.purchase.url, note: e.purchase.note } : { type: 'book', label: 'Book', url: `/book?service=${e.slug}`, squareUrl: `${base}/${s.id}` },
+      page: `/services/${e.slug}`,
+    };
+  }).sort((a, b) => a.order - b.order);
+  const strip = (h) => h.replace(/<[^>]+>/g, '');
+  built = { config, services, faqs: faqs.flatMap((g) => g.items.map((i) => ({ q: i.q, a: strip(i.a.join(' ')) }))) };
+  return built;
+}
+
+export function systemPrompt(settings, { channel = 'chat', interest = '', page = '' } = {}) {
+  const { config, services, faqs } = catalogue();
+  const svc = services.map((s) => `- [${s.slug}] ${s.name} (${s.categoryLabel}): ${s.price || 'price shown at booking'}${s.durationMinutes ? `, ${s.durationMinutes} min` : ''}. ${s.action.type === 'purchase' ? 'Joined/paid through checkout, NO appointment needed.' : 'Booked as an appointment in Square.'} ${s.description}`).join('\n');
+  const faq = faqs.map((f) => `Q: ${f.q}\nA: ${f.a}`).join('\n');
+  const eco = config.ecosystem.map((e) => `- ${e.name}: ${e.description} (${e.url.startsWith('/') ? config.siteUrl + e.url : e.url})`).join('\n');
+  return `You are the AI studio assistant for Maryland Recording Studio by Disco Sundays (Disco Sundays LLC), a members' recording studio in Hanover, Maryland 21076. You are an AI, not a person: say so if asked, and never pretend to be human.
+
+GOAL: help each visitor find the right service and get booked or joined, by being genuinely helpful (never pushy). Ask one short question at a time to understand what they want to achieve (e.g. record vocals over a beat, need production help, mixing a finished recording, recording often enough that membership saves money). Then recommend specific services and call show_booking_options so they get tappable buttons.
+
+THE THREE MAIN WAYS IN (recommend these first when they fit):
+1. Disco Sundays Unlimited membership: $200/month (plus Maryland sales tax at checkout). 24/7 studio access, up to 4 hours a day, no contracts, music uploaded for A&R review, help booking shows, one location. Joining is a checkout payment: NO appointment or 4-hour booking is needed. Members then book member sessions.
+2. Recording: 1 Hour Session $60, 2 Hour Session $120, 3 Hour Session $180, booked in Square.
+3. Mixing: Mixing Session $75 for 1 hour, plus Mastering $50.
+Membership vs pay-as-you-go: the only facts you may use are the prices above. E.g. at $60/hour, 4 one-hour sessions cost $240 vs $200/month membership; you may do simple arithmetic like this when the visitor tells you how often they record, and say it's an estimate.
+
+ALL SERVICES (the only services that exist):
+${svc}
+
+FAQ AND POLICIES:
+${faq}
+
+CONTACT: call or text ${settings.ai.handoffPhone}, email ${settings.ai.handoffEmail}. Website: ${config.siteUrl}.
+DISCO SUNDAYS ECOSYSTEM (the Rewards program is also the customer portal / member login):
+${eco}
+${settings.ai.extraKnowledge ? `\nADDITIONAL VERIFIED INFORMATION FROM THE OWNER:\n${settings.ai.extraKnowledge}\n` : ''}
+STRICT RULES:
+- Only state prices, services, policies and benefits listed above. Never invent prices, discounts, availability, equipment, engineers' names, testimonials, reviews or guarantees. If you don't know (e.g. specific gear, exact availability, turnaround times), say so and offer to connect them with the team.
+- You cannot see the calendar or take payments. Never say a booking is confirmed. Booking happens on Square's secure page; membership is paid through Square checkout.
+- No fake urgency. No pressure.
+- Capturing contact details: only when the visitor wants follow-up. Ask permission explicitly ("Is it OK if the team contacts you about this?"). Only call capture_lead after they say yes, with consent_contact=true. Ask about marketing updates separately; default no.
+- Use handoff_to_human when they ask for a person, have a complaint, a billing/refund issue, or anything you can't answer.
+- Never ask for card numbers or passwords. Membership usernames/passwords are created at Square checkout, not here.
+- Keep replies short: 1-3 sentences for chat${channel === 'voice' ? '; for voice, speak naturally in one or two sentences and never read out URLs (the buttons appear on screen)' : ''}. Use plain text, no markdown headings.
+${interest ? `The visitor told us they're interested in: ${interest}.` : ''}${page ? ` They are currently on the page: ${page}.` : ''}`;
+}
+
+export const TOOLS = [
+  {
+    name: 'show_booking_options',
+    description: 'Show the visitor tappable buttons for specific services (booking links or membership checkout). Use whenever you recommend services.',
+    parameters: { type: 'object', properties: { slugs: { type: 'array', items: { type: 'string' }, description: 'Service slugs from the list, best first (max 4).' }, reason: { type: 'string', description: 'One short line on why these fit.' } }, required: ['slugs'] },
+  },
+  {
+    name: 'capture_lead',
+    description: 'Save the visitor as a lead for the team to follow up. ONLY after they explicitly agreed to be contacted.',
+    parameters: { type: 'object', properties: {
+      name: { type: 'string' }, email: { type: 'string' }, phone: { type: 'string' },
+      service: { type: 'string', enum: ['membership', 'recording', 'mixing', 'mastering', 'podcast', 'voice-over', 'live-performance', 'artist-development', 'other'] },
+      project: { type: 'string', description: 'What they want to do, in their words.' }, preferred_date: { type: 'string' }, budget: { type: 'string' },
+      urgency: { type: 'string', enum: ['today', 'this_week', 'this_month', 'later', 'unknown'] },
+      consent_contact: { type: 'boolean' }, consent_marketing: { type: 'boolean' },
+    }, required: ['service', 'consent_contact'] },
+  },
+  {
+    name: 'handoff_to_human',
+    description: 'Connect the visitor with the studio team (shows call/text/email options and flags the conversation).',
+    parameters: { type: 'object', properties: { reason: { type: 'string' } }, required: ['reason'] },
+  },
+];
+
+export function bookingCards(slugs = []) {
+  const { services } = catalogue();
+  return slugs.slice(0, 4).map((slug) => services.find((s) => s.slug === slug)).filter(Boolean).map((s) => ({
+    slug: s.slug, name: s.name, price: s.price, duration: s.durationMinutes, type: s.action.type,
+    label: s.action.type === 'purchase' ? 'Join now' : (s.primary === 'recording' || s.category === 'recording' ? 'Book recording' : s.primary === 'mixing' ? 'Book mixing' : 'Book'),
+    url: s.action.url, external: s.action.type === 'purchase', page: s.page,
+  }));
+}
+
+// Transparent lead-priority rules shown in the dashboard.
+export function scoreLead(l) {
+  const hasContact = !!(l.email || l.phone);
+  let priority = 'normal';
+  if (l.urgency === 'today' || l.urgency === 'this_week') priority = 'high';
+  if (l.service === 'membership' && hasContact) priority = priority === 'high' ? 'high' : 'medium';
+  if (!hasContact) priority = 'low';
+  const stage = l.service === 'membership' ? 'membership_prospect' : (l.urgency === 'today' || l.urgency === 'this_week') ? 'urgent_booking' : l.project && l.project.length > 40 ? 'project_enquiry' : 'new';
+  return { priority, stage };
+}

@@ -1,0 +1,138 @@
+<!-- {"path":"/","title":"Maryland Recording Studio | Disco Sundays · Hanover, MD","description":"A members' recording studio in Hanover, Maryland. 24/7 studio access, personal audio engineers, artist development and free studio visits. Book online in minutes.","bodyClass":"page-home","scripts":["social.js"]} -->
+<section class="hero" data-anim aria-labelledby="hero-title">
+  <div class="hero__media" aria-hidden="true">{{heroMedia}}{{heroArt}}<div class="hero__beams"></div><div class="hero__liquid"></div><div class="hero__grain"></div></div>
+  <div class="hero__wave" data-wave aria-hidden="true"></div>
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow">Recording studio · Hanover, Maryland</p>
+      <h1 id="hero-title" class="display-1 hero__title"><span class="line">Make the record</span> <span class="line">you keep</span> <span class="line"><em>hearing in your head.</em></span></h1>
+      <p class="lead hero__lead">A members' studio for artists who are serious about what's next: 24/7 access, your own audio engineer if you want one, and artist development that maps out your next move.</p>
+      <div class="btn-row">
+        <a class="btn btn--primary btn--lg" href="/book" data-hero-cta data-track="book_cta_click" data-label="hero">Book your session</a>
+        <a class="btn btn--ghost btn--lg" href="/book?service=visit-studio" data-track="book_cta_click" data-label="hero_visit">Visit free first</a>
+      </div>
+      <div class="interest" data-interest hidden role="group" aria-labelledby="interest-label">
+        <span id="interest-label" class="interest__label">What are you here for?</span>
+        <button type="button" data-pick="recording" aria-pressed="false">Recording</button><button type="button" data-pick="mixing" aria-pressed="false">Mixing</button><button type="button" data-pick="membership" aria-pressed="false">Membership</button>
+        <span class="interest__note" data-interest-note aria-live="polite"></span>
+      </div>
+      <button type="button" class="ai-voice-cta" data-ai-voice data-ai-open="voice" hidden><span class="ai-orb ai-orb--sm" aria-hidden="true"></span>Talk to our AI studio assistant</button>
+      <button type="button" class="hero__radio" data-radio-toggle aria-label="Play Disco Sundays Radio"><span class="live-dot" aria-hidden="true"></span><span class="hero__radio-label">Disco Sundays Radio is live</span><span class="hero__radio-now" data-radio-now>Tap to listen</span></button>
+    </div>
+    <aside class="qb" aria-labelledby="qb-title">
+      <div class="qb__head">{{logoLg}}</div>
+      <p class="qb__title" id="qb-title">Most popular</p>
+      <ol class="qb__list">{{quickBook}}</ol>
+      <a class="qb__all" href="/services">See all {{serviceCount}} services</a>
+      <p class="qb__note"><span aria-hidden="true">🔒</span> Secure booking and instant confirmation by Square</p>
+    </aside>
+  </div>
+</section>
+
+<div class="marquee" data-anim aria-hidden="true"><div class="marquee__track"><span>Record</span><span>Mix</span><span>Perform</span><span>Develop</span><span>24/7 access</span><span>A&amp;R review</span><span>Live video</span><span>Hanover, MD</span><span>Record</span><span>Mix</span><span>Perform</span><span>Develop</span><span>24/7 access</span><span>A&amp;R review</span><span>Live video</span><span>Hanover, MD</span></div></div>
+
+{{partners}}
+
+<section class="section manifesto" id="why" aria-labelledby="why-title">
+  <div class="container manifesto__grid">
+    <div class="manifesto__lead reveal">
+      <p class="eyebrow">Why Disco Sundays</p>
+      <h2 id="why-title" class="display-2">More than a room with a mic.</h2>
+      <p class="lead">Studio time is only the start. Everything here is built to help you make better music, more often, and take it further.</p>
+      <a class="link-arrow" href="/studio">Inside the studio</a>
+    </div>
+    <ol class="manifesto__list">
+      <li class="reveal"><span>01</span><div><h3>24/7 access, no contracts</h3><p>Unlimited members record any time, up to four hours a day.</p></div></li>
+      <li class="reveal"><span>02</span><div><h3>Your own audio engineer</h3><p>Creator members get a personal engineer, with mixing and live video performance included.</p></div></li>
+      <li class="reveal"><span>03</span><div><h3>Heard by A&amp;R</h3><p>Unlimited members' music is uploaded for A&amp;R review, and we help book shows.</p></div></li>
+      <li class="reveal"><span>04</span><div><h3>A plan, not guesswork</h3><p>The Crash Test, development sessions and course training give you a clear path.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section section--dark" aria-labelledby="services-title">
+  <div class="container">
+    <div class="section-head section-head--split reveal">
+      <div><p class="eyebrow">Services</p><h2 id="services-title" class="display-2">Start with one of these.</h2></div>
+      <div><p class="lead">Real prices, real availability, straight from our booking system.</p><a class="link-arrow" href="/services">View all {{serviceCount}} services</a></div>
+    </div>
+    {{serviceRows}}
+  </div>
+</section>
+
+<section class="section" aria-labelledby="studio-title">
+  <div class="container">
+    <div class="section-head section-head--split reveal">
+      <div><p class="eyebrow">The studio</p><h2 id="studio-title" class="display-2">Record. Mix. Perform. Develop.</h2></div>
+      <div><p class="lead">From your first take to your next show, there's a service for every step.</p><a class="link-arrow" href="/studio">Explore the studio</a></div>
+    </div>
+    {{studioPanels}}
+  </div>
+</section>
+
+<section class="section section--experience" aria-labelledby="exp-title">
+  <div class="container experience">
+    <div class="experience__copy reveal">
+      <p class="eyebrow">The Crash Test</p>
+      <h2 id="exp-title" class="display-2">It isn't an audition. It's your blueprint.</h2>
+      <p class="lead">One focused hour on your sound, your performance and your direction.</p>
+      <ol class="steps">
+        <li><strong>Talk it through.</strong> Your sound, your goals and where you are right now.</li>
+        <li><strong>Get evaluated.</strong> Your music, performance and delivery, in the booth or live.</li>
+        <li><strong>Leave with a plan.</strong> A clear recommendation for recording, development or live performance.</li>
+      </ol>
+      <div class="btn-row"><a class="btn btn--primary" href="/book?service=crash-test-artist-evaluation" data-track="book_cta_click" data-label="home_crash_test">Book the Crash Test</a><a class="btn btn--ghost" href="/services/crash-test-artist-evaluation">About the Crash Test</a></div>
+    </div>
+    <div data-anim class="experience__visual reveal" aria-hidden="true">
+      <div class="meter"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="experience__badge">{{logoLg}}</div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--dark social-feed" aria-labelledby="feed-title">
+  <div class="container">
+    <div class="section-head section-head--split reveal">
+      <div><p class="eyebrow">From the community</p><h2 id="feed-title" class="display-2">Fresh from the studio.</h2></div>
+      <div><p class="lead">Sessions, performances and moments from Instagram, Facebook and YouTube.</p>{{followButtons}}</div>
+    </div>
+    <div class="feed" data-feed data-limit="9" aria-live="polite">
+      <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+    </div>
+    <p class="center feed__more"><a class="btn btn--ghost btn--lg" href="/gallery">View all content</a></p>
+  </div>
+</section>
+
+<section class="section radio-section" aria-labelledby="radio-title">
+  <div class="container radio-section__grid">
+    <div class="reveal">
+      <p class="eyebrow">Disco Sundays Radio</p>
+      <h2 id="radio-title" class="display-2">Tune in while you browse.</h2>
+      <p class="lead">Music, artists, live shows and podcasts, live around the clock. Press play and keep exploring. The player follows you around the site.</p>
+    </div>
+    <div class="reveal">{{radioPlayer}}</div>
+  </div>
+</section>
+
+{{showcaseRap}}
+
+<section class="section eco-section" aria-labelledby="eco-title">
+  <div class="container">
+    <div class="eco-section__head reveal">
+      {{logoLg}}
+      <div><p class="eyebrow eyebrow--dark">Explore Disco Sundays</p><h2 id="eco-title" class="display-2">One studio. A whole world around it.</h2><p class="lead">The app, rewards, radio and artist programs that grow with you.</p></div>
+    </div>
+    {{ecosystem}}
+  </div>
+</section>
+{{showcaseApp}}
+
+<section class="section" aria-labelledby="faq-title">
+  <div class="container faq-split">
+    <div class="reveal"><p class="eyebrow">Good to know</p><h2 id="faq-title" class="display-2">Quick answers.</h2><p class="lead">Still unsure? Call or text <a href="tel:{{phoneE164}}" data-track="phone_click">{{phone}}</a>.</p><a class="link-arrow" href="/faq">All questions</a></div>
+    <div>{{faqTop}}</div>
+  </div>
+</section>
+
+{{ctaBand}}
+{{socialData}}

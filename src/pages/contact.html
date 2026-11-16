@@ -1,0 +1,53 @@
+<!-- {"path":"/contact","title":"Contact","description":"Contact Disco Sundays in Hanover, MD. Call or text (443) 401-5425, email us, or send a message about studio sessions and memberships.","scripts":["contact.js"]} -->
+<section class="page-hero page-hero--compact">
+  <div class="container">
+    <p class="eyebrow">Contact</p>
+    <h1 class="display-1">Let's talk about your music.</h1>
+    <p class="lead">Questions about memberships, sessions or the studio? Send a message, call or text. Ready to go? <a href="/book" data-track="book_cta_click" data-label="contact_intro">Book online</a>.</p>
+  </div>
+</section>
+<section class="section section--flush-top">
+  <div class="container contact">
+    <form class="form" data-contact-form novalidate action="/api/contact" method="post">
+      <div class="form__row">
+        <div class="field"><label for="cf-name">Name <span aria-hidden="true">*</span></label><input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="100" aria-describedby="cf-name-err"><p class="field__err" id="cf-name-err"></p></div>
+        <div class="field"><label for="cf-email">Email <span aria-hidden="true">*</span></label><input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="cf-email-err"><p class="field__err" id="cf-email-err"></p></div>
+      </div>
+      <div class="form__row">
+        <div class="field"><label for="cf-phone">Phone <span class="optional">(optional)</span></label><input id="cf-phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
+        <div class="field"><label for="cf-date">Preferred date <span class="optional">(optional)</span></label><input id="cf-date" name="preferredDate" type="date"></div>
+      </div>
+      <div class="field"><label for="cf-service">Service of interest</label><select id="cf-service" name="service">{{contactServiceOptions}}</select></div>
+      <div class="field"><label for="cf-message">Message <span aria-hidden="true">*</span></label><textarea id="cf-message" name="message" rows="6" required minlength="10" maxlength="4000" aria-describedby="cf-message-err"></textarea><p class="field__err" id="cf-message-err"></p></div>
+      <div class="hp" aria-hidden="true"><label for="cf-website">Leave this field empty</label><input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+      <input type="hidden" name="startedAt" data-started-at>
+      <button class="btn btn--primary btn--lg" type="submit" data-submit>Send message</button>
+      <div class="form__status" role="status" aria-live="polite" data-form-status></div>
+    </form>
+    <aside class="contact__aside">
+      <div class="contact-card">
+        <h2 class="h3">Call or text</h2>
+        <p><a class="big-link" href="tel:{{phoneE164}}" data-track="phone_click">{{phone}}</a></p>
+        <p><a href="sms:{{phoneE164}}" data-track="phone_click" data-label="sms">Send a text</a></p>
+      </div>
+      <div class="contact-card">
+        <h2 class="h3">Email</h2>
+        <p><a class="big-link big-link--sm" href="mailto:{{email}}" data-track="email_click">{{email}}</a></p>
+      </div>
+      <div class="contact-card">
+        <h2 class="h3">Location</h2>
+        <p>Hanover, Maryland 21076</p>
+        <p class="muted">Call or text for directions to your session.</p>
+        <div class="map" data-map>
+          <button type="button" class="btn btn--ghost btn--sm" data-map-load data-src="https://www.google.com/maps?q=Hanover,+MD+21076&amp;output=embed">Show map</button>
+          <a class="btn btn--ghost btn--sm" href="https://www.google.com/maps/search/?api=1&amp;query=Hanover%2C+MD+21076" target="_blank" rel="noopener">Directions</a>
+        </div>
+      </div>
+      <div class="contact-card">
+        <h2 class="h3">Follow</h2>
+        {{socialLinks}}
+      </div>
+    </aside>
+  </div>
+</section>
+{{ctaBand}}

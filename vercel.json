@@ -1,0 +1,110 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "functions": {
+    "api/services.js": {
+      "includeFiles": "data/**",
+      "maxDuration": 15
+    },
+    "api/contact.js": {
+      "maxDuration": 15
+    },
+    "api/youtube.js": {
+      "maxDuration": 10
+    },
+    "api/instagram.js": {
+      "maxDuration": 10
+    },
+    "api/ai/chat.js": {
+      "includeFiles": "{data/**,content/**,site.config.json}",
+      "maxDuration": 30
+    },
+    "api/ai/realtime.js": {
+      "includeFiles": "{data/**,content/**,site.config.json}",
+      "maxDuration": 15
+    },
+    "api/ai/voice-event.js": {
+      "includeFiles": "{data/**,content/**,site.config.json}",
+      "maxDuration": 15
+    },
+    "api/admin.js": {
+      "maxDuration": 60
+    },
+    "api/track.js": {
+      "maxDuration": 10
+    },
+    "api/settings.js": {
+      "maxDuration": 10
+    },
+    "api/hq.js": {
+      "maxDuration": 5
+    }
+  },
+  "headers": [
+    {
+      "source": "/assets/(css|js)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(brand|photos|partners|fonts)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(self), geolocation=()"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/booking",
+      "destination": "/book",
+      "permanent": true
+    },
+    {
+      "source": "/the-studio",
+      "destination": "/studio",
+      "permanent": true
+    },
+    {
+      "source": "/social",
+      "destination": "/gallery",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/:slug(hq-[a-z0-9]+)",
+      "destination": "/api/hq?slug=:slug"
+    }
+  ]
+}

@@ -1,0 +1,332 @@
+{
+  "_comment": "Snapshot of the Square Appointments catalogue for Disco Sundays LLC (Hanover, MD). Square is the source of truth. Main booking site: https://book.squareup.com/appointments/rot9qejuixvuzc/location/LBRQ3J5MYKNYX/services. This file is regenerated automatically by scripts/sync-square.mjs when SQUARE_ACCESS_TOKEN is set. Do not hand-edit prices here; change them in Square.",
+  "source": "square-public-booking-page",
+  "syncedAt": "2026-11-16T20:30:00Z",
+  "bookingBase": "https://book.squareup.com/appointments/rot9qejuixvuzc/location/LBRQ3J5MYKNYX/services",
+  "categories": [
+    {
+      "id": "membership",
+      "name": "Membership"
+    },
+    {
+      "id": "recording",
+      "name": "Recording"
+    },
+    {
+      "id": "mixing",
+      "name": "Mixing & Mastering"
+    },
+    {
+      "id": "content",
+      "name": "Podcasts, Voice-Over & Live Video"
+    },
+    {
+      "id": "development",
+      "name": "Artist Development"
+    },
+    {
+      "id": "member-sessions",
+      "name": "Member Sessions"
+    },
+    {
+      "id": "creator",
+      "name": "Creator Membership"
+    }
+  ],
+  "services": [
+    {
+      "id": "VHW4XWH3IKLBXRJUNNBC37MQ",
+      "name": "Disco Sundays Unlimited membership",
+      "category": "membership",
+      "description": "Enjoy 24/7 studio access with no contracts, just recording. Use up to 4 hours a day. Your music is uploaded for A&R review, and we assist with booking shows. Only includes access to 1 location.",
+      "price": {
+        "amount": 20000,
+        "currency": "USD",
+        "display": "$200.00"
+      },
+      "durationMinutes": null,
+      "variations": [],
+      "longDescription": [
+        "Disco Sundays' membership is designed to help musicians, producers, DJs, and creative entrepreneurs grow their skills and careers through structured courses, community support, and practical projects.",
+        "You get a username and password in order to sign in and book sessions.",
+        "Ask about deep skills and course development for career acceleration."
+      ],
+      "membershipTerms": true
+    },
+    {
+      "id": "KFW5FLXFO6VHQ2WIMFYS6CAO",
+      "name": "1 Hour Session",
+      "category": "recording",
+      "description": "Book your studio session in Hanover, MD.",
+      "price": {
+        "amount": 6000,
+        "currency": "USD",
+        "display": "$60.00"
+      },
+      "durationMinutes": 60,
+      "variations": []
+    },
+    {
+      "id": "QR6IEWLFU7ZVMZ4G5M37DLLK",
+      "name": "2 Hour Session",
+      "category": "recording",
+      "description": "Book your studio session in Hanover, MD.",
+      "price": {
+        "amount": 12000,
+        "currency": "USD",
+        "display": "$120.00"
+      },
+      "durationMinutes": 120,
+      "variations": []
+    },
+    {
+      "id": "UKPJOFT65WRBJT62MRY7WQPA",
+      "name": "3 Hour Session",
+      "category": "recording",
+      "description": "Book your studio session in Hanover, MD.",
+      "price": {
+        "amount": 18000,
+        "currency": "USD",
+        "display": "$180.00"
+      },
+      "durationMinutes": 180,
+      "variations": []
+    },
+    {
+      "id": "QATG23RRM6KKKTSAEK7KUVNJ",
+      "name": "Mixing Session",
+      "category": "mixing",
+      "description": "Book your mixing session in Hanover, MD.",
+      "price": {
+        "amount": 7500,
+        "currency": "USD",
+        "display": "$75.00"
+      },
+      "durationMinutes": 60,
+      "variations": []
+    },
+    {
+      "id": "2IMWD3HQTHV7GK3W57FHRQLF",
+      "name": "Mastering",
+      "category": "mixing",
+      "description": "Make sure your song is as loud and clear as possible for radio and streaming services.",
+      "price": {
+        "amount": 5000,
+        "currency": "USD",
+        "display": "$50.00"
+      },
+      "durationMinutes": 120,
+      "variations": []
+    },
+    {
+      "id": "CJQQUF36A5UV7VQEETQQHQD5",
+      "name": "Video Podcasting",
+      "category": "content",
+      "description": "Book your video podcast session in Hanover, MD. Choose a date and time, enter your details and session preferences, then confirm and pay to receive your session details.",
+      "price": {
+        "amount": 10000,
+        "currency": "USD",
+        "display": "$100.00"
+      },
+      "durationMinutes": 60,
+      "variations": []
+    },
+    {
+      "id": "SUR2HYKMANGRNQ2EMZMHXRUH",
+      "name": "Voice-Over Session",
+      "category": "content",
+      "description": "Choose your voice-over session in Hanover, MD. After booking and any necessary payment, you will receive a confirmation and address details by email.",
+      "price": {
+        "amount": 6000,
+        "currency": "USD",
+        "display": "$60.00"
+      },
+      "durationMinutes": 60,
+      "variations": []
+    },
+    {
+      "id": "4KETI3UTKIT76B7Q33UFEKCB",
+      "name": "Live Performance Session @ LittyProdStudio",
+      "category": "content",
+      "description": "Performance, live show and video production with expressive performance and 4K-quality visuals, dynamic editing and engaging content, in Hanover, MD.",
+      "price": {
+        "amount": null,
+        "currency": "USD",
+        "display": "Price varies by number of songs"
+      },
+      "durationMinutes": 60,
+      "variations": []
+    },
+    {
+      "id": "OERMRRTFFMZUJY5B33R4FQK3",
+      "name": "Live Session Performances",
+      "category": "content",
+      "description": "Make sure you have paid for the membership; otherwise, you will have to pay in person.",
+      "price": {
+        "amount": 7500,
+        "currency": "USD",
+        "display": "$75.00"
+      },
+      "durationMinutes": 60,
+      "variations": []
+    },
+    {
+      "id": "U42QERKEERL2BU2S6GAUSPT6",
+      "name": "Disco Sundays Crash Test",
+      "category": "development",
+      "description": "A 1-hour artist evaluation designed to assess your sound, performance, and direction, while mapping out your next steps as an artist.",
+      "price": {
+        "amount": 7500,
+        "currency": "USD",
+        "display": "$75.00"
+      },
+      "durationMinutes": 60,
+      "variations": [],
+      "longDescription": [
+        "The Disco Sundays Crash Test is a structured, one-hour artist development session built to evaluate where you are in your journey and how to take you to the next level.",
+        "This is not just a studio session. It's a full creative assessment."
+      ],
+      "includes": [
+        "Discuss your sound, goals, and current stage as an artist",
+        "Evaluate your music, performance, and delivery",
+        "Test your presence in the booth or live performance",
+        "Identify strengths and areas for improvement",
+        "Introduce you to the Disco Sundays development platform"
+      ],
+      "outcome": "At the end of the session, you'll receive a clear, professional recommendation on your next steps, whether that's recording, development, or preparing for live performance opportunities. This isn't an audition. It's your blueprint."
+    },
+    {
+      "id": "5BUHF6IGSFB5TAN6X7AERV7J",
+      "name": "Creator Membership / Personal Audio Engineer Plan",
+      "category": "creator",
+      "description": "Personal Audio Engineer Plan / Full Membership in Hanover Location. A personal audio engineer handles all your audio needs. Available only in Hanover. Sessions include mixing and live video performance.",
+      "price": {
+        "amount": 25000,
+        "currency": "USD",
+        "display": "$250.00"
+      },
+      "durationMinutes": 240,
+      "variations": [],
+      "membershipTerms": true
+    },
+    {
+      "id": "VN6NGGAFA67BIQRLN2ZEJNHP",
+      "name": "Creator Membership / Personal Audio Engineer Plan",
+      "category": "creator",
+      "description": "Personal Audio Engineer Plan / Full Membership in Hanover Location. A personal audio engineer handles all your audio needs. Available only in Hanover. Sessions include mixing and live video performance.",
+      "price": {
+        "amount": 20000,
+        "currency": "USD",
+        "display": "$200.00"
+      },
+      "durationMinutes": 240,
+      "variations": [],
+      "membershipTerms": true
+    },
+    {
+      "id": "RADGHQWKZKQPAOP3XE4ZWHPT",
+      "name": "1 Hour Artist Development Session",
+      "category": "development",
+      "description": "Make sure you have paid for the membership; otherwise, you will have to pay in person.",
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "display": "Free"
+      },
+      "durationMinutes": 60,
+      "variations": []
+    },
+    {
+      "id": "PL254DCUNHJPXW5LNS2IIZML",
+      "name": "2 Hour Artist Development Session",
+      "category": "development",
+      "description": "Make sure you have paid for the membership; otherwise, you will have to pay in person.",
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "display": "Free"
+      },
+      "durationMinutes": 120,
+      "variations": []
+    },
+    {
+      "id": "AUYQ6AEQBNSMNGQFC42R2V27",
+      "name": "2 Hour Course Training Session",
+      "category": "development",
+      "description": "Make sure you have paid for the membership; otherwise, you will have to pay in person.",
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "display": "Free"
+      },
+      "durationMinutes": 120,
+      "variations": []
+    },
+    {
+      "id": "43MPRJ2VAXIUKUXEVJW57OJF",
+      "name": "1 Hour Membership Session",
+      "category": "member-sessions",
+      "description": "Make sure you have paid for the membership; otherwise, you will have to pay in person.",
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "display": "Free"
+      },
+      "durationMinutes": 60,
+      "variations": []
+    },
+    {
+      "id": "DWLF64RX6J3NXAOO3M4L6ZJL",
+      "name": "2 Hour Membership Session",
+      "category": "member-sessions",
+      "description": "Make sure you have paid for the membership; otherwise, you will have to pay in person.",
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "display": "Free"
+      },
+      "durationMinutes": 120,
+      "variations": []
+    },
+    {
+      "id": "BBBDB2AAKCZQ3TAMAQ2JVWJU",
+      "name": "3 Hour Membership Session",
+      "category": "member-sessions",
+      "description": "Make sure you have paid for the membership; otherwise, you will have to pay in person.",
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "display": "Free"
+      },
+      "durationMinutes": 180,
+      "variations": []
+    },
+    {
+      "id": "N7VYZDXIL2XIWZRYHP7GJQ7B",
+      "name": "4 Hour Membership Sessions",
+      "category": "member-sessions",
+      "description": "Make sure you have paid for the membership; otherwise, you will have to pay in person.",
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "display": "Free"
+      },
+      "durationMinutes": 240,
+      "variations": []
+    },
+    {
+      "id": "3DIB4TS5LTGJDECP5F7UZXKA",
+      "name": "Visit Studio",
+      "category": "member-sessions",
+      "description": "Visit Disco Sundays Studio.",
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "display": "Free"
+      },
+      "durationMinutes": 30,
+      "variations": [],
+      "bookingBase": "https://book.squareup.com/appointments/fk5phm6o38fjpy/location/LBRQ3J5MYKNYX/services"
+    }
+  ]
+}

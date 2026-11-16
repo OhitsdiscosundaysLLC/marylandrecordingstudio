@@ -1,0 +1,50 @@
+<nav class="container breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/services">Services</a></li><li aria-current="page">{{svcName}}</li></ol></nav>
+<section class="svc-hero" data-service-id="{{svcId}}" data-service-slug="{{svcSlug}}">
+  <div class="container svc-hero__grid">
+    <div class="svc-hero__copy">
+      <p class="eyebrow">{{svcCategory}}</p>
+      <h1 class="display-2">{{svcName}}</h1>
+      <p class="lead">{{svcTagline}}</p>
+      <dl class="svc-facts">
+        <div><dt>Price</dt><dd data-live-price>{{svcPrice}}</dd></div>
+        <div><dt>{{svcDurationLabel}}</dt><dd data-live-duration>{{svcDuration}}</dd></div>
+        <div><dt>Location</dt><dd>Hanover, MD</dd></div>
+      </dl>
+      <div class="btn-row">
+        <a class="btn btn--primary btn--lg" href="{{svcActionHref}}" {{svcActionAttrs}}>{{svcActionLabel}}</a>
+        <a class="btn btn--ghost btn--lg" href="/services">All services</a>
+      </div>
+      <p class="svc-hero__unavailable" data-unavailable hidden role="status">This service isn't currently listed in our booking system. <a href="/services">See what's available</a> or <a href="/contact">contact us</a>.</p>
+    </div>
+    <div class="svc-hero__visual">{{svcVisual}}</div>
+  </div>
+</section>
+<section class="section section--tight">
+  <div class="container svc-body">
+    <div class="prose">
+      <h2 class="h3">About this service</h2>
+      {{svcDescription}}
+      {{svcIncludes}}
+      {{svcOutcome}}
+      {{svcVariations}}
+      {{svcTerms}}
+    </div>
+    <aside class="svc-aside">
+      <div class="svc-aside__card">
+        <p class="eyebrow">Ready?</p>
+        <p class="h3">{{svcAsideTitle}}</p>
+        <p>{{svcAsideText}}</p>
+        <a class="btn btn--primary btn--block" href="{{svcActionHref}}" {{svcActionAttrs}}>{{svcActionLabel}}</a>
+        <a class="btn btn--ghost btn--block" href="/book?service=visit-studio" data-track="book_cta_click" data-label="aside_visit">Book a free visit first</a>
+      </div>
+    </aside>
+  </div>
+</section>
+{{svcFaq}}
+<section class="section section--dark">
+  <div class="container">
+    <div class="section-head reveal"><p class="eyebrow">You might also like</p><h2 class="display-2">Related services.</h2></div>
+    <div class="svc-grid">{{svcRelated}}</div>
+  </div>
+</section>
+{{ctaBand}}
