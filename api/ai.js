@@ -1,0 +1,12 @@
+// AI endpoints (one function to stay within the plan's function limit):
+// /api/ai/chat, /api/ai/realtime, /api/ai/voice-event  (rewritten to /api/ai?op=...)
+import chat from './_lib/routes/ai-chat.js';
+import realtime from './_lib/routes/ai-realtime.js';
+import voiceEvent from './_lib/routes/ai-voice-event.js';
+import { send } from './_lib/http.js';
+const ROUTES = { chat, realtime, 'voice-event': voiceEvent };
+export default function handler(req, res) {
+  const u = new URL(req.url, 'http://x');
+  const op = u.searchParams.get('op') || u.pathname.split('/').pop();
+  return ROUTES[op] ? ROUTES[op](req, res) : send(res, 404, { error: 'not_found' });
+}

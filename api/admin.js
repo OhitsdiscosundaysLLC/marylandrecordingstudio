@@ -6,8 +6,9 @@ import { openai, openaiConfigured } from './_lib/openai.js';
 import { files } from './_lib/files.js';
 import { emailConfigured } from './_lib/notify.js';
 import { catalogue } from './_lib/knowledge.js';
-import { whatsappMissing } from './integrations/whatsapp.js';
-import { phoneMissing } from './integrations/phone.js';
+import { whatsappMissing } from './_lib/routes/whatsapp.js';
+import { phoneMissing } from './_lib/routes/phone.js';
+import hqPage from './_lib/routes/hq.js';
 
 const facts = () => {
   const { services, config } = catalogue();
@@ -25,6 +26,7 @@ const H = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' };
 const tries = new Map();
 
 export default async function handler(req, res) {
+  if (new URL(req.url, 'http://x').searchParams.get('op') === 'page') return hqPage(req, res);
   if (!adminConfigured()) return send(res, 404, { error: 'Not found' }, H);
   const url = new URL(req.url, 'http://x');
   const action = url.searchParams.get('action');

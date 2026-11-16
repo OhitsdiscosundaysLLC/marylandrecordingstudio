@@ -2,11 +2,11 @@
 // Required env: WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_VERIFY_TOKEN, WHATSAPP_APP_SECRET.
 // Webhook URL to give Meta: https://<your-domain>/api/integrations/whatsapp
 import crypto from 'node:crypto';
-import { send } from '../_lib/http.js';
-import { rawBody } from '../_lib/raw.js';
-import { rpc, dbConfigured, getSettings } from '../_lib/db.js';
-import { openaiConfigured } from '../_lib/openai.js';
-import { runAssistant, logMessage } from '../_lib/assistant.js';
+import { send } from '../http.js';
+import { rawBody } from '../raw.js';
+import { rpc, dbConfigured, getSettings } from '../db.js';
+import { openaiConfigured } from '../openai.js';
+import { runAssistant, logMessage } from '../assistant.js';
 
 export const config = { api: { bodyParser: false } };
 const BASE = () => process.env.PUBLIC_SITE_URL || `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL || 'marylandrecordingstudio.vercel.app'}`;

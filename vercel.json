@@ -18,18 +18,6 @@
     "api/instagram.js": {
       "maxDuration": 10
     },
-    "api/ai/chat.js": {
-      "includeFiles": "{data/**,content/**,site.config.json}",
-      "maxDuration": 30
-    },
-    "api/ai/realtime.js": {
-      "includeFiles": "{data/**,content/**,site.config.json}",
-      "maxDuration": 15
-    },
-    "api/ai/voice-event.js": {
-      "includeFiles": "{data/**,content/**,site.config.json}",
-      "maxDuration": 15
-    },
     "api/admin.js": {
       "includeFiles": "{data/**,content/**,site.config.json}",
       "maxDuration": 60
@@ -40,19 +28,16 @@
     "api/settings.js": {
       "maxDuration": 10
     },
-    "api/hq.js": {
-      "maxDuration": 5
-    },
     "api/projects.js": {
       "maxDuration": 20
     },
-    "api/integrations/whatsapp.js": {
+    "api/ai.js": {
       "includeFiles": "{data/**,content/**,site.config.json}",
       "maxDuration": 30
     },
-    "api/integrations/phone.js": {
+    "api/integrations.js": {
       "includeFiles": "{data/**,content/**,site.config.json}",
-      "maxDuration": 15
+      "maxDuration": 30
     }
   },
   "headers": [
@@ -116,7 +101,15 @@
   "rewrites": [
     {
       "source": "/:slug(hq-[a-z0-9]+)",
-      "destination": "/api/hq?slug=:slug"
+      "destination": "/api/admin?op=page&slug=:slug"
+    },
+    {
+      "source": "/api/ai/:op",
+      "destination": "/api/ai?op=:op"
+    },
+    {
+      "source": "/api/integrations/:op",
+      "destination": "/api/integrations?op=:op"
     }
   ]
 }

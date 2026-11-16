@@ -1,7 +1,7 @@
-import { send, readJSONBody } from '../_lib/http.js';
-import { rpc, dbConfigured, getSettings } from '../_lib/db.js';
-import { openaiConfigured } from '../_lib/openai.js';
-import { runAssistant, logMessage } from '../_lib/assistant.js';
+import { send, readJSONBody } from '../http.js';
+import { rpc, dbConfigured, getSettings } from '../db.js';
+import { openaiConfigured } from '../openai.js';
+import { runAssistant, logMessage } from '../assistant.js';
 
 const clean = (s, n) => String(s || '').slice(0, n);
 const hits = new Map();

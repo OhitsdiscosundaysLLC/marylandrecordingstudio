@@ -4,11 +4,11 @@
 // `realtime.call.incoming` webhook here and we accept the call with the studio's instructions.
 // Required env: OPENAI_WEBHOOK_SECRET (from the OpenAI webhook settings) and a SIP trunk pointed at OpenAI.
 import crypto from 'node:crypto';
-import { send } from '../_lib/http.js';
-import { rawBody } from '../_lib/raw.js';
-import { rpc, dbConfigured, getSettings } from '../_lib/db.js';
-import { openai, openaiConfigured } from '../_lib/openai.js';
-import { systemPrompt } from '../_lib/knowledge.js';
+import { send } from '../http.js';
+import { rawBody } from '../raw.js';
+import { rpc, dbConfigured, getSettings } from '../db.js';
+import { openai, openaiConfigured } from '../openai.js';
+import { systemPrompt } from '../knowledge.js';
 
 export const config = { api: { bodyParser: false } };
 export const phoneMissing = () => ['OPENAI_WEBHOOK_SECRET'].filter((k) => !process.env[k]).concat(openaiConfigured() ? [] : ['OPENAI_API_KEY']);

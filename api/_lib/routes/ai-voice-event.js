@@ -1,9 +1,9 @@
 // Voice sessions run browser<->OpenAI; the browser relays transcripts and tool calls here
 // so leads are saved server-side and conversations appear in the dashboard.
-import { send, readJSONBody } from '../_lib/http.js';
-import { rpc, dbConfigured, getSettings } from '../_lib/db.js';
-import { TOOLS } from '../_lib/knowledge.js';
-import { runTool } from '../_lib/actions.js';
+import { send, readJSONBody } from '../http.js';
+import { rpc, dbConfigured, getSettings } from '../db.js';
+import { TOOLS } from '../knowledge.js';
+import { runTool } from '../actions.js';
 const NAMES = new Set(TOOLS.map((t) => t.name));
 export default async function handler(req, res) {
   if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });

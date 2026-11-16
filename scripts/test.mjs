@@ -153,6 +153,11 @@ try {
     const P = JSON.parse(m[1]); assert.deepEqual([P.member, P.hour, P.mix, P.master], [200, 60, 75, 50]);
   });
 
+  await t('Serverless function count fits the Vercel Hobby limit (12)', async () => {
+    const { readdirSync } = await import('node:fs');
+    const n = readdirSync(path.join(root, 'api'), { recursive: true }).filter((f) => f.endsWith('.js') && !String(f).split(/[\\/]/).some((p) => p.startsWith('_'))).length;
+    assert.ok(n <= 12, `${n} functions`);
+  });
   await t('GET /api/instagram reports configuration honestly', async () => {
     const d = await (await fetch(base + '/api/instagram')).json();
     assert.ok(Array.isArray(d.posts));

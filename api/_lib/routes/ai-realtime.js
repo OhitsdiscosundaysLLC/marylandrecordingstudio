@@ -1,9 +1,9 @@
 // Creates a short-lived Realtime client secret so the browser can talk to OpenAI over WebRTC
 // without ever seeing the API key.
-import { send, readJSONBody } from '../_lib/http.js';
-import { rpc, dbConfigured, getSettings } from '../_lib/db.js';
-import { openai, openaiConfigured } from '../_lib/openai.js';
-import { systemPrompt, TOOLS } from '../_lib/knowledge.js';
+import { send, readJSONBody } from '../http.js';
+import { rpc, dbConfigured, getSettings } from '../db.js';
+import { openai, openaiConfigured } from '../openai.js';
+import { systemPrompt, TOOLS } from '../knowledge.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
