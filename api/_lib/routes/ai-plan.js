@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       const out = await openai('/chat/completions', {
         model: settings.ai.model || 'gpt-4o-mini', temperature: 0.4, response_format: { type: 'json_object' }, max_tokens: 500,
         messages: [
-          { role: 'system', content: `You recommend services for Maryland Recording Studio by Disco Sundays (Hanover, MD). Use ONLY these services and prices; never invent prices, discounts, availability or outcomes:\n${list}\nAlso available: submit-project (free page to upload files for mixing/mastering), visit-studio (free 30-min visit).\nMembership: $200/month + MD tax, 24/7 access up to 4 hrs/day, A&R review, help booking shows; pays off at about 4+ studio hours a month vs $60/hour. Do not recommend members-only sessions to non-members.\nReturn JSON: {"headline": short personal headline (max 9 words), "summary": 1-2 sentences why, "steps": [3 short action steps], "slugs": [2-3 slugs from the list, best first], "estimate": one short line of simple monthly/one-off cost math using only listed prices, or ""}. Friendly, confident, no hype, no fake urgency.` },
+          { role: 'system', content: `You recommend services for Maryland Recording Studio by Disco Sundays (Hanover, MD). Use ONLY these services and prices; never invent prices, discounts, availability or outcomes:\n${list}\nAlso available: submit-project (free page to upload files for mixing/mastering), visit-studio (free 30-min visit).\nMembership: $200/month + MD tax, 24/7 access up to 4 hrs/day, A&R review, help booking shows; pays off at about 4+ studio hours a month vs $60/hour. Do not recommend members-only sessions to non-members.\nReturn JSON: {"headline": short personal headline (max 9 words), "summary": 1-2 sentences why, "steps": [3 short action steps], "slugs": [2-3 slugs from the list, best first], "estimate": ""} (leave estimate empty; it is calculated separately). Friendly, confident, no hype, no fake urgency.` },
           { role: 'user', content: `Goal: ${GOALS[goal]}. How often: ${FREQ[freq]}. Stage: ${STAGE[stage]}. ${note ? 'Extra: ' + note : ''}` },
         ],
       });
@@ -47,11 +47,18 @@ export default async function handler(req, res) {
     } catch (e) { console.error('plan', e.message); }
   }
   const cards = bookingCards(slugs);
+  // Cost line computed from real prices (never by the AI).
+  const hrs = { once: 0, few: 4, weekly: 8 }[freq];
+  const studio = ['record', 'podcast', 'voiceover', 'develop'].includes(goal);
+  const estimate = studio && hrs ? `About ${hrs} studio hours a month: $${hrs * 60} paying $60/hour vs $212 with Unlimited membership ($200 + MD tax).`
+    : goal === 'mix' ? 'Mixing Session $75 (1 hour)' + (stage === 'polish' ? '; add Mastering for $50.' : '.')
+    : goal === 'master' ? 'Mastering is $50.'
+    : goal === 'record' ? 'Recording is $60/hour (1, 2 or 3-hour sessions: $60, $120, $180).' : '';
   plan = {
     headline: String(plan?.headline || 'Here’s where to start').slice(0, 80),
     summary: String(plan?.summary || '').slice(0, 400),
     steps: (Array.isArray(plan?.steps) ? plan.steps : []).slice(0, 3).map((x) => String(x).slice(0, 160)),
-    estimate: String(plan?.estimate || '').slice(0, 200),
+    estimate,
   };
   try { if (dbConfigured()) await rpc('mrs_track', { p: { type: 'quiz_complete', label: `${goal}/${freq}/${stage}`, visitor_id: String(b.visitor_id || '').slice(0, 64), path: String(b.page || '').slice(0, 300), source: String(b.source || '').slice(0, 120), meta: { slugs } } }); } catch {}
   send(res, 200, { plan, cards });

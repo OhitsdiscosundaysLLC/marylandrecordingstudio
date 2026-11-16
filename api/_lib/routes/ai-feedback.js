@@ -25,22 +25,27 @@ export default async function handler(req, res) {
 Give specific, useful feedback about what you can actually hear: vocal clarity/level vs the beat, low end, harshness/brightness, space/reverb, loudness/dynamics, arrangement/energy, performance. If you are unsure about something, say so; never invent details you cannot hear. Do not mention prices.
 Then choose the ONE studio service that would help most from: mixing (Mixing Session), mastering (Mastering), recording-session-2-hours (re-record or record more), crash-test-artist-evaluation (career/artist feedback), unlimited-membership (if they record a lot).
 Reply ONLY with JSON: {"vibe": one encouraging sentence about what works, "strengths": [2 short items], "improve": [3 short, specific items], "next": one sentence on the best next step, "service": one slug from the list}`;
-  const call = (model) => openai('/chat/completions', { model, modalities: ['text'], max_tokens: 600, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'input_audio', input_audio: { data, format: 'wav' } }] }] });
-  let text = '';
-  try {
-    let out;
-    try { out = await call(settings.ai.audioModel || 'gpt-audio'); }
-    catch (e) { if (e.status === 404 || e.status === 400) out = await call(AUDIO_FALLBACK); else throw e; }
-    text = out.choices[0].message.content || '';
-  } catch (e) {
-    console.error('feedback', e.message);
-    return send(res, 502, { error: 'The AI could not listen to that clip right now. Please try again, or send the song to the team.' });
+  const m = b.metrics && typeof b.metrics === 'object' ? JSON.stringify(b.metrics).slice(0, 1500) : '';
+  const measured = m ? `\nMeasured from this exact section in the artist's browser (trust these numbers): ${m}. Reference points: modern streaming mixes usually peak around -1 to -0.3 dBFS with RMS around -14 to -8 dBFS; crest factor under ~6 dB means heavy limiting, over ~14 dB means very dynamic/quiet; clipped samples above ~0.05% suggests distortion; tonal balance where presence 2-6kHz is above ~20% can sound harsh, sub/bass above ~45% can sound boomy, air under ~1% can sound dull; stereo side-to-mid below -20 dB is very narrow/near-mono.` : '';
+  const call = (model) => openai('/chat/completions', { model, modalities: ['text'], max_tokens: 600, messages: [{ role: 'system', content: 'You are an audio engineer assistant. The user attaches an audio clip of their own song for feedback; listening to and describing it is expected and allowed.' }, { role: 'user', content: [{ type: 'input_audio', input_audio: { data, format: 'wav' } }, { type: 'text', text: prompt + measured }] }] });
+  const parse = (t) => { try { const x = JSON.parse(String(t).replace(/^```(json)?|```$/gm, '').trim()); return x && Array.isArray(x.improve) && x.improve.length ? x : null; } catch { return null; } };
+  let fb = null, basis = 'listening';
+  for (const model of [...new Set([settings.ai.audioModel || 'gpt-audio', AUDIO_FALLBACK])]) {
+    try { fb = parse((await call(model)).choices[0].message.content); } catch (e) { console.error('feedback', model, e.message); }
+    if (fb) break;
   }
-  let fb; try { fb = JSON.parse(text.replace(/^```(json)?|```$/gm, '').trim()); } catch { fb = { vibe: '', strengths: [], improve: [], next: text.slice(0, 600), service: 'mixing' }; }
+  if (!fb && m) { // Audio model declined or failed: give honest feedback from the measurements alone.
+    basis = 'measurements';
+    try {
+      const out = await openai('/chat/completions', { model: settings.ai.model || 'gpt-4o-mini', temperature: 0.3, response_format: { type: 'json_object' }, max_tokens: 600, messages: [{ role: 'user', content: prompt.replace('Listen to this', 'You cannot hear it, but you have exact measurements of this').replace('what you can actually hear', 'what the measurements show (do not claim to hear the song; say "the measurements suggest")') + measured }] });
+      fb = parse(out.choices[0].message.content);
+    } catch (e) { console.error('feedback metrics', e.message); }
+  }
+  if (!fb) return send(res, 502, { error: 'The AI could not analyse that clip right now. Please try again, or send the song to the team.' });
   const slug = ['mixing', 'mastering', 'recording-session-2-hours', 'crash-test-artist-evaluation', 'unlimited-membership'].includes(fb.service) ? fb.service : 'mixing';
   const cards = bookingCards([slug, slug === 'mixing' || slug === 'mastering' ? 'submit-project' : 'visit-studio']);
   const clean = (a, n) => (Array.isArray(a) ? a : []).slice(0, n).map((x) => String(x).slice(0, 220));
   const result = { vibe: String(fb.vibe || '').slice(0, 300), strengths: clean(fb.strengths, 3), improve: clean(fb.improve, 4), next: String(fb.next || '').slice(0, 400) };
-  try { if (dbConfigured()) await rpc('mrs_track', { p: { type: 'feedback_complete', label: slug, visitor_id: String(b.visitor_id || '').slice(0, 64), path: '/feedback', source: String(b.source || '').slice(0, 120), meta: { stage, genre } } }); } catch {}
-  send(res, 200, { feedback: result, cards });
+  try { if (dbConfigured()) await rpc('mrs_track', { p: { type: 'feedback_complete', label: slug, visitor_id: String(b.visitor_id || '').slice(0, 64), path: '/feedback', source: String(b.source || '').slice(0, 120), meta: { stage, genre, basis } } }); } catch {}
+  send(res, 200, { feedback: result, cards, basis });
 }
