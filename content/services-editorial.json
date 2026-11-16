@@ -1,57 +1,182 @@
 {
-  "_comment": "Editorial layer on top of the Square catalogue. Keys are Square item IDs. Use this for URL slugs, images, SEO copy and featuring. Never put prices, durations or availability here: those always come from Square.",
+  "_comment": "Editorial layer on top of the Square catalogue, keyed by Square item ID: URL slug, order, primary placement, taglines, SEO copy, images and purchase links. Prices, durations and availability always come from Square.",
   "categoryLabels": {
-    "hanover-md": { "label": "Creator Programs", "blurb": "Memberships and artist evaluation at the Hanover studio." },
-    "membership-sessions": { "label": "Book a Session", "blurb": "Studio, artist development and course time for members, plus free studio visits." },
-    "other": { "label": "Memberships", "blurb": "Monthly access to the studio." }
+    "membership": {
+      "label": "Membership",
+      "blurb": "Monthly access to the studio. Pay once a month, book sessions as a member."
+    },
+    "recording": {
+      "label": "Recording",
+      "blurb": "Book studio time by the hour to record music, vocals and more."
+    },
+    "mixing": {
+      "label": "Mixing & Mastering",
+      "blurb": "Professional mixing and mastering for your recordings."
+    },
+    "content": {
+      "label": "Podcasts & Live Video",
+      "blurb": "Video podcasts, voice-over and live performance sessions."
+    },
+    "development": {
+      "label": "Artist Development",
+      "blurb": "Evaluation, development sessions and course training."
+    },
+    "member-sessions": {
+      "label": "Member Sessions",
+      "blurb": "Studio time for members, plus free studio visits."
+    },
+    "creator": {
+      "label": "Creator Membership",
+      "blurb": "Membership with a personal audio engineer, Hanover only."
+    }
   },
   "services": {
-    "3DIB4TS5LTGJDECP5F7UZXKA": {
-      "slug": "visit-studio",
+    "VHW4XWH3IKLBXRJUNNBC37MQ": {
+      "slug": "unlimited-membership",
       "featured": true,
       "order": 1,
-      "tagline": "Come see the room before you commit.",
-      "seoDescription": "Book a free 30-minute visit to the Disco Sundays recording studio in Hanover, Maryland.",
-      "image": null
+      "tagline": "24/7 studio access. Up to 4 hours a day. No contracts.",
+      "seoDescription": "Disco Sundays Unlimited membership: $200/month for 24/7 recording studio access in Hanover, MD, up to 4 hours a day, with A&R review and help booking shows.",
+      "image": null,
+      "primary": "membership",
+      "hideDuration": true,
+      "priceSuffix": "/month",
+      "purchase": {
+        "url": "https://square.link/u/rJp640Zd",
+        "label": "Join for $200/month",
+        "note": "Secure Square checkout. No appointment needed. Maryland sales tax is added at checkout."
+      }
+    },
+    "KFW5FLXFO6VHQ2WIMFYS6CAO": {
+      "slug": "recording-session-1-hour",
+      "featured": true,
+      "primary": "recording",
+      "order": 2,
+      "tagline": "One hour of studio time to record.",
+      "seoDescription": "Book a 1-hour recording session at the Disco Sundays studio in Hanover, MD for $60."
+    },
+    "QR6IEWLFU7ZVMZ4G5M37DLLK": {
+      "slug": "recording-session-2-hours",
+      "order": 3,
+      "tagline": "Two hours of studio time to record.",
+      "seoDescription": "Book a 2-hour recording session in Hanover, MD for $120."
+    },
+    "UKPJOFT65WRBJT62MRY7WQPA": {
+      "slug": "recording-session-3-hours",
+      "order": 4,
+      "tagline": "Three hours of studio time to record.",
+      "seoDescription": "Book a 3-hour recording session in Hanover, MD for $180."
+    },
+    "QATG23RRM6KKKTSAEK7KUVNJ": {
+      "slug": "mixing",
+      "featured": true,
+      "primary": "mixing",
+      "order": 5,
+      "tagline": "Professional mixing for your recordings.",
+      "seoDescription": "Book a mixing session at the Disco Sundays studio in Hanover, MD. $75 per hour."
+    },
+    "2IMWD3HQTHV7GK3W57FHRQLF": {
+      "slug": "mastering",
+      "order": 6,
+      "tagline": "Loud and clear for radio and streaming.",
+      "seoDescription": "Mastering at Disco Sundays in Hanover, MD: make your song loud and clear for radio and streaming. $50."
+    },
+    "CJQQUF36A5UV7VQEETQQHQD5": {
+      "slug": "video-podcasting",
+      "order": 7,
+      "tagline": "Record your video podcast in the studio.",
+      "seoDescription": "Book a video podcast session in Hanover, MD. $100 per hour."
+    },
+    "SUR2HYKMANGRNQ2EMZMHXRUH": {
+      "slug": "voice-over",
+      "order": 8,
+      "tagline": "Voice-over recording sessions.",
+      "seoDescription": "Book a voice-over session in Hanover, MD. $60 per hour."
+    },
+    "4KETI3UTKIT76B7Q33UFEKCB": {
+      "slug": "live-performance-session",
+      "order": 9,
+      "tagline": "Live performance filmed in 4K.",
+      "seoDescription": "Live Performance Session at LittyProdStudio, Hanover, MD: performance, live show and 4K video production."
+    },
+    "OERMRRTFFMZUJY5B33R4FQK3": {
+      "slug": "live-session-performances",
+      "order": 10,
+      "tagline": "Live session performances for members."
     },
     "U42QERKEERL2BU2S6GAUSPT6": {
       "slug": "crash-test-artist-evaluation",
-      "featured": true,
-      "order": 2,
+      "featured": false,
+      "order": 11,
       "tagline": "One hour. A clear blueprint for your next move.",
       "seoDescription": "The Disco Sundays Crash Test: a one-hour artist evaluation in Hanover, MD covering your sound, performance and next steps.",
       "image": null
     },
-    "VHW4XWH3IKLBXRJUNNBC37MQ": {
-      "slug": "unlimited-membership",
-      "featured": true,
-      "order": 3,
-      "tagline": "24/7 studio access. Up to 4 hours a day. No contracts.",
-      "seoDescription": "Disco Sundays Unlimited membership: 24/7 recording studio access in Maryland, up to 4 hours a day, with A&R review and help booking shows.",
+    "RADGHQWKZKQPAOP3XE4ZWHPT": {
+      "slug": "1-hour-artist-development-session",
+      "order": 12,
+      "tagline": "Focused development time for members.",
+      "featured": false
+    },
+    "PL254DCUNHJPXW5LNS2IIZML": {
+      "slug": "2-hour-artist-development-session",
+      "order": 13,
+      "tagline": "Extended development time for members.",
+      "featured": false
+    },
+    "AUYQ6AEQBNSMNGQFC42R2V27": {
+      "slug": "2-hour-course-training-session",
+      "order": 14,
+      "tagline": "Extended course training for members.",
+      "featured": false
+    },
+    "3DIB4TS5LTGJDECP5F7UZXKA": {
+      "slug": "visit-studio",
+      "featured": false,
+      "order": 15,
+      "tagline": "Come see the room before you commit.",
+      "seoDescription": "Book a free 30-minute visit to the Disco Sundays recording studio in Hanover, Maryland.",
       "image": null
+    },
+    "43MPRJ2VAXIUKUXEVJW57OJF": {
+      "slug": "1-hour-membership-session",
+      "order": 16,
+      "tagline": "One hour of studio time for members.",
+      "featured": false
+    },
+    "DWLF64RX6J3NXAOO3M4L6ZJL": {
+      "slug": "2-hour-membership-session",
+      "order": 17,
+      "tagline": "Two hours of studio time for members.",
+      "featured": false
+    },
+    "BBBDB2AAKCZQ3TAMAQ2JVWJU": {
+      "slug": "3-hour-membership-session",
+      "order": 18,
+      "tagline": "Three hours of studio time for members.",
+      "featured": false
+    },
+    "N7VYZDXIL2XIWZRYHP7GJQ7B": {
+      "slug": "4-hour-membership-session",
+      "order": 19,
+      "tagline": "Four hours of studio time for members.",
+      "featured": false
     },
     "5BUHF6IGSFB5TAN6X7AERV7J": {
       "slug": "creator-membership",
-      "featured": true,
-      "order": 4,
+      "featured": false,
+      "order": 20,
       "tagline": "Your own personal audio engineer.",
       "seoDescription": "Creator Membership with a personal audio engineer at the Disco Sundays studio in Hanover, MD. Sessions include mixing and live video performance.",
       "image": null
     },
     "VN6NGGAFA67BIQRLN2ZEJNHP": {
       "slug": "creator-membership-200",
-      "order": 5,
+      "order": 21,
       "tagline": "Your own personal audio engineer.",
       "seoDescription": "Creator Membership / Personal Audio Engineer Plan at Disco Sundays, Hanover, MD.",
-      "image": null
-    },
-    "RADGHQWKZKQPAOP3XE4ZWHPT": { "slug": "1-hour-artist-development-session", "order": 10, "tagline": "Focused development time for members." },
-    "PL254DCUNHJPXW5LNS2IIZML": { "slug": "2-hour-artist-development-session", "order": 11, "tagline": "Extended development time for members." },
-    "43MPRJ2VAXIUKUXEVJW57OJF": { "slug": "1-hour-membership-session", "order": 12, "tagline": "One hour of studio time for members." },
-    "DWLF64RX6J3NXAOO3M4L6ZJL": { "slug": "2-hour-membership-session", "order": 13, "tagline": "Two hours of studio time for members." },
-    "BBBDB2AAKCZQ3TAMAQ2JVWJU": { "slug": "3-hour-membership-session", "order": 14, "tagline": "Three hours of studio time for members." },
-    "N7VYZDXIL2XIWZRYHP7GJQ7B": { "slug": "4-hour-membership-session", "order": 15, "tagline": "Four hours of studio time for members." },
-    "67JHRMKGMPVAJLO2HZBX47UJ": { "slug": "1-hour-course-training-session", "order": 16, "tagline": "Structured course training for members." },
-    "AUYQ6AEQBNSMNGQFC42R2V27": { "slug": "2-hour-course-training-session", "order": 17, "tagline": "Extended course training for members." }
+      "image": null,
+      "featured": false
+    }
   }
 }

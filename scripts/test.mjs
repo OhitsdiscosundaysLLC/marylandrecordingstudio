@@ -69,7 +69,7 @@ try {
     assert.ok(cat.services.length > 0);
     for (const s of cat.services) {
       assert.ok(seen.has(`/services/${s.slug}`), `no page for ${s.slug}`);
-      assert.match(s.bookUrl, /^https:\/\/book\.squareup\.com\/appointments\/fk5phm6o38fjpy\/location\/LBRQ3J5MYKNYX\/services\/[A-Z0-9]{24}$/);
+      assert.match(s.bookUrl, /^https:\/\/book\.squareup\.com\/appointments\/(rot9qejuixvuzc|fk5phm6o38fjpy)\/location\/LBRQ3J5MYKNYX\/services\/[A-Z0-9]{24}$/);
     }
   });
 

@@ -48,14 +48,29 @@
     const base = catalogue.bookingBase;
     // A service added in Square after the last deploy can still be booked by its Square ID.
     const url = s ? s.bookUrl : (p.get('id') && /^[A-Z0-9]{10,40}$/.test(p.get('id')) ? `${base}/${p.get('id')}` : base);
-    load(url);
+    const purchase = s && s.purchase;
+    const pp = document.querySelector('[data-purchase]');
+    const wrap = document.querySelector('[data-frame-wrap]');
+    if (pp) pp.hidden = !purchase;
+    wrap.hidden = !!purchase;
+    document.querySelector('.booking-panel__ext').hidden = !!purchase;
+    if (purchase) {
+      clearTimeout(timer); fallback.hidden = true;
+      pp.querySelector('[data-purchase-name]').textContent = s.name;
+      pp.querySelector('[data-purchase-price]').textContent = s.priceText || '';
+      pp.querySelector('[data-purchase-note]').textContent = purchase.note || '';
+      const link = pp.querySelector('[data-purchase-link]');
+      link.href = purchase.url; link.firstChild.textContent = purchase.label || 'Join now';
+    } else {
+      load(url);
+    }
     externals.forEach((a) => { a.href = url; });
     items.forEach((b) => b.setAttribute('aria-pressed', String((s ? s.slug : '') === b.dataset.pick)));
     if (select) select.value = s ? s.slug : '';
     if (s) {
-      panelTitle.textContent = `${s.name}${s.price?.display ? ' · ' + s.price.display : ''}`;
+      panelTitle.textContent = `${s.name}${s.priceText ? ' · ' + s.priceText : ''}`;
       title.textContent = s.name;
-      sub.textContent = 'Choose a team member below, then press Book to pick your time in Square\'s secure booking page.';
+      sub.textContent = s.purchase ? 'Pay your membership securely with Square. No appointment needed.' : 'Choose a team member below, then press Book to pick your time in Square\'s secure booking page.';
       document.title = `Book ${s.name} | Maryland Recording Studio`;
     } else {
       panelTitle.textContent = p.get('id') ? 'Selected service' : 'All services';

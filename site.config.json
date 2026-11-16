@@ -20,9 +20,9 @@
   "email": "ohitsdiscosundays@gmail.com",
   "whatsapp": null,
   "square": {
-    "merchantId": "fk5phm6o38fjpy",
+    "merchantId": "rot9qejuixvuzc",
     "locationId": "LBRQ3J5MYKNYX",
-    "bookingBase": "https://book.squareup.com/appointments/fk5phm6o38fjpy/location/LBRQ3J5MYKNYX/services"
+    "bookingBase": "https://book.squareup.com/appointments/rot9qejuixvuzc/location/LBRQ3J5MYKNYX/services"
   },
   "social": {
     "instagram": {
@@ -146,5 +146,12 @@
         "src240": "/assets/partners/cashmere-b-productions-160.webp"
       }
     ]
+  },
+  "membership": {
+    "name": "Disco Sundays Unlimited membership",
+    "price": "$200",
+    "period": "month",
+    "checkoutUrl": "https://square.link/u/rJp640Zd",
+    "serviceId": "VHW4XWH3IKLBXRJUNNBC37MQ"
   }
 }

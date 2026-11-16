@@ -27,6 +27,14 @@
         <p class="booking-panel__title"><span class="dot" aria-hidden="true"></span><span data-panel-title>All services</span></p>
         <a class="booking-panel__ext" href="{{bookingBase}}" target="_blank" rel="noopener" data-external-link data-track="square_booking_visit" data-label="open_new_tab">Open in a new tab<span class="sr-only"> (opens Square booking)</span></a>
       </div>
+      <div class="purchase-panel" data-purchase hidden>
+        <p class="eyebrow">Membership checkout</p>
+        <h2 class="display-2" data-purchase-name>Disco Sundays Unlimited</h2>
+        <p class="purchase-panel__price" data-purchase-price></p>
+        <p data-purchase-note></p>
+        <p class="muted">Joining doesn't book any studio time. Once you're a member, book member sessions whenever you like.</p>
+        <a class="btn btn--primary btn--lg" href="#" target="_blank" rel="noopener" data-purchase-link data-track="membership_checkout_click" data-label="book_page">Join now<span class="sr-only"> (opens secure Square checkout)</span></a>
+      </div>
       <div class="booking-panel__frame" data-frame-wrap>
         <div class="booking-panel__loading" data-loading><div class="spinner" aria-hidden="true"></div><p>Loading live availability…</p></div>
         <iframe data-booking-frame title="Book with Disco Sundays (secure booking by Square)" src="about:blank" loading="eager" allow="payment" referrerpolicy="strict-origin-when-cross-origin"></iframe>

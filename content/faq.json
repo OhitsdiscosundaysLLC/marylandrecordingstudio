@@ -4,29 +4,46 @@
     "items": [
       {
         "q": "How do I book a session?",
-        "a": ["Choose a service on the <a href=\"/services\">services page</a> and press <strong>Book this service</strong>. You pick your date, time and details in our secure booking panel, which is powered by Square, and Square sends your confirmation."],
+        "a": [
+          "For recording, mixing, mastering, podcasts and voice-over, choose a service on the <a href=\"/services\">services page</a> and press <strong>Book</strong>. You pick your time in our secure Square booking page and Square sends your confirmation. Memberships are paid through checkout instead and don't need an appointment."
+        ],
         "top": true
       },
       {
         "q": "Can I see the studio before I book?",
-        "a": ["Yes. Studio visits are free and take 30 minutes. <a href=\"/book?service=visit-studio\">Book a studio visit</a>."],
+        "a": [
+          "Yes. Studio visits are free and take 30 minutes. <a href=\"/book?service=visit-studio\">Book a studio visit</a>."
+        ],
         "top": true,
-        "services": ["membership-sessions", "visit-studio"]
+        "services": [
+          "membership-sessions",
+          "visit-studio"
+        ]
       },
       {
         "q": "Why do membership sessions show as free?",
-        "a": ["Membership sessions are covered by your membership, so there's nothing to pay when you book them. If you haven't paid for a membership, you'll pay in person at the session."],
+        "a": [
+          "Membership sessions are covered by your membership, so there's nothing to pay when you book them. If you haven't paid for a membership, you'll pay in person at the session."
+        ],
         "top": true,
-        "services": ["membership-sessions"]
+        "services": [
+          "membership-sessions"
+        ]
       },
       {
         "q": "Is studio availability guaranteed?",
-        "a": ["Sessions are booked through the official Disco Sundays scheduling system. Booking priority and how far ahead you can reserve vary by membership tier, and a specific studio or time isn't guaranteed. The booking panel always shows the times that are open right now."],
-        "services": ["membership"]
+        "a": [
+          "Sessions are booked through the official Disco Sundays scheduling system. Booking priority and how far ahead you can reserve vary by membership tier, and a specific studio or time isn't guaranteed. The booking panel always shows the times that are open right now."
+        ],
+        "services": [
+          "membership"
+        ]
       },
       {
         "q": "How do I change or cancel a booking?",
-        "a": ["Call or text <a href=\"tel:+14434015425\">(443) 401-5425</a> or email <a href=\"mailto:ohitsdiscosundays@gmail.com\">ohitsdiscosundays@gmail.com</a> and we'll help you sort it out."]
+        "a": [
+          "Call or text <a href=\"tel:+14434015425\">(443) 401-5425</a> or email <a href=\"mailto:ohitsdiscosundays@gmail.com\">ohitsdiscosundays@gmail.com</a> and we'll help you sort it out."
+        ]
       }
     ]
   },
@@ -34,40 +51,81 @@
     "group": "Memberships",
     "items": [
       {
-        "q": "What does the Unlimited membership include?",
-        "a": ["24/7 studio access with no contracts, up to 4 hours a day. Your music is uploaded for A&R review, and we help with booking shows. The membership includes access to one location. <a href=\"/services/unlimited-membership\">See the Unlimited membership</a>."],
+        "q": "How do I become a member?",
+        "a": [
+          "Join online through our secure Square checkout for $200 a month (Maryland sales tax is added at checkout). Joining doesn't book any studio time: you create your member username and password at checkout, then book member sessions whenever you want. <a href=\"https://square.link/u/rJp640Zd\" target=\"_blank\" rel=\"noopener\">Join now</a>."
+        ],
         "top": true,
-        "services": ["other", "unlimited-membership"]
+        "services": [
+          "membership",
+          "unlimited-membership"
+        ]
+      },
+      {
+        "q": "What does the Unlimited membership include?",
+        "a": [
+          "$200 a month for 24/7 studio access with no contracts, up to 4 hours a day. Your music is uploaded for A&R review, and we help with booking shows. The membership includes access to one location. <a href=\"/services/unlimited-membership\">See the Unlimited membership</a>."
+        ],
+        "top": true,
+        "services": [
+          "other",
+          "unlimited-membership"
+        ]
       },
       {
         "q": "What is the Creator Membership?",
-        "a": ["It's our Personal Audio Engineer Plan: a personal audio engineer handles all your audio needs, and sessions include mixing and live video performance. It's available only at the Hanover location. <a href=\"/services/creator-membership\">See the Creator Membership</a>."],
-        "services": ["hanover-md", "creator-membership"]
+        "a": [
+          "It's our Personal Audio Engineer Plan: a personal audio engineer handles all your audio needs, and sessions include mixing and live video performance. It's available only at the Hanover location. <a href=\"/services/creator-membership\">See the Creator Membership</a>."
+        ],
+        "services": [
+          "hanover-md",
+          "creator-membership"
+        ]
       },
       {
         "q": "How does membership billing work?",
-        "a": ["Membership fees are billed monthly and renew automatically each billing cycle unless you cancel before the renewal date. Fees are non-refundable once charged."],
-        "services": ["membership"]
+        "a": [
+          "Membership fees are billed monthly and renew automatically each billing cycle unless you cancel before the renewal date. Fees are non-refundable once charged."
+        ],
+        "services": [
+          "membership"
+        ]
       },
       {
         "q": "Do unused studio hours roll over?",
-        "a": ["No. Each membership includes a set number of studio hours per month, and they need to be used within the active billing cycle unless Disco Sundays agrees otherwise in writing."],
-        "services": ["membership"]
+        "a": [
+          "No. Each membership includes a set number of studio hours per month, and they need to be used within the active billing cycle unless Disco Sundays agrees otherwise in writing."
+        ],
+        "services": [
+          "membership"
+        ]
       },
       {
         "q": "Where are membership sessions held?",
-        "a": ["Disco Sundays is based in Hanover, Maryland, and also partners with independent recording studios. Memberships give access to studio time at participating partner studios, depending on your tier. The Creator Membership is available only in Hanover, and the Unlimited membership covers one location. Members follow each partner studio's rules and policies."],
-        "services": ["membership"]
+        "a": [
+          "Disco Sundays is based in Hanover, Maryland, and also partners with independent recording studios. Memberships give access to studio time at participating partner studios, depending on your tier. The Creator Membership is available only in Hanover, and the Unlimited membership covers one location. Members follow each partner studio's rules and policies."
+        ],
+        "services": [
+          "membership"
+        ]
       },
       {
         "q": "Are engineering and production included?",
-        "a": ["Engineering, production, premium equipment and other add-ons may be offered at an additional cost. The Creator Membership includes a personal audio engineer."],
-        "services": ["membership"]
+        "a": [
+          "Engineering, production, premium equipment and other add-ons may be offered at an additional cost. The Creator Membership includes a personal audio engineer."
+        ],
+        "services": [
+          "membership"
+        ]
       },
       {
         "q": "What am I responsible for during a session?",
-        "a": ["Members are responsible for their own conduct while using the studios, and for any damage they cause to studio property."],
-        "services": ["membership"]
+        "a": [
+          "Members are responsible for their own conduct while using the studios, and for any damage they cause to studio property."
+        ],
+        "services": [
+          "membership"
+        ]
       }
     ]
   },
@@ -76,13 +134,20 @@
     "items": [
       {
         "q": "What is the Disco Sundays Crash Test?",
-        "a": ["A one-hour artist evaluation. We talk through your sound, goals and current stage, evaluate your music and delivery, test your presence in the booth or live, and finish with a clear recommendation for your next steps. It isn't an audition. It's your blueprint. <a href=\"/services/crash-test-artist-evaluation\">See the Crash Test</a>."],
+        "a": [
+          "A one-hour artist evaluation. We talk through your sound, goals and current stage, evaluate your music and delivery, test your presence in the booth or live, and finish with a clear recommendation for your next steps. It isn't an audition. It's your blueprint. <a href=\"/services/crash-test-artist-evaluation\">See the Crash Test</a>."
+        ],
         "top": true,
-        "services": ["hanover-md", "crash-test-artist-evaluation"]
+        "services": [
+          "hanover-md",
+          "crash-test-artist-evaluation"
+        ]
       },
       {
         "q": "Who are the memberships for?",
-        "a": ["Musicians, producers, DJs and creative entrepreneurs who want to grow their skills and careers through structured courses, community support and practical projects."]
+        "a": [
+          "Musicians, producers, DJs and creative entrepreneurs who want to grow their skills and careers through structured courses, community support and practical projects."
+        ]
       }
     ]
   }

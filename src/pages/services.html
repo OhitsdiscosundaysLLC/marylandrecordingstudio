@@ -1,13 +1,17 @@
-<!-- {"path":"/services","title":"Recording Studio Services & Memberships","description":"Every bookable service at Disco Sundays in Hanover, MD: studio memberships, membership sessions, artist development, course training and free studio visits.","scripts":["services.js"]} -->
+<!-- {"path":"/services","title":"Recording Studio Services & Memberships","description":"Membership, recording and mixing at Disco Sundays in Hanover, MD, plus every other bookable service at Disco Sundays in Hanover, MD: studio memberships, membership sessions, artist development, course training and free studio visits.","scripts":["services.js"]} -->
 <section class="page-hero page-hero--compact">
   <div class="container">
     <p class="eyebrow">Services</p>
     <h1 class="display-1">Find your session.</h1>
-    <p class="lead">{{serviceCount}} services across {{categoryCount}} categories. Prices and times come straight from our live booking system.</p>
+    <p class="lead">Start with our three most popular ways in: membership, recording and mixing. Prices come straight from our live booking system.</p>
   </div>
 </section>
-<section class="section section--flush-top">
+<section class="section section--flush-top" aria-label="Most booked">
+  <div class="container">{{primaryTrio}}</div>
+</section>
+<section class="section section--flush-top" aria-labelledby="all-services">
   <div class="container">
+    <h2 id="all-services" class="h2 catalogue__h">All services</h2>
     {{catalogue}}
   </div>
 </section>

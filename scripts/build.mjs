@@ -60,7 +60,11 @@ const services = catalogue.services.map((s, i) => {
     image: ed.image || null,
     categoryName: cat.name,
     categoryLabel: catLabel,
-    bookUrl: `${config.square.bookingBase}/${s.id}`,
+    bookUrl: `${s.bookingBase || config.square.bookingBase}/${s.id}`,
+    primary: ed.primary || null,
+    purchase: ed.purchase || null,
+    hideDuration: !!ed.hideDuration,
+    priceSuffix: ed.priceSuffix || '',
     seed: i,
   };
 }).sort((a, b) => a.order - b.order);
@@ -98,7 +102,12 @@ function picture(img, { sizes = '100vw', className = '', eager = false } = {}) {
   return `<img class="${className}" src="${esc(src)}" alt="${esc(alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" sizes="${sizes}"${img.width ? ` width="${img.width}" height="${img.height}"` : ''}>`;
 }
 
-const priceLine = (s) => [s.price?.display, fmtDuration(s.durationMinutes)].filter(Boolean).join(' · ');
+const priceText = (s) => (s.priceSuffix && s.price?.display ? s.price.display.replace(/\.00$/, '') + s.priceSuffix : s.price?.display);
+const priceLine = (s) => [priceText(s), s.hideDuration ? '' : fmtDuration(s.durationMinutes)].filter(Boolean).join(' · ');
+// Primary action for a service: memberships go to checkout (no appointment), everything else books in Square.
+const ctaFor = (s, label) => s.purchase
+  ? `<a class="btn btn--primary btn--sm" href="${s.purchase.url}" target="_blank" rel="noopener" data-track="membership_checkout_click" data-label="${esc(s.name)}">${label || 'Join now'}<span class="sr-only"> (opens secure Square checkout)</span></a>`
+  : `<a class="btn btn--primary btn--sm" href="/book?service=${s.slug}" data-track="book_cta_click" data-label="${esc(s.name)}">${label || 'Book this service'}</a>`;
 
 function serviceCard(s, { headingLevel = 3 } = {}) {
   const H = `h${headingLevel}`;
@@ -111,7 +120,7 @@ function serviceCard(s, { headingLevel = 3 } = {}) {
     <p class="svc-card__meta">${esc(priceLine(s))}</p>
     <p class="svc-card__desc">${esc(s.tagline || s.description)}</p>
     <div class="svc-card__actions">
-      <a class="btn btn--primary btn--sm" href="/book?service=${s.slug}" data-track="book_cta_click" data-label="${esc(s.name)}">Book this service</a>
+      ${ctaFor(s)}
       <a class="btn btn--ghost btn--sm" href="/services/${s.slug}">Details<span class="sr-only"> about ${esc(s.name)}</span></a>
     </div>
   </div>
@@ -137,6 +146,41 @@ function catalogueUI() {
 }
 
 const featured = services.filter((s) => s.featured).slice(0, 4);
+const bySlug = (slug) => services.find((s) => s.slug === slug);
+
+// The three main ways in: Membership, Recording, Mixing. Each has its own presentation.
+function primaryTrio() {
+  const m = bySlug('unlimited-membership');
+  const rec = services.filter((s) => s.category === 'recording');
+  const mix = bySlug('mixing'), mas = bySlug('mastering');
+  const U = (s) => esc(s.description);
+  return `<div class="trio">
+  <article class="trio__card trio__card--membership reveal" aria-labelledby="trio-m">
+    <p class="trio__kicker">01 · Membership</p>
+    <h2 id="trio-m" class="trio__title">Disco Sundays Unlimited</h2>
+    <p class="trio__price"><strong>${esc(m.price.display.replace(/\.00$/, ''))}</strong><span>/month</span></p>
+    <ul class="ticks"><li>24/7 studio access, up to 4 hours a day</li><li>No contracts</li><li>Music uploaded for A&amp;R review</li><li>Help booking shows</li></ul>
+    <p class="trio__note">No appointment needed to join. You'll set your member username and password at checkout, then book member sessions any time.</p>
+    <div class="btn-row"><a class="btn btn--primary btn--lg" href="${m.purchase.url}" target="_blank" rel="noopener" data-track="membership_checkout_click" data-label="trio">Join for $200/month<span class="sr-only"> (opens secure Square checkout)</span></a><a class="btn btn--ghost btn--lg" href="/services/${m.slug}">How it works</a></div>
+    <p class="trio__fine">${esc(m.purchase.note)}</p>
+  </article>
+  <article class="trio__card trio__card--recording reveal" aria-labelledby="trio-r">
+    <p class="trio__kicker">02 · Recording</p>
+    <h2 id="trio-r" class="trio__title">Book studio time</h2>
+    <p class="trio__lead">Record music, vocals and more by the hour.</p>
+    <ul class="trio__options">${rec.map((s) => `<li><a href="/book?service=${s.slug}" data-track="book_cta_click" data-label="trio_${s.slug}"><span>${esc(fmtDuration(s.durationMinutes))}</span><strong>${esc(s.price.display.replace(/\.00$/, ''))}</strong></a></li>`).join('')}</ul>
+    <a class="btn btn--primary btn--lg btn--block" href="/book?service=${rec[0].slug}" data-track="book_cta_click" data-label="trio_recording">Book recording</a>
+  </article>
+  <article class="trio__card trio__card--mixing reveal" aria-labelledby="trio-x">
+    <div class="trio__wave" aria-hidden="true">${art(3, { bars: 36 })}</div>
+    <p class="trio__kicker">03 · Mixing</p>
+    <h2 id="trio-x" class="trio__title">Mixing &amp; mastering</h2>
+    <dl class="trio__menu"><div><dt>Mixing session</dt><dd>${esc(priceLine(mix))}</dd></div>${mas ? `<div><dt>Mastering</dt><dd>${esc(priceLine(mas))}</dd></div>` : ''}</dl>
+    <div class="btn-row"><a class="btn btn--primary btn--lg" href="/book?service=${mix.slug}" data-track="book_cta_click" data-label="trio_mixing">Book mixing</a>${mas ? `<a class="btn btn--ghost btn--lg" href="/book?service=${mas.slug}" data-track="book_cta_click" data-label="trio_mastering">Book mastering</a>` : ''}</div>
+    <button type="button" class="trio__ask" data-ai-open="I have a project that needs mixing. Can you help me figure out what to book?">Not sure what you need? Ask our AI studio assistant →</button>
+  </article>
+</div>`;
+}
 
 function ctaBand(title = 'Your next session starts here.', copy = 'Pick a service, choose a time and get your confirmation from Square in minutes.') {
   return `<section class="cta-band reveal" aria-labelledby="cta-${slugify(title)}">
@@ -479,7 +523,8 @@ const tokens = {
       <span class="svc-row__meta">${esc(priceLine(s))}</span>
       <span class="svc-row__art" aria-hidden="true">${s.image ? picture(s.image) : art(s.seed, { bars: 28 })}</span>
       <span class="svc-row__go" aria-hidden="true">→</span></a></li>`).join('')}</ol>`,
-  quickBook: () => ['visit-studio', 'crash-test-artist-evaluation', 'unlimited-membership'].map((slug) => services.find((s) => s.slug === slug)).filter(Boolean).map((s) => `<li><a href="/book?service=${s.slug}" data-track="book_cta_click" data-label="hero_quick_${s.slug}"><span class="qb__name">${esc(s.name.replace('Disco Sundays ', ''))}</span><span class="qb__meta">${esc(priceLine(s))}</span><span class="qb__go" aria-hidden="true">→</span></a></li>`).join(''),
+  quickBook: () => [['unlimited-membership', 'Unlimited membership'], ['recording-session-1-hour', 'Recording session'], ['mixing', 'Mixing']].map(([slug, label]) => [services.find((s) => s.slug === slug), label]).filter(([s]) => s).map(([s, label]) => `<li><a href="${s.purchase ? s.purchase.url : '/book?service=' + s.slug}"${s.purchase ? ' target="_blank" rel="noopener" data-track="membership_checkout_click"' : ' data-track="book_cta_click"'} data-label="hero_quick_${s.slug}"><span class="qb__name">${esc(label)}</span><span class="qb__meta">${esc(priceLine(s))}${s.purchase ? ' · no booking needed' : ''}</span><span class="qb__go" aria-hidden="true">→</span></a></li>`).join(''),
+  primaryTrio,
   socialData: () => `<script type="application/json" id="social-data">${JSON.stringify({ instagram: social.instagram, facebook: config.social.facebook.url, instagramProfile: config.social.instagram.url, youtube: config.social.youtube.url, photos: (media.gallery || []).concat(media.studio || []) }).replace(/</g, '\\u003c')}</script>`,
   followButtons: () => `<div class="follow-row">${['instagram', 'facebook', 'youtube'].map((k) => `<a class="follow follow--${k}" href="${config.social[k].url}" target="_blank" rel="noopener" data-track="social_profile_click" data-label="${k}">Follow on ${k === 'youtube' ? 'YouTube' : k[0].toUpperCase() + k.slice(1)}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')}</div>`,
   radioAppUrl: () => config.radio.appUrl,
@@ -546,7 +591,7 @@ const publicCatalogue = {
   syncedAt: catalogue.syncedAt,
   bookingBase: config.square.bookingBase,
   categories: categories.map(({ id, name, label }) => ({ id, name, label })),
-  services: services.map((s) => ({ id: s.id, slug: s.slug, name: s.name, category: s.category, categoryLabel: s.categoryLabel, description: s.description, tagline: s.tagline, price: s.price, durationMinutes: s.durationMinutes, bookUrl: s.bookUrl, featured: s.featured })),
+  services: services.map((s) => ({ id: s.id, slug: s.slug, name: s.name, category: s.category, categoryLabel: s.categoryLabel, description: s.description, tagline: s.tagline, price: s.price, priceText: priceText(s), durationMinutes: s.hideDuration ? null : s.durationMinutes, bookUrl: s.bookUrl, featured: s.featured, primary: s.primary, purchase: s.purchase })),
 };
 await writeFile(path.join(dist, 'data/services.json'), JSON.stringify(publicCatalogue));
 
@@ -579,8 +624,14 @@ for (const s of services) {
     svcId: s.id,
     svcCategory: esc(s.categoryLabel),
     svcTagline: esc(s.tagline || ''),
-    svcPrice: esc(s.price?.display || ''),
-    svcDuration: esc(fmtDuration(s.durationMinutes)),
+    svcPrice: esc(priceText(s) || ''),
+    svcDuration: esc(s.hideDuration ? 'Monthly' : fmtDuration(s.durationMinutes)),
+    svcDurationLabel: s.hideDuration ? 'Billing' : 'Duration',
+    svcActionHref: s.purchase ? s.purchase.url : `/book?service=${s.slug}`,
+    svcActionAttrs: s.purchase ? `target="_blank" rel="noopener" data-track="membership_checkout_click" data-label="${esc(s.name)}"` : `data-track="book_cta_click" data-label="${esc(s.name)}"`,
+    svcActionLabel: s.purchase ? esc(s.purchase.label) : (s.primary === 'recording' ? 'Book recording' : s.primary === 'mixing' ? 'Book mixing' : 'Book this service'),
+    svcAsideTitle: s.purchase ? 'Become a member.' : 'Choose your appointment.',
+    svcAsideText: s.purchase ? esc(s.purchase.note) : "Pick a date and time in the next step. You'll get an instant confirmation from Square.",
     svcVisual: s.image ? picture(s.image, { eager: true, sizes: '(min-width: 900px) 50vw, 100vw' }) : art(s.seed, { bars: 56 }),
     svcDescription: [s.description, ...(s.longDescription || [])].map((p) => `<p>${esc(p)}</p>`).join(''),
     svcIncludes: s.includes ? `<h2 class="h3">During your session</h2><ul class="ticks">${s.includes.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : '',
