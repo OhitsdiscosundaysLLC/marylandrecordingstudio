@@ -23,7 +23,9 @@ export async function runAssistant({ settings, history, channel = 'chat', conver
   // If the reply names services but the model skipped the buttons, attach them (real catalogue only).
   if (!ctx.ui.some((u) => u.type === 'booking' || u.type === 'handoff')) {
     const t = reply.toLowerCase(); const slugs = [];
-    if (/membership|unlimited/.test(t)) slugs.push('unlimited-membership');
+    const member = /(as a|existing|already a) member|member session|sign(ing)? in with your username/.test(t);
+    if (member) slugs.push('1-hour-membership-session', '2-hour-membership-session');
+    else if (/membership|unlimited/.test(t)) slugs.push('unlimited-membership');
     if (/recording session|record (a|your)|\$60|1 hour session|hour session/.test(t) && !/membership session/.test(t)) slugs.push('recording-session-1-hour');
     if (/mixing/.test(t)) slugs.push('mixing');
     if (/mastering/.test(t)) slugs.push('mastering');
