@@ -36,6 +36,9 @@ export async function runAssistant({ settings, history, channel = 'chat', conver
     const cards = bookingCards(slugs);
     if (cards.length) ctx.ui.push({ type: 'booking', reason: '', cards });
   }
+  if (ctx.ui.some((u) => u.type === 'booking') && channel !== 'whatsapp') {
+    reply = reply.replace(/\s*(Would|Do) you (like|want) me to (show|share|give)[^?]*(options|links?|buttons)[^?]*\?/i, ' The buttons are below.').trim();
+  }
   return { reply, ui: ctx.ui, conversationId: ctx.conversationId };
 }
 
