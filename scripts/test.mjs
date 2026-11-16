@@ -55,7 +55,7 @@ try {
   });
 
   await t('all main routes resolve', async () => {
-    for (const r of ['/', '/studio', '/services', '/book', '/gallery', '/radio', '/explore', '/about', '/contact', '/faq', '/members', '/submit-project']) assert.ok(seen.has(r), `missing ${r}`);
+    for (const r of ['/', '/studio', '/services', '/book', '/gallery', '/radio', '/explore', '/about', '/contact', '/faq', '/members', '/submit-project', '/feedback']) assert.ok(seen.has(r), `missing ${r}`);
   });
 
   await t('unknown routes return the 404 page', async () => {
@@ -153,6 +153,17 @@ try {
     const P = JSON.parse(m[1]); assert.deepEqual([P.member, P.hour, P.mix, P.master], [200, 60, 75, 50]);
   });
 
+  await t('Session finder always answers with real services (rule-based without AI)', async () => {
+    const r = await post('/api/ai/plan', { goal: 'mix', freq: 'once', stage: 'recorded' });
+    assert.equal(r.status, 200); const d = await r.json();
+    assert.deepEqual(d.cards.map((c) => c.slug), ['mixing', 'mastering', 'submit-project']);
+  });
+  await t('Demo feedback reports missing key honestly', async () => {
+    const r = await post('/api/ai/feedback', { audio: 'x' }); assert.equal(r.status, 503);
+  });
+  await t('Quiz lead capture requires consent', async () => {
+    const r = await post('/api/ai/lead', { email: 'a@b.co', source: 'ai_quiz' }); assert.equal(r.status, 400);
+  });
   await t('Serverless function count fits the Vercel Hobby limit (12)', async () => {
     const { readdirSync } = await import('node:fs');
     const n = readdirSync(path.join(root, 'api'), { recursive: true }).filter((f) => f.endsWith('.js') && !String(f).split(/[\\/]/).some((p) => p.startsWith('_'))).length;

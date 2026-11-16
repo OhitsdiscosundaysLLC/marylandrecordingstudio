@@ -33,7 +33,7 @@
     },
     "api/ai.js": {
       "includeFiles": "{data/**,content/**,site.config.json}",
-      "maxDuration": 30
+      "maxDuration": 60
     },
     "api/integrations.js": {
       "includeFiles": "{data/**,content/**,site.config.json}",

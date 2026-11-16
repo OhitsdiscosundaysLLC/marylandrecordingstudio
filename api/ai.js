@@ -3,8 +3,11 @@
 import chat from './_lib/routes/ai-chat.js';
 import realtime from './_lib/routes/ai-realtime.js';
 import voiceEvent from './_lib/routes/ai-voice-event.js';
+import plan from './_lib/routes/ai-plan.js';
+import feedback from './_lib/routes/ai-feedback.js';
+import lead from './_lib/routes/ai-lead.js';
 import { send } from './_lib/http.js';
-const ROUTES = { chat, realtime, 'voice-event': voiceEvent };
+const ROUTES = { chat, realtime, 'voice-event': voiceEvent, plan, feedback, lead };
 export default function handler(req, res) {
   const u = new URL(req.url, 'http://x');
   const op = u.searchParams.get('op') || u.pathname.split('/').pop();

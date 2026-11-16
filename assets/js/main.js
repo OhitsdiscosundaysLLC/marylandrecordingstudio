@@ -7,7 +7,7 @@
   // ---- Analytics: one function for every provider; always pushes to dataLayer ----
   window.dataLayer = window.dataLayer || [];
   // First-party analytics for the private dashboard: anonymous random IDs, no cookies, no personal data.
-  const SERVER = new Set(['page_view', 'book_cta_click', 'square_booking_visit', 'membership_checkout_click', 'interest_select', 'ai_open', 'voice_start', 'phone_click', 'email_click', 'whatsapp_click', 'radio_play', 'ecosystem_click', 'contact_submit']);
+  const SERVER = new Set(['page_view', 'book_cta_click', 'square_booking_visit', 'membership_checkout_click', 'interest_select', 'ai_open', 'voice_start', 'phone_click', 'email_click', 'whatsapp_click', 'radio_play', 'ecosystem_click', 'contact_submit', 'exp_view', 'nudge_shown', 'nudge_click', 'estimator_use', 'quiz_start', 'feedback_start']);
   const rid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
   const store = (s, k) => { try { let v = s.getItem(k); if (!v) { v = rid(); s.setItem(k, v); } return v; } catch { return ''; } };
   const visitorId = store(localStorage, 'mrs_vid'); const sid = store(sessionStorage, 'mrs_sid');
@@ -21,6 +21,7 @@
   const beacon = (type, props) => {
     if (!SERVER.has(type) || navigator.webdriver) return;
     const { page, label, ...rest } = props;
+    try { const x = JSON.parse(localStorage.getItem('mrs_exp') || 'null'); if (x && x.exp) { rest.exp = x.exp; rest.variant = x.variant; } } catch (_) {}
     const body = JSON.stringify({ type, visitor_id: visitorId, session_id: sid, path: page || location.pathname, label: label || '', source, referrer: type === 'page_view' ? document.referrer.slice(0, 300) : '', meta: rest });
     try { if (!navigator.sendBeacon || !navigator.sendBeacon('/api/track', new Blob([body], { type: 'application/json' }))) fetch('/api/track', { method: 'POST', body, keepalive: true, headers: { 'Content-Type': 'application/json' } }); } catch (_) {}
   };

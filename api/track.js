@@ -1,6 +1,6 @@
 import { send, readJSONBody } from './_lib/http.js';
 import { rpc, dbConfigured } from './_lib/db.js';
-const ALLOWED = new Set(['page_view', 'book_cta_click', 'square_booking_visit', 'membership_checkout_click', 'interest_select', 'ai_open', 'voice_start', 'phone_click', 'email_click', 'whatsapp_click', 'radio_play', 'ecosystem_click', 'contact_submit', 'rewards_click']);
+const ALLOWED = new Set(['page_view', 'book_cta_click', 'square_booking_visit', 'membership_checkout_click', 'interest_select', 'ai_open', 'voice_start', 'phone_click', 'email_click', 'whatsapp_click', 'radio_play', 'ecosystem_click', 'contact_submit', 'rewards_click', 'exp_view', 'nudge_shown', 'nudge_click', 'estimator_use', 'quiz_start', 'feedback_start']);
 export default async function handler(req, res) {
   if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
   if (!dbConfigured()) return send(res, 204, {});

@@ -17,9 +17,11 @@ export async function rpc(name, args = {}) {
 }
 
 const DEFAULTS = {
-  ai: { enabled: true, voiceEnabled: true, model: 'gpt-4o-mini', voiceModel: 'gpt-realtime', voice: 'marin', greeting: "Hey! I'm the Disco Sundays AI studio assistant. What are you working on?", extraKnowledge: '', handoffPhone: '(443) 401-5425', handoffEmail: 'ohitsdiscosundays@gmail.com' },
+  ai: { enabled: true, voiceEnabled: true, model: 'gpt-4o-mini', voiceModel: 'gpt-realtime', voice: 'marin', greeting: "Hey! I'm the Disco Sundays AI studio assistant. What are you working on?", extraKnowledge: '', handoffPhone: '(443) 401-5425', handoffEmail: 'ohitsdiscosundays@gmail.com', audioModel: 'gpt-audio' },
   motion: { ambient: true, magneticButtons: true, cursorGlow: true, waveform: true, reveal: true, marquee: true },
   personalization: { enabled: true },
+  conversion: { quiz: true, feedback: true, nudges: true, welcomeBack: true },
+  experiment: { enabled: false, id: '', variants: [] },
 };
 let cache = { at: 0, value: null };
 export async function getSettings({ fresh = false } = {}) {

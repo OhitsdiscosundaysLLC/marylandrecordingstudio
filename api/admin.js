@@ -53,7 +53,7 @@ export default async function handler(req, res) {
       }
       case 'settings': {
         if (req.method === 'POST') {
-          const allowed = ['ai', 'motion', 'personalization'];
+          const allowed = ['ai', 'motion', 'personalization', 'conversion', 'experiment'];
           if (!allowed.includes(body.key) || typeof body.value !== 'object') return send(res, 400, { error: 'Bad setting' }, H);
           await rpc('mrs_settings_set', { p_key: body.key, p_value: body.value });
           clearSettingsCache();
@@ -117,6 +117,19 @@ export default async function handler(req, res) {
         const text = await write(settings, `You draft a personal follow-up message from the studio team to someone who asked about a service. Short (under 110 words), friendly, helpful, references what they asked about, gives the single most relevant next step and link from the facts. Sign off as "The Disco Sundays team". ${NO_INVENT}\n${facts()}\nBooking links: membership checkout https://square.link/u/rJp640Zd ; book any service at ${catalogue().config.siteUrl}/book ; upload files ${catalogue().config.siteUrl}/submit-project`,
           `Channel: ${body.channel === 'sms' ? 'text message (under 300 characters, no subject)' : 'email (include a subject line on the first line as "Subject: ...")'}. Lead: name ${l.name || 'unknown'}, service ${l.service}, what they said: ${(l.project || '').slice(0, 600)}, preferred date ${l.preferred_date || 'not given'}.`);
         return send(res, 200, { text, email: l.email, phone: l.phone }, H);
+      }
+      case 'conversion': {
+        const settings = await getSettings({ fresh: true });
+        const counts = await rpc('mrs_event_counts', { p_days: days });
+        const exp = settings.experiment?.id ? await rpc('mrs_experiment_stats', { p_exp: settings.experiment.id }) : {};
+        return send(res, 200, { counts, experiment: settings.experiment, expStats: exp, conversion: settings.conversion }, H);
+      }
+      case 'headlines': {
+        const settings = await getSettings();
+        const text = await write(settings, `You write homepage hero headlines for a recording studio website to increase bookings. ${NO_INVENT}\n${facts()}\nCurrent headline: "Make the record you keep | hearing in your head." Current subline: "A members' studio for artists who are serious about what's next: 24/7 access, your own audio engineer if you want one, and artist development that maps out your next move."`,
+          `Write 3 alternative hero variants with different angles (e.g. outcome, price/value with real prices, membership freedom). ${String(body.focus || '').slice(0, 300)} Return JSON {"variants":[{"headline": "main part | accent part (max 10 words total, use one | to split)", "sub": "one sentence, max 30 words", "angle": "2-4 words"}]}`, true);
+        let v = []; try { v = JSON.parse(text).variants || []; } catch {}
+        return send(res, 200, { variants: v.slice(0, 3).map((x, i) => ({ id: 'v' + (i + 1), headline: String(x.headline || '').slice(0, 120), sub: String(x.sub || '').slice(0, 240), angle: String(x.angle || '').slice(0, 40) })) }, H);
       }
       case 'integrations': {
         return send(res, 200, { items: [

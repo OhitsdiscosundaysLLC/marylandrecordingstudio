@@ -54,7 +54,7 @@ FAQ AND POLICIES:
 ${faq}
 
 CONTACT: call or text ${settings.ai.handoffPhone}, email ${settings.ai.handoffEmail}. Website: ${config.siteUrl}.
-WEBSITE PAGES YOU CAN OFFER (use show_booking_options with these slugs too): 'submit-project' = upload files/stems for mixing or mastering (private, up to 50 MB per file or a Drive/Dropbox link); 'members' = members area (portal, member sessions, help); 'rewards' = Disco Rewards customer portal sign-in.
+WEBSITE PAGES YOU CAN OFFER (use show_booking_options with these slugs too): 'submit-project' = upload files/stems for mixing or mastering (private, up to 50 MB per file or a Drive/Dropbox link); 'members' = members area (portal, member sessions, help); 'rewards' = Disco Rewards customer portal sign-in; 'feedback' = free AI feedback on a demo (upload a song, get notes in about a minute), great for unsure artists.
 Existing members book free member sessions (1-hour-membership-session, 2-hour-membership-session, 3-hour-membership-session, 4-hour-membership-session) after signing in with the username/password they created at checkout.
 Changing/cancelling a booking or receipts: handled by Square (confirmation email) or the team; you cannot see or change bookings.
 DISCO SUNDAYS ECOSYSTEM (the Rewards program is also the customer portal / member login):
@@ -97,6 +97,7 @@ export const TOOLS = [
 
 const PAGES = {
   'submit-project': { slug: 'submit-project', name: 'Send us your project', price: 'Upload files for mixing or mastering', type: 'page', label: 'Upload files', url: '/submit-project', external: false, page: '/submit-project' },
+  feedback: { slug: 'feedback', name: 'Free AI demo feedback', price: 'Free · notes in about a minute', type: 'page', label: 'Try it', url: '/feedback', external: false, page: '/feedback' },
   members: { slug: 'members', name: 'Members area', price: 'Portal, member sessions, help', type: 'page', label: 'Open', url: '/members', external: false, page: '/members' },
   rewards: { slug: 'rewards', name: 'Disco Rewards (customer portal)', price: 'Sign in, points and rewards', type: 'page', label: 'Open portal', url: 'https://disco-sundaysllc-club.base44.app/', external: true, page: 'https://disco-sundaysllc-club.base44.app/' },
 };

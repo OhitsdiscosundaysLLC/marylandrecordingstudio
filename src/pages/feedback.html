@@ -1,0 +1,38 @@
+<!-- {"path":"/feedback","title":"Free AI Demo Feedback","description":"Upload your song and get free, specific AI feedback on your mix, vocals and energy in under a minute, from Maryland Recording Studio by Disco Sundays in Hanover, MD.","scripts":["feedback.js"]} -->
+<section class="page-hero page-hero--compact">
+  <div class="container">
+    <p class="eyebrow">Free tool</p>
+    <h1 class="display-1">Free AI feedback on your demo.</h1>
+    <p class="lead">Upload a song and our AI engineer listens to a 45-second section and tells you what's working, what to fix and the next step. Free, no account needed.</p>
+  </div>
+</section>
+<section class="section section--flush-top">
+  <div class="container contact">
+    <div class="fb" data-fb>
+      <form class="form" data-fb-form>
+        <label class="drop" data-fb-drop>
+          <input type="file" accept="audio/*,.wav,.mp3,.m4a,.aif,.aiff,.flac,.ogg" data-fb-file aria-label="Choose a song">
+          <strong data-fb-name>Drop your song here or tap to choose</strong>
+          <span>MP3, WAV, M4A, AIFF or FLAC · up to 80 MB · only a 45-second section is sent</span>
+        </label>
+        <div class="fb__clip" data-fb-clip hidden>
+          <label class="est__ctl"><span>Which part should we listen to? <output data-fb-at>0:00</output></span><input type="range" min="0" max="0" value="0" step="1" data-fb-start></label>
+          <button type="button" class="btn btn--ghost btn--sm" data-fb-preview>▶ Preview section</button>
+        </div>
+        <div class="form__row">
+          <label class="field"><span class="label">Stage</span><select name="stage"><option value="rough demo">Rough demo</option><option value="vocals over a beat">Vocals over a beat</option><option value="my own mix">My own mix</option><option value="finished master">Finished master</option></select></label>
+          <label class="field"><span class="label">Genre <span class="optional">(optional)</span></span><input name="genre" maxlength="60" placeholder="e.g. R&amp;B, drill, gospel"></label>
+        </div>
+        <label class="field"><span class="label">What do you want feedback on? <span class="optional">(optional)</span></span><input name="notes" maxlength="400" placeholder="e.g. are my vocals loud enough?"></label>
+        <button class="btn btn--primary btn--lg" data-fb-go disabled>Get my feedback</button>
+        <p class="fb__fine">The section is sent to our AI (OpenAI) for analysis and isn't published. AI listening is helpful but not perfect. For the full picture, have an engineer hear it.</p>
+        <div class="form__status" role="status" aria-live="polite" data-fb-status></div>
+      </form>
+      <div class="fb__out" data-fb-out hidden aria-live="polite"></div>
+    </div>
+    <aside class="contact__aside">
+      <div class="contact-card"><h2 class="h3">How it works</h2><ol class="steps-sm"><li>Pick your song and the section to judge.</li><li>The AI listens and writes notes.</li><li>Get matched with the right next step.</li></ol></div>
+      <div class="contact-card"><h2 class="h3">Want a real engineer?</h2><p>Mixing Session: $75 (1 hour)<br>Mastering: $50</p><p><a href="/submit-project">Send us the full project →</a></p></div>
+    </aside>
+  </div>
+</section>

@@ -323,7 +323,7 @@ function layout({ title, description, pathname, body, scripts = [], jsonld = [],
   const fullTitle = pathname === '/' ? title : `${title} | ${config.siteName}`;
   const img = ogImage || `${SITE_URL}/assets/brand/og-image.jpg`;
   const navItems = NAV.map(([href, label]) => `<li><a href="${href}"${pathname.startsWith(href) ? ' aria-current="page"' : ''}>${label}</a></li>`).join('');
-  const memberMenu = `<li><a href="/members" data-track="ecosystem_click" data-label="members"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5Z"/></svg></span><span><strong>Members area</strong><small>Portal, member sessions, projects</small></span></a></li><li><a href="/submit-project" data-track="ecosystem_click" data-label="submit_project"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M11 16V7.8l-3.3 3.3-1.4-1.4L12 4l5.7 5.7-1.4 1.4L13 7.8V16h-2Zm-6 4v-5h2v3h10v-3h2v5H5Z"/></svg></span><span><strong>Send us your project</strong><small>Upload tracks for mixing or mastering</small></span></a></li>`;
+  const memberMenu = `<li><a href="/members" data-track="ecosystem_click" data-label="members"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5Z"/></svg></span><span><strong>Members area</strong><small>Portal, member sessions, projects</small></span></a></li><li><a href="/submit-project" data-track="ecosystem_click" data-label="submit_project"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M11 16V7.8l-3.3 3.3-1.4-1.4L12 4l5.7 5.7-1.4 1.4L13 7.8V16h-2Zm-6 4v-5h2v3h10v-3h2v5H5Z"/></svg></span><span><strong>Send us your project</strong><small>Upload tracks for mixing or mastering</small></span></a></li><li><a href="/feedback" data-track="ecosystem_click" data-label="feedback"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M3 10h2v4H3v-4Zm4-4h2v12H7V6Zm4-3h2v18h-2V3Zm4 5h2v8h-2V8Zm4 2h2v4h-2v-4Z"/></svg></span><span><strong>Free AI demo feedback</strong><small>Upload a song, get notes in a minute</small></span></a></li>`;
   const ecoMenu = memberMenu + ECO.filter((e) => e.id !== 'studio').map((e) => `<li><a href="${ecoHref(e)}"${ecoExternal(e) ? ' target="_blank" rel="noopener"' : ''} data-track="ecosystem_click" data-label="${e.id}"><span class="menu-icon">${ecoIcon[e.id]}</span><span><strong>${esc(e.name)}</strong><small>${esc(e.kicker)}</small></span>${ecoExternal(e) ? extIcon : ''}</a></li>`).join('');
   return `<!doctype html>
 <html lang="en-US">
@@ -403,7 +403,7 @@ ${body}
   <div class="container site-footer__grid">
     <nav aria-label="Studio">
       <h2 class="footer-h">Studio</h2>
-      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/book">Book now</a></li><li><a href="/members">Members area</a></li><li><a href="/submit-project">Send us your project</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
+      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/book">Book now</a></li><li><a href="/members">Members area</a></li><li><a href="/submit-project">Send us your project</a></li><li><a href="/feedback">Free AI demo feedback</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
     </nav>
     <nav aria-label="Explore Disco Sundays">
       <h2 class="footer-h">Explore Disco Sundays</h2>
@@ -551,6 +551,21 @@ const tokens = {
   </div>
 </section>`;
   },
+  sessionFinder: () => `<section class="finder reveal" data-finder hidden aria-labelledby="finder-title">
+  <div class="finder__head"><span class="ai-orb" aria-hidden="true"></span><div><p class="eyebrow">AI session finder</p><h2 id="finder-title" class="h2">Find your perfect session in 30 seconds.</h2></div></div>
+  <form class="finder__form" data-finder-form>
+    <fieldset class="finder__q" data-q="goal"><legend>What are you working on?</legend>
+      <div class="finder__opts">${[['record', 'Record a new song'], ['mix', 'Mix a recorded song'], ['master', 'Master a finished mix'], ['podcast', 'Podcast / video'], ['voiceover', 'Voice-over'], ['develop', 'Grow as an artist']].map(([v, l]) => `<label><input type="radio" name="goal" value="${v}"><span>${l}</span></label>`).join('')}</div></fieldset>
+    <fieldset class="finder__q" data-q="freq" hidden><legend>How often do you want studio time?</legend>
+      <div class="finder__opts">${[['once', 'Just this once'], ['few', 'A few times a month'], ['weekly', 'Every week or more']].map(([v, l]) => `<label><input type="radio" name="freq" value="${v}"><span>${l}</span></label>`).join('')}</div></fieldset>
+    <fieldset class="finder__q" data-q="stage" hidden><legend>Where's the song at right now?</legend>
+      <div class="finder__opts">${[['idea', 'Ideas / still writing'], ['ready', 'Beat + lyrics ready'], ['recorded', 'Vocals recorded'], ['polish', 'Done, needs polish']].map(([v, l]) => `<label><input type="radio" name="stage" value="${v}"><span>${l}</span></label>`).join('')}</div>
+      <label class="finder__note"><span>Anything else? <span class="optional">(optional)</span></span><input name="note" maxlength="400" placeholder="e.g. first time in a studio, need it done by Friday"></label>
+      <button class="btn btn--primary btn--lg" data-finder-go>Get my plan</button></fieldset>
+  </form>
+  <div class="finder__result" data-finder-result hidden aria-live="polite"></div>
+</section>`,
+  feedbackCta: () => `<a class="fb-cta reveal" href="/feedback" data-track="ecosystem_click" data-label="feedback_cta"><span class="ai-orb" aria-hidden="true"></span><span><strong>Free AI feedback on your demo</strong><span>Upload a song, get specific mix and performance notes in under a minute.</span></span><span class="fb-cta__go" aria-hidden="true">Try it →</span></a>`,
   memberSessions: () => `<ul class="member-sessions">${services.filter((s) => s.category === 'member-sessions' && s.slug !== 'visit-studio').map((s) => `<li><a href="/book?service=${s.slug}" data-track="book_cta_click" data-label="members_${s.slug}"><strong>${esc(s.name)}</strong><span>Members only · ${esc(fmtDuration(s.durationMinutes))}</span><span class="member-sessions__go" aria-hidden="true">Book →</span></a></li>`).join('')}</ul>`,
   rewardsUrl: () => ECO.find((e) => e.id === 'rewards').url,
   socialData: () => `<script type="application/json" id="social-data">${JSON.stringify({ instagram: social.instagram, facebook: config.social.facebook.url, instagramProfile: config.social.instagram.url, youtube: config.social.youtube.url, photos: (media.gallery || []).concat(media.studio || []) }).replace(/</g, '\\u003c')}</script>`,
