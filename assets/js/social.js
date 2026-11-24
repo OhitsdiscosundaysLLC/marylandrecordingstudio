@@ -61,7 +61,7 @@
     el.dataset.platform = item.platform;
     if (item.kind === 'ig-embed') {
       el.classList.add('tile--embed');
-      el.innerHTML = `<div class="tile__head">${badge('instagram')}<button type="button" class="tile__expand" aria-label="Open this Instagram post larger">Expand</button></div>
+      el.innerHTML = `<div class="tile__head">${badge('instagram')}<button type="button" class="tile__expand" aria-label="Expand this Instagram post">Expand</button></div>
         <div class="tile__embed"><iframe data-src="${esc(item.embed)}" title="Instagram post from Disco Sundays" scrolling="no" allowtransparency="true"></iframe></div>`;
       el.querySelector('.tile__expand').addEventListener('click', () => openLightbox(item));
       lazyFrame(el.querySelector('iframe'));
@@ -81,7 +81,7 @@
       return el;
     }
     // Native media tile (YouTube thumbnail, Instagram API image, studio photo).
-    el.innerHTML = `<button type="button" class="tile__media" aria-label="${item.kind === 'youtube' ? 'Play video' : 'View'}: ${esc(item.title || LABEL[item.platform] + ' post')}">
+    el.innerHTML = `<button type="button" class="tile__media"><span class="sr-only">${item.kind === 'youtube' ? 'Play video:' : 'View:'} ${item.title ? '' : esc(LABEL[item.platform] + ' post')}</span>
         <img src="${esc(item.image)}"${item.kind === 'youtube' ? ` srcset="https://i.ytimg.com/vi/${esc(item.id)}/mqdefault.jpg 320w, https://i.ytimg.com/vi/${esc(item.id)}/hqdefault.jpg 480w" sizes="${cls.includes('tile--feature') ? '(min-width: 1000px) 600px, 100vw' : '(min-width: 1000px) 300px, (min-width: 560px) 50vw, 100vw'}" width="480" height="360"` : ''} alt="" loading="lazy" decoding="async">
         ${item.kind === 'youtube' || item.video ? '<span class="tile__play" aria-hidden="true"></span>' : ''}
         <span class="tile__overlay">${badge(item.platform)}<span class="tile__caption">${esc(item.title || '')}</span>${item.date ? `<span class="tile__date">${esc(fmtDate(item.date))}</span>` : ''}</span>

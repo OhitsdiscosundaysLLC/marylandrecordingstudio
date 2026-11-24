@@ -14,6 +14,7 @@ Google Business Profile: **out of scope; never edited.** The listing data (name,
 ## Completed
 | Date | Change | Why |
 |---|---|---|
+| 2026-11-24 | All 21 written Google reviews (verbatim, unfiltered, newest first, linked to the Google listing) rendered in the HTML of /, /services, /studio and /artist-development | Trust signals and fresh, unique on-page text for local intent. No review rich-snippet markup is used, because Google treats a business's own LocalBusiness reviews as self-serving |
 | 2026-11-24 | Removed the home-page layout shift; fixed the language toggle's accessible name; `/api/reviews` and `/api/availability` return 200 when not configured | Core Web Vitals (CLS) and an error-free console |
 | 2026-11-23 | New page /recording-studio-cost-maryland: real prices, sample budgets, estimator, FAQ, cited Peerspace market average | Targets "recording studio cost / prices Maryland / Baltimore" searches; Article and FAQPage schema |
 | 2026-11-23 | Home title changed to "Recording Studio in Hanover, MD near Baltimore", with a new description | Puts primary local intent in the title |
