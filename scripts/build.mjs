@@ -14,6 +14,7 @@ const config = await readJSON('site.config.json');
 const catalogue = await readJSON('data/services.json');
 const editorial = await readJSON('content/services-editorial.json');
 const media = await readJSON('content/media.json');
+const greviews = await readJSON('content/google-reviews.json');
 const faqs = await readJSON('content/faq.json');
 const social = await readJSON('content/social.json');
 const ecoShots = existsSync(path.join(root, 'content/ecosystem-shots.json')) ? await readJSON('content/ecosystem-shots.json') : { shots: [] };
@@ -545,7 +546,17 @@ const tokens = {
   adCheckoutUrl: () => config.artistDevelopment.checkoutUrl,
   adPrice: () => config.artistDevelopment.price,
   faqAD: () => faqList((faqs.find((g) => g.group === 'Artist Development') || { items: [] }).items),
-  googleReviews: () => `<section class="section gr" aria-labelledby="gr-title" data-google-reviews data-reviews-url="${config.google.mapsUrl}" data-write-url="${config.google.writeReviewUrl}" data-i18n-scope><div class="container narrow"><p class="eyebrow">Google reviews</p><h2 id="gr-title" class="display-2">What artists say</h2><div data-gr-body aria-live="polite"><div class="skeleton-card" style="height:120px"></div></div></div></section>`,
+  googleReviews: () => {
+    const g = greviews; const mon = (d) => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+    const star = (n) => `<span class="gr__stars" aria-hidden="true">${'★'.repeat(n)}${'☆'.repeat(5 - n)}</span><span class="sr-only">${n} out of 5 stars</span>`;
+    const card = (r) => `<figure class="gr__item"><figcaption>${star(r.rating)}<span class="gr__who">${esc(r.author)}</span><time datetime="${r.date}">${mon(r.date)}</time></figcaption><blockquote><p>${esc(r.text).replace(/\n/g, '<br>')}</p></blockquote></figure>`;
+    const first = g.reviews.slice(0, 6), rest = g.reviews.slice(6);
+    return `<section class="section gr" aria-labelledby="gr-title" data-google-reviews data-reviews-url="${config.google.mapsUrl}" data-write-url="${config.google.writeReviewUrl}" data-i18n-scope><div class="container"><p class="eyebrow">Google reviews</p><h2 id="gr-title" class="display-2">What artists say</h2><div data-gr-body>
+<p class="gr__sum"><span class="gr__stars" aria-hidden="true">★★★★★</span> <strong>${g.rating.toFixed(1)}</strong> on Google · ${g.count} reviews</p>
+<div class="gr__list">${first.map(card).join('')}</div>${rest.length ? `<details class="gr__more"><summary>Show all ${g.withText} written reviews</summary><div class="gr__list">${rest.map(card).join('')}</div></details>` : ''}
+<p class="gr__attr">Every written review from our Google listing, shown word for word, newest first (updated ${mon(g.asOf)}). <a href="${config.google.mapsUrl}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="google_reviews">Read them on Google<span class="sr-only"> (opens Google Maps)</span></a> · <a href="${config.google.writeReviewUrl}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="google_write">Write a review</a></p>
+</div></div></section>`;
+  },
   adReview: () => `<section class="section ad-quote" aria-label="What artists say"><div class="container narrow reveal"><figure class="ad-quote__fig"><blockquote><p>“Very professional delivery and awesome Artist Development Program. I’m always learning something new from Melvin and Xavier.”</p></blockquote><figcaption>Dara Kamilah · <a href="${config.google.mapsUrl}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="ad_review_google">Google review<span class="sr-only"> (opens Google Maps in a new tab)</span></a></figcaption></figure></div></section>`,
   spotlights: () => {
     const list = (media.spotlights || []).filter((x) => x.approved === true && (x.video || x.image));

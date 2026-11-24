@@ -54,3 +54,9 @@ export async function endedBookings(sinceMs, untilMs) {
   });
 }
 export async function customer(id) { const r = await squareFetch(`/v2/customers/${encodeURIComponent(id)}`); return r.customer || null; }
+// Number of upcoming (accepted or pending) bookings for a customer, so reminders never go to someone already booked.
+export async function upcomingFor(customerId) {
+  const q = new URLSearchParams({ customer_id: customerId, location_id: LOCATION(), start_at_min: new Date().toISOString(), limit: '20' });
+  const r = await squareFetch(`/v2/bookings?${q}`);
+  return (r.bookings || []).filter((b) => ['ACCEPTED', 'PENDING'].includes(b.status)).length;
+}

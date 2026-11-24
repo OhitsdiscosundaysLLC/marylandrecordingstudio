@@ -1,19 +1,18 @@
-// Genuine Google reviews (Places API via /api/reviews). Without the API key it shows links only, never a made-up rating.
+// Genuine Google reviews. The page already contains every written review from the Google listing (verbatim snapshot, built in).
+// When the official Places API is configured (/api/reviews), refresh the live rating and count and add any review newer than the snapshot.
+// If the API is not configured or fails, nothing changes: we never show a made-up rating.
 (() => {
-  const T = (s) => (window.mrsT ? window.mrsT(s) : s);
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const stars = (n) => `<span class="gr__stars" aria-label="${n} / 5">${'★'.repeat(Math.round(n))}${'☆'.repeat(5 - Math.round(n))}</span>`;
   document.querySelectorAll('[data-google-reviews]').forEach(async (el) => {
-    const read = el.dataset.reviewsUrl, write = el.dataset.writeUrl;
     try {
-      const r = await fetch('/api/reviews'); const j = await r.json();
-      if (!r.ok || !j.configured || !j.reviews?.length) throw 0;
-      const list = j.reviews.filter((x) => x.text).slice(0, 5);
-      el.querySelector('[data-gr-body]').innerHTML = `<p class="gr__sum">${stars(j.rating)} <strong>${esc(j.rating?.toFixed(1))}</strong> · ${esc(j.count)} ${esc(T('Google reviews'))}</p>
-        <div class="gr__list">${list.map((x) => `<figure class="gr__item"><blockquote>${esc(x.text.length > 420 ? x.text.slice(0, 417) + '…' : x.text)}</blockquote><figcaption>${stars(x.rating)} <a href="${esc(x.authorUrl || j.reviewsUrl)}" target="_blank" rel="noopener nofollow">${esc(x.author)}</a> · ${esc(x.when || '')}</figcaption></figure>`).join('')}</div>
-        <p class="gr__attr">${esc(T('Reviews from Google.'))} <a href="${esc(j.reviewsUrl || read)}" target="_blank" rel="noopener">${esc(T('Read all reviews'))}</a> · <a href="${esc(j.writeUrl || write)}" target="_blank" rel="noopener">${esc(T('Write a review'))}</a></p>`;
-    } catch {
-      el.querySelector('[data-gr-body]').innerHTML = `<p class="gr__sum">${esc(T('See what artists say about us on Google.'))}</p><div class="btn-row"><a class="btn btn--ghost" href="${esc(read)}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="google_reviews">${esc(T('Read our Google reviews'))}<span class="sr-only"> (opens Google Maps)</span></a><a class="btn btn--ghost" href="${esc(write)}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="google_write">${esc(T('Write a review'))}</a></div>`;
-    }
+      const r = await fetch('/api/reviews'); if (!r.ok) return;
+      const j = await r.json(); if (!j.configured || typeof j.rating !== 'number' || !j.count) return;
+      const sum = el.querySelector('.gr__sum strong'); if (sum) sum.textContent = j.rating.toFixed(1);
+      const s = el.querySelector('.gr__sum'); if (s) s.lastChild.textContent = ` on Google · ${j.count} reviews`;
+      const known = new Set([...el.querySelectorAll('.gr__who')].map((n) => n.textContent.trim().toLowerCase()));
+      const fresh = (j.reviews || []).filter((x) => x.text && x.author && !known.has(String(x.author).trim().toLowerCase()));
+      const list = el.querySelector('.gr__list');
+      if (list && fresh.length) list.insertAdjacentHTML('afterbegin', fresh.map((x) => `<figure class="gr__item"><figcaption><span class="gr__stars" aria-hidden="true">${'★'.repeat(Math.round(x.rating))}${'☆'.repeat(5 - Math.round(x.rating))}</span><span class="sr-only">${esc(x.rating)} out of 5 stars</span><span class="gr__who">${esc(x.author)}</span><time>${esc(x.when || '')}</time></figcaption><blockquote><p>${esc(x.text)}</p></blockquote></figure>`).join(''));
+    } catch { /* keep the built-in reviews */ }
   });
 })();

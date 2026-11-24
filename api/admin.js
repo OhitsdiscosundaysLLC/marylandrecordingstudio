@@ -10,8 +10,9 @@ import { phoneMissing } from './_lib/routes/phone.js';
 import hqPage from './_lib/routes/hq.js';
 import { buildWeeklyReport } from './_lib/report.js';
 import { sendEmail, layoutEmail, emailConfigured, dashboardUrl } from './_lib/notify.js';
-import { sendReviewInvite, verifyOptout, optOut, customerEmailReady } from './_lib/invites.js';
-import { squareHealth, endedBookings, customer, availability } from './_lib/availability.js';
+import { sendReviewInvite, sendRebookReminder, verifyOptout, optOut, customerEmailReady } from './_lib/invites.js';
+import { squareHealth, endedBookings, customer, availability, upcomingFor } from './_lib/availability.js';
+import { slugsForVariations, againLink } from './_lib/routes/book-again.js';
 import { getReviews, reviewsConfigured } from './_lib/reviews.js';
 import { squareConfigured } from './_lib/square.js';
 
@@ -50,7 +51,7 @@ export default async function handler(req, res) {
     const e = verifyOptout(url.searchParams.get('e'), url.searchParams.get('s'));
     if (e) await optOut(e).catch(() => {});
     res.statusCode = e ? 200 : 400; res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    return res.end(`<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Email preferences</title><body style="font:16px/1.5 system-ui;padding:40px;max-width:520px;margin:auto"><h1>${e ? 'You are unsubscribed' : 'Link not valid'}</h1><p>${e ? 'We will not send you review emails again.' : 'This link is invalid or expired.'}</p><p><a href="/">Back to the website</a></p></body>`);
+    return res.end(`<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Email preferences</title><body style="font:16px/1.5 system-ui;padding:40px;max-width:520px;margin:auto"><h1>${e ? 'You are unsubscribed' : 'Link not valid'}</h1><p>${e ? 'We will not send you review or reminder emails again.' : 'This link is invalid or expired.'}</p><p><a href="/">Back to the website</a></p></body>`);
   }
   // Daily scheduled job (Vercel Cron sends Authorization: Bearer CRON_SECRET).
   if (action === 'cron') {
@@ -73,6 +74,24 @@ export default async function handler(req, res) {
         log.invites = `${sent}/${bookings.length}`;
       } catch (e) { log.invites = 'error: ' + e.message; }
     }
+    if (settings.rebookReminders?.auto && squareConfigured() && customerEmailReady()) {
+      try {
+        const days = Math.min(120, Math.max(7, Number(settings.rebookReminders.days) || 30));
+        const until = Date.now() - days * 86400_000, since = until - 86400_000;
+        const bookings = await endedBookings(since, until); let sent = 0; const seen = new Set();
+        for (const b of bookings.slice(0, 40)) {
+          if (seen.has(b.customer_id)) continue; seen.add(b.customer_id);
+          const c = await customer(b.customer_id).catch(() => null);
+          if (!c?.email_address || c.preferences?.email_unsubscribed) continue;
+          if ((await upcomingFor(b.customer_id).catch(() => 1)) > 0) continue;
+          const slugs = await slugsForVariations((b.appointment_segments || []).map((x) => x.service_variation_id)).catch(() => []);
+          if (!slugs.length) continue;
+          const r = await sendRebookReminder({ email: c.email_address, name: [c.given_name, c.family_name].filter(Boolean).join(' '), bookingId: b.id, link: againLink(c.email_address, slugs) });
+          if (r.status === 'sent') sent++;
+        }
+        log.rebook = `${sent}/${bookings.length}`;
+      } catch (e) { log.rebook = 'error: ' + e.message; }
+    }
     await rpc('mrs_record_create', { p_kind: 'cron_log', p_token_hash: null, p_visitor: null, p: log }).catch(() => {});
     return send(res, 200, log, H);
   }
@@ -89,7 +108,7 @@ export default async function handler(req, res) {
       }
       case 'settings': {
         if (req.method === 'POST') {
-          const allowed = ['ai', 'motion', 'personalization', 'conversion', 'experiment', 'reports', 'reviewsInvites'];
+          const allowed = ['ai', 'motion', 'personalization', 'conversion', 'experiment', 'reports', 'reviewsInvites', 'rebookReminders'];
           if (!allowed.includes(body.key) || typeof body.value !== 'object') return send(res, 400, { error: 'Bad setting' }, H);
           await rpc('mrs_settings_set', { p_key: body.key, p_value: body.value });
           clearSettingsCache();
@@ -185,7 +204,7 @@ export default async function handler(req, res) {
           for (const r of list) results.push({ email: r.email, ...(await sendReviewInvite({ email: r.email, name: r.name, service: r.service, source: 'manual' })) });
           return send(res, 200, { results }, H);
         }
-        return send(res, 200, { items: await rpc('mrs_record_list', { p_kind: 'review_invite', p_limit: 200, p_days: 400 }), ready: customerEmailReady(), square: squareConfigured() }, H);
+        return send(res, 200, { items: await rpc('mrs_record_list', { p_kind: 'review_invite', p_limit: 200, p_days: 400 }), rebook: await rpc('mrs_record_list', { p_kind: 'rebook_reminder', p_limit: 200, p_days: 400 }), ready: customerEmailReady(), square: squareConfigured() }, H);
       }
       case 'records': {
         const kind = url.searchParams.get('kind');

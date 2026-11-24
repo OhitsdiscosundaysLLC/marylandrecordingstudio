@@ -169,6 +169,17 @@ try {
     const n = readdirSync(path.join(root, 'api'), { recursive: true }).filter((f) => f.endsWith('.js') && !String(f).split(/[\\/]/).some((p) => p.startsWith('_'))).length;
     assert.ok(n <= 12, `${n} functions`);
   });
+  await t('Google reviews: every written review is shown verbatim, nothing filtered', async () => {
+    const { readFileSync } = await import('node:fs');
+    const g = JSON.parse(readFileSync(path.join(root, 'content/google-reviews.json'), 'utf8'));
+    assert.equal(g.reviews.length, g.withText);
+    assert.ok(g.reviews.every((r) => r.rating >= 1 && r.rating <= 5 && r.text && r.author && /^\d{4}-\d{2}-\d{2}$/.test(r.date)));
+    for (const p of ['/', '/services', '/studio', '/artist-development']) {
+      const h = await (await fetch(base + p)).text();
+      assert.equal((h.match(/class="gr__item"/g) || []).length, g.withText, p);
+      assert.ok(h.includes('maps.app.goo.gl/mYL9zgRThxWeSNHd9'), `${p} links to Google`);
+    }
+  });
   await t('GET /api/instagram reports configuration honestly', async () => {
     const d = await (await fetch(base + '/api/instagram')).json();
     assert.ok(Array.isArray(d.posts));

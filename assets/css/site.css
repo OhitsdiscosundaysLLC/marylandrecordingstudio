@@ -1352,7 +1352,7 @@ html.i18n-pending [data-i18n-scope] { visibility: hidden; }
 .slot-pick { margin: 0 0 12px; padding: 12px 14px; border-radius: var(--radius-sm); background: rgba(255,166,48,.1); border: 1px solid rgba(255,166,48,.4); }
 .slot-pick[hidden] { display: none; }
 .gr__sum { font-size: 1.05rem; margin: 0 0 16px; } .gr__stars { color: var(--amber); letter-spacing: 2px; }
-.gr__list { display: grid; gap: 12px; }
+.gr__list { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); align-items: start; }
 .gr__item { margin: 0; padding: 18px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--graphite); }
 .gr__item blockquote { margin: 0 0 10px; } .gr__item figcaption { font-size: .85rem; color: var(--muted); } .gr__item a { color: var(--text); }
 .gr__attr { font-size: .82rem; color: var(--muted); margin-top: 14px; }
@@ -1364,3 +1364,12 @@ html.i18n-pending [data-i18n-scope] { visibility: hidden; }
 .price-table th, .price-table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--line); }
 .price-table thead th { color: var(--muted); font-size: .82rem; font-weight: 600; } .price-table td { font-variant-numeric: tabular-nums; }
 .price-table a { color: var(--text); }
+
+/* v13 Google reviews (verbatim snapshot) */
+.gr__item { display: flex; flex-direction: column; gap: 10px; }
+.gr__item figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; order: -1; }
+.gr__item blockquote { margin: 0; } .gr__item blockquote p { margin: 0; line-height: 1.55; overflow-wrap: anywhere; }
+.gr__who { color: var(--text); font-weight: 600; } .gr__item time { color: var(--muted); }
+.gr__more { margin-top: 14px; } .gr__more > summary { cursor: pointer; display: inline-block; padding: 10px 18px; border: 1px solid var(--line); border-radius: 999px; font-weight: 600; list-style: none; min-height: 44px; }
+.gr__more > summary::-webkit-details-marker { display: none; } .gr__more[open] > summary { margin-bottom: 14px; }
+.gr__more > summary:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }

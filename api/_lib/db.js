@@ -24,6 +24,7 @@ const DEFAULTS = {
   experiment: { enabled: false, id: '', variants: [] },
   reports: { weekly: true },
   reviewsInvites: { auto: false },
+  rebookReminders: { auto: false, days: 30 },
 };
 let cache = { at: 0, value: null };
 export async function getSettings({ fresh = false } = {}) {

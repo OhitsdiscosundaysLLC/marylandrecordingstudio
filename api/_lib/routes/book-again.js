@@ -9,13 +9,21 @@ import { sendEmail, siteBase } from '../notify.js';
 import { customerEmailReady } from '../invites.js';
 
 const key = () => process.env.ADMIN_SESSION_SECRET || 'x';
-const sign = (p) => { const b = Buffer.from(JSON.stringify(p)).toString('base64url'); return `${b}.${crypto.createHmac('sha256', key()).update('again:' + b).digest('base64url').slice(0, 32)}`; };
+export const sign = (p) => { const b = Buffer.from(JSON.stringify(p)).toString('base64url'); return `${b}.${crypto.createHmac('sha256', key()).update('again:' + b).digest('base64url').slice(0, 32)}`; };
 export function readToken(t) {
   const [b, s] = String(t || '').split('.');
   if (!b || !s || s !== crypto.createHmac('sha256', key()).update('again:' + b).digest('base64url').slice(0, 32)) return null;
   try { const p = JSON.parse(Buffer.from(b, 'base64url').toString()); return p.exp > Date.now() ? p : null; } catch { return null; }
 }
 const hits = new Map();
+// Square service-variation ids -> our bookable service slugs.
+export async function slugsForVariations(variationIds) {
+  const ids = [...new Set(variationIds)].filter(Boolean); if (!ids.length) return [];
+  const r = await squareFetch('/v2/catalog/batch-retrieve', { object_ids: ids });
+  const items = new Set((r.objects || []).map((o) => o.item_variation_data?.item_id).filter(Boolean));
+  return catalogue().services.filter((s) => items.has(s.id) && s.action.type === 'book').map((s) => s.slug).slice(0, 8);
+}
+export const againLink = (email, slugs, days = 14) => `${siteBase()}/members?again=${sign({ email: String(email).toLowerCase(), slugs, exp: Date.now() + days * 86400_000 })}`;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
