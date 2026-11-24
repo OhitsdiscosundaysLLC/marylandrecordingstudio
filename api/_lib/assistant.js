@@ -4,9 +4,9 @@ import { openai } from './openai.js';
 import { systemPrompt, TOOLS, bookingCards } from './knowledge.js';
 import { runTool } from './actions.js';
 
-export async function runAssistant({ settings, history, channel = 'chat', conversationId = null, interest = '', page = '' }) {
+export async function runAssistant({ settings, history, channel = 'chat', conversationId = null, interest = '', page = '', lang = 'en' }) {
   const ctx = { ui: [], channel, conversationId };
-  const messages = [{ role: 'system', content: systemPrompt(settings, { channel, interest, page }) }, ...history];
+  const messages = [{ role: 'system', content: systemPrompt(settings, { channel, interest, page, lang }) }, ...history];
   const tools = TOOLS.map((t) => ({ type: 'function', function: t }));
   let reply = '';
   for (let round = 0; round < 4; round++) {
@@ -37,7 +37,7 @@ export async function runAssistant({ settings, history, channel = 'chat', conver
     if (cards.length) ctx.ui.push({ type: 'booking', reason: '', cards });
   }
   if (ctx.ui.some((u) => u.type === 'booking') && channel !== 'whatsapp') {
-    reply = reply.replace(/\s*(Would|Do) you (like|want) me to (show|share|give)[^?]*(options|links?|buttons)[^?]*\?/i, ' The buttons are below.').trim();
+    reply = reply.replace(/\s*(Would|Do) you (like|want) me to (show|share|give)[^?]*(options|links?|buttons)[^?]*\?/i, lang === 'es' ? ' Los botones están abajo.' : ' The buttons are below.').trim();
   }
   return { reply, ui: ctx.ui, conversationId: ctx.conversationId };
 }

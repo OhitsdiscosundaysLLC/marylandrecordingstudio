@@ -32,7 +32,7 @@ export function catalogue() {
   return built;
 }
 
-export function systemPrompt(settings, { channel = 'chat', interest = '', page = '' } = {}) {
+export function systemPrompt(settings, { channel = 'chat', interest = '', page = '', lang = 'en' } = {}) {
   const { config, services, faqs } = catalogue();
   const svc = services.map((s) => `- [${s.slug}] ${s.name} (${s.categoryLabel}): ${s.price || 'price shown at booking'}${s.durationMinutes ? `, ${s.durationMinutes} min` : ''}. ${s.action.type === 'purchase' ? 'Joined/paid through checkout, NO appointment needed.' : 'Booked as an appointment in Square.'} ${s.description}`).join('\n');
   const faq = faqs.map((f) => `Q: ${f.q}\nA: ${f.a}`).join('\n');
@@ -73,7 +73,7 @@ STRICT RULES:
 - Use handoff_to_human when they ask for a person, have a complaint, a billing/refund issue, or anything you can't answer.
 - Never ask for card numbers or passwords. Membership usernames/passwords are created at Square checkout, not here.
 - Keep replies short: 1-3 sentences for chat${channel === 'voice' ? '; for voice, speak naturally in one or two sentences and never read out URLs (the buttons appear on screen)' : ''}. Use plain text, no markdown headings.
-${interest ? `The visitor told us they're interested in: ${interest}.` : ''}${page ? ` They are currently on the page: ${page}.` : ''}`;
+${lang === 'es' ? 'LANGUAGE: The visitor chose Spanish. Always reply in natural Latin-American Spanish (keep brand and service names like "Disco Sundays Unlimited membership", "Mixing Session", "Artist Development Program" and "RAP Program" as they are). ' : 'LANGUAGE: Reply in the language the visitor writes in (English by default). '}${interest ? `The visitor told us they're interested in: ${interest}.` : ''}${page ? ` They are currently on the page: ${page}.` : ''}`;
 }
 
 export const TOOLS = [

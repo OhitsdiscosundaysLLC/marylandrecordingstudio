@@ -145,7 +145,7 @@
     try { if (sessionStorage.getItem('mrs_nudged')) return; sessionStorage.setItem('mrs_nudged', '1'); } catch {}
     nudged = true;
     const n = document.createElement('div');
-    n.className = 'nudge'; n.setAttribute('role', 'status');
+    n.className = 'nudge'; n.setAttribute('role', 'status'); n.setAttribute('data-i18n-scope', '');
     n.innerHTML = `<span class="ai-orb ai-orb--sm" aria-hidden="true"></span><p>${text}</p><div class="nudge__row">${href ? `<a class="btn btn--primary btn--sm" href="${href}" data-track="nudge_click" data-label="${label}">${cta}</a>` : `<button type="button" class="btn btn--primary btn--sm" data-ai-open="chat" data-ai-topic="${topic}" data-nudge-go>${cta}</button>`}<button type="button" class="nudge__x" aria-label="Dismiss">×</button></div>`;
     document.body.append(n);
     requestAnimationFrame(() => n.classList.add('is-in'));

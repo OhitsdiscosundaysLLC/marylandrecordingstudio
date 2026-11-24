@@ -1,0 +1,47 @@
+<!-- {"path":"/release-planner","title":"Free AI Music Release Planner","description":"Plan your next single, EP or album for free: an AI release timeline that works backwards from your release date through recording, mixing, mastering, artwork, distribution and promotion.","scripts":["planner.js"],"bodyClass":"page-tool"} -->
+<section class="page-hero page-hero--compact" data-i18n-scope>
+  <div class="container">
+    <p class="eyebrow">Free tool</p>
+    <h1 class="display-1">Plan your release backwards from the drop date.</h1>
+    <p class="lead">Tell us your release date and where the song is at. You get a realistic timeline for recording, mixing, mastering, artwork, distribution and promotion, with every deadline worked out for you.</p>
+  </div>
+</section>
+<section class="section section--flush-top" data-i18n-scope>
+  <div class="container rp">
+    <form class="form rp__form" data-rp-form novalidate>
+      <div class="form__row">
+        <div class="field"><label for="rp-title">Song or project name</label><input id="rp-title" name="title" maxlength="120" placeholder="e.g. Midnight Drive"></div>
+        <div class="field"><label for="rp-date">Target release date <span aria-hidden="true">*</span></label><input id="rp-date" name="releaseDate" type="date" required><p class="field__err" data-err="releaseDate"></p></div>
+      </div>
+      <div class="form__row">
+        <div class="field"><label for="rp-type">Release type</label><select id="rp-type" name="type"><option value="single">Single</option><option value="ep">EP</option><option value="album">Album</option></select></div>
+        <div class="field"><label for="rp-songs">Number of songs</label><input id="rp-songs" name="songs" type="number" min="1" max="30" value="1" inputmode="numeric"></div>
+      </div>
+      <fieldset class="finder__q rp__q"><legend>Where is it right now?</legend>
+        <div class="finder__opts">
+          <label><input type="radio" name="stage" value="writing" checked><span>Still writing</span></label>
+          <label><input type="radio" name="stage" value="demo"><span>Rough demo</span></label>
+          <label><input type="radio" name="stage" value="recorded"><span>Recorded</span></label>
+          <label><input type="radio" name="stage" value="produced"><span>Produced / edited</span></label>
+          <label><input type="radio" name="stage" value="mixed"><span>Mixed</span></label>
+          <label><input type="radio" name="stage" value="mastered"><span>Mastered</span></label>
+        </div></fieldset>
+      <fieldset class="finder__q rp__q"><legend>What do you want from this release? <span class="optional">(pick any)</span></legend>
+        <div class="finder__opts">
+          <label><input type="checkbox" name="goals" value="streaming"><span>Streaming growth</span></label>
+          <label><input type="checkbox" name="goals" value="playlist"><span>Playlist pitching</span></label>
+          <label><input type="checkbox" name="goals" value="video"><span>Music video</span></label>
+          <label><input type="checkbox" name="goals" value="live"><span>Live show / release party</span></label>
+          <label><input type="checkbox" name="goals" value="press"><span>Press &amp; blogs</span></label>
+          <label><input type="checkbox" name="goals" value="radio"><span>Radio</span></label>
+          <label><input type="checkbox" name="goals" value="fans"><span>Grow my fanbase</span></label>
+          <label><input type="checkbox" name="goals" value="first"><span>It's my first release</span></label>
+        </div></fieldset>
+      <div class="field"><label for="rp-details">Anything else? <span class="optional">(optional)</span></label><textarea id="rp-details" name="details" rows="3" maxlength="800" placeholder="e.g. I produce my own beats, need a feature, budget is tight"></textarea></div>
+      <button class="btn btn--primary btn--lg" data-rp-go>Build my release plan</button>
+      <div class="form__status" role="status" aria-live="polite" data-rp-status></div>
+    </form>
+    <div class="rp__out" data-rp-out hidden aria-live="polite"></div>
+    <aside class="rp__saved" data-rp-saved hidden><h2 class="h3">Your saved plans</h2><ul data-rp-list></ul></aside>
+  </div>
+</section>

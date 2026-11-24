@@ -15,8 +15,8 @@ export default async function handler(req, res) {
   try {
     if (dbConfigured()) conversationId = await rpc('mrs_conversation', { p: { visitor_id: String(b.visitor_id || '').slice(0, 64), channel: 'voice', interest: String(b.interest || '').slice(0, 40), page: String(b.page || '').slice(0, 300), source: String(b.source || '').slice(0, 120) } });
   } catch (e) { console.error('db', e.message); }
-  const instructions = systemPrompt(settings, { channel: 'voice', interest: String(b.interest || '').slice(0, 40), page: String(b.page || '').slice(0, 300) })
-    + `\nVOICE: Start by saying: "Hi, I'm the Disco Sundays AI studio assistant. I'm an AI, and this call isn't recorded as audio, but I keep a text note so the team can follow up. How can I help?" Speak warmly, briefly, in English unless the caller uses another language.`;
+  const instructions = systemPrompt(settings, { channel: 'voice', interest: String(b.interest || '').slice(0, 40), page: String(b.page || '').slice(0, 300), lang: b.lang === 'es' ? 'es' : 'en' })
+    + `\nVOICE: Start by saying: "Hi, I'm the Disco Sundays AI studio assistant. I'm an AI, and this call isn't recorded as audio, but I keep a text note so the team can follow up. How can I help?" Speak warmly and briefly.${b.lang === 'es' ? ' The visitor chose Spanish: greet and speak in Spanish (say you are an AI).' : ' Speak English unless the caller uses another language.'}`;
   try {
     const out = await openai('/realtime/client_secrets', {
       expires_after: { anchor: 'created_at', seconds: 120 },

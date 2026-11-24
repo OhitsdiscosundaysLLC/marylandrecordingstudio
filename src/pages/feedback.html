@@ -1,13 +1,19 @@
-<!-- {"path":"/feedback","title":"Free AI Demo Feedback","description":"Upload your song and get free, specific AI feedback on your mix, vocals and energy in under a minute, from Maryland Recording Studio by Disco Sundays in Hanover, MD.","scripts":["feedback.js"]} -->
-<section class="page-hero page-hero--compact">
+<!-- {"path":"/feedback","title":"Free AI Demo Feedback","description":"Upload your song and get free, specific AI feedback on your mix, vocals and energy in under a minute, from Maryland Recording Studio by Disco Sundays in Hanover, MD.","scripts":["feedback.js","audio-analysis.js","compare.js"]} -->
+<section class="page-hero page-hero--compact" data-i18n-scope>
   <div class="container">
     <p class="eyebrow">Free tool</p>
     <h1 class="display-1">Free AI feedback on your demo.</h1>
-    <p class="lead">Upload a song and our AI engineer listens to a 45-second section and tells you what's working, what to fix and the next step. Free, no account needed.</p>
+    <p class="lead">Upload a song and our AI engineer listens to a 45-second section and tells you what's working, what to fix and the next step. Or compare your mix against a reference track you love. Free, no account needed.</p>
   </div>
 </section>
-<section class="section section--flush-top">
-  <div class="container contact">
+<section class="section section--flush-top" data-i18n-scope>
+  <div class="container">
+    <div class="fb-tabs" role="tablist" aria-label="Choose a tool">
+      <button type="button" role="tab" id="tab-fb" aria-controls="panel-fb" aria-selected="true" data-fb-tab="fb">Feedback on my song</button>
+      <button type="button" role="tab" id="tab-cmp" aria-controls="panel-cmp" aria-selected="false" data-fb-tab="cmp">Compare with a reference</button>
+    </div>
+  </div>
+  <div class="container contact" id="panel-fb" role="tabpanel" aria-labelledby="tab-fb">
     <div class="fb" data-fb>
       <form class="form" data-fb-form>
         <label class="drop" data-fb-drop>
@@ -34,5 +40,28 @@
       <div class="contact-card"><h2 class="h3">How it works</h2><ol class="steps-sm"><li>Pick your song and the section to judge.</li><li>The AI listens and writes notes.</li><li>Get matched with the right next step.</li></ol></div>
       <div class="contact-card"><h2 class="h3">Want a real engineer?</h2><p>Mixing Session: $75 (1 hour)<br>Mastering: $50</p><p><a href="/submit-project">Send us the full project →</a></p></div>
     </aside>
+  </div>
+  <div class="container" id="panel-cmp" role="tabpanel" aria-labelledby="tab-cmp" hidden>
+    <div class="cmp" data-cmp>
+      <form class="form" data-cmp-form novalidate>
+        <div class="cmp__files">
+          <div class="cmp__file">
+            <span class="label">Your mix</span>
+            <label class="drop" data-cmp-drop="mine"><input type="file" accept="audio/*,.wav,.mp3,.m4a,.aif,.aiff,.flac,.ogg" data-cmp-file="mine" aria-label="Choose your mix"><strong data-cmp-name="mine">Choose your mix</strong><span>MP3, WAV, M4A, AIFF or FLAC · up to 80 MB</span></label>
+            <label class="est__ctl" data-cmp-at-wrap="mine" hidden><span>Section to compare <output data-cmp-at="mine">0:00</output></span><input type="range" min="0" max="0" value="0" data-cmp-start="mine"></label>
+          </div>
+          <div class="cmp__file">
+            <span class="label">Reference track</span>
+            <label class="drop" data-cmp-drop="ref"><input type="file" accept="audio/*,.wav,.mp3,.m4a,.aif,.aiff,.flac,.ogg" data-cmp-file="ref" aria-label="Choose a reference track"><strong data-cmp-name="ref">Choose a reference track</strong><span>A released song with the sound you're going for</span></label>
+            <label class="est__ctl" data-cmp-at-wrap="ref" hidden><span>Section to compare <output data-cmp-at="ref">0:00</output></span><input type="range" min="0" max="0" value="0" data-cmp-start="ref"></label>
+          </div>
+        </div>
+        <label class="checkline"><input type="checkbox" name="listen" checked> <span>Also let the AI listen to 30 seconds of each track for listening notes (sent to OpenAI for analysis, not stored).</span></label>
+        <button class="btn btn--primary btn--lg" data-cmp-go disabled>Compare my mix</button>
+        <p class="fb__fine">Loudness, peaks, dynamics, tonal balance, stereo and clipping are measured in your browser. Only the numbers (and, if you allow it, two short clips) are sent for the explanation. Your full files are never uploaded.</p>
+        <div class="form__status" role="status" aria-live="polite" data-cmp-status></div>
+      </form>
+      <div class="cmp__out" data-cmp-out hidden aria-live="polite"></div>
+    </div>
   </div>
 </section>

@@ -325,7 +325,7 @@ function layout({ title, description, pathname, body, scripts = [], jsonld = [],
   const fullTitle = pathname === '/' ? title : `${title} | ${config.siteName}`;
   const img = ogImage || `${SITE_URL}/assets/brand/og-image.jpg`;
   const navItems = NAV.map(([href, label]) => `<li><a href="${href}"${pathname.startsWith(href) ? ' aria-current="page"' : ''}>${label}</a></li>`).join('');
-  const memberMenu = `<li><a href="/members" data-track="ecosystem_click" data-label="members"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5Z"/></svg></span><span><strong>Members area</strong><small>Portal, member sessions, projects</small></span></a></li><li><a href="/submit-project" data-track="ecosystem_click" data-label="submit_project"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M11 16V7.8l-3.3 3.3-1.4-1.4L12 4l5.7 5.7-1.4 1.4L13 7.8V16h-2Zm-6 4v-5h2v3h10v-3h2v5H5Z"/></svg></span><span><strong>Send us your project</strong><small>Upload tracks for mixing or mastering</small></span></a></li><li><a href="/feedback" data-track="ecosystem_click" data-label="feedback"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M3 10h2v4H3v-4Zm4-4h2v12H7V6Zm4-3h2v18h-2V3Zm4 5h2v8h-2V8Zm4 2h2v4h-2v-4Z"/></svg></span><span><strong>Free AI demo feedback</strong><small>Upload a song, get notes in a minute</small></span></a></li>`;
+  const memberMenu = `<li><a href="/members" data-track="ecosystem_click" data-label="members"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5Z"/></svg></span><span><strong>Members area</strong><small>Portal, member sessions, projects</small></span></a></li><li><a href="/submit-project" data-track="ecosystem_click" data-label="submit_project"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M11 16V7.8l-3.3 3.3-1.4-1.4L12 4l5.7 5.7-1.4 1.4L13 7.8V16h-2Zm-6 4v-5h2v3h10v-3h2v5H5Z"/></svg></span><span><strong>Send us your project</strong><small>Upload tracks for mixing or mastering</small></span></a></li><li><a href="/feedback" data-track="ecosystem_click" data-label="feedback"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M3 10h2v4H3v-4Zm4-4h2v12H7V6Zm4-3h2v18h-2V3Zm4 5h2v8h-2V8Zm4 2h2v4h-2v-4Z"/></svg></span><span><strong>Free AI demo feedback</strong><small>Upload a song, get notes in a minute</small></span></a></li><li><a href="/release-planner" data-track="ecosystem_click" data-label="planner"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M7 2v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7Zm12 7v10H5V9h14Zm-8 2v2H7v-2h4Zm6 4v2h-6v-2h6Z"/></svg></span><span><strong>Release planner</strong><small>Plan a release with AI</small></span></a></li><li><a href="/hook-starter" data-track="ecosystem_click" data-label="hook"><span class="menu-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 3v10.6A4 4 0 1 0 14 17V7h4V3h-6Z"/></svg></span><span><strong>Hook &amp; lyric starter</strong><small>Original hooks and song ideas</small></span></a></li>`;
   const ecoMenu = memberMenu + ECO.filter((e) => e.id !== 'studio').map((e) => `<li><a href="${ecoHref(e)}"${ecoExternal(e) ? ' target="_blank" rel="noopener"' : ''} data-track="ecosystem_click" data-label="${e.id}"><span class="menu-icon">${ecoIcon[e.id]}</span><span><strong>${esc(e.name)}</strong><small>${esc(e.kicker)}</small></span>${ecoExternal(e) ? extIcon : ''}</a></li>`).join('');
   return `<!doctype html>
 <html lang="en-US">
@@ -354,13 +354,13 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="manifest" href="/site.webmanifest">
 ${FONT_HEAD}
 <link rel="stylesheet" href="/assets/css/site.css?v=${BUILD_ID}">
-<script>document.documentElement.classList.add('js')</script>
+<script>document.documentElement.classList.add('js');try{var l=new URLSearchParams(location.search).get('lang')||localStorage.getItem('mrs_lang');if(l==='es'){document.documentElement.classList.add('lang-es','i18n-pending');document.documentElement.lang='es';setTimeout(function(){document.documentElement.classList.remove('i18n-pending')},1800)}}catch(e){}</script>
 ${[businessLD, ...jsonld].map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 ${analyticsTags()}
 </head>
 <body class="${bodyClass}">
 <a class="skip-link" href="#main">Skip to content</a>
-<header class="site-header" data-header>
+<header class="site-header" data-i18n-scope data-header>
   <div class="container site-header__inner">
     <a class="brand" href="/" aria-label="${esc(config.siteName)} by Disco Sundays, home">
       ${logo({ size: 'sm', eager: true })}
@@ -373,23 +373,24 @@ ${analyticsTags()}
         </li>
       </ul>
     </nav>
+    <button type="button" class="lang-toggle" data-lang-toggle aria-label="Ver en español" lang="es">ES</button>
     <a class="btn btn--primary btn--sm site-header__cta" href="/book" data-track="book_cta_click" data-label="header">Book now</a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle><span class="sr-only">Open menu</span><span class="menu-toggle__bars" aria-hidden="true"></span></button>
   </div>
 </header>
-<div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
+<div class="mobile-menu" id="mobile-menu" data-i18n-scope data-mobile-menu hidden>
   <a class="btn btn--primary btn--lg btn--block" href="/book" data-track="book_cta_click" data-label="mobile_menu">Book your session</a>
   <nav aria-label="Mobile">
     <ul class="mobile-menu__main"><li><a href="/"${pathname === '/' ? ' aria-current="page"' : ''}>Home</a></li>${navItems}<li><a href="/members"${pathname === '/members' ? ' aria-current="page"' : ''}>Members area</a></li><li><a href="/faq"${pathname === '/faq' ? ' aria-current="page"' : ''}>FAQ</a></li></ul>
     <p class="mobile-menu__h">Explore Disco Sundays</p>
     <ul class="mobile-menu__eco">${ecoMenu}</ul>
   </nav>
-  <div class="mobile-menu__contact"><a href="tel:${config.phoneE164}" data-track="phone_click">${config.phone}</a>${socialLinks()}</div>
+  <div class="mobile-menu__contact"><button type="button" class="lang-toggle lang-toggle--wide" data-lang-toggle aria-label="Ver en español" lang="es">Español</button><a href="tel:${config.phoneE164}" data-track="phone_click">${config.phone}</a>${socialLinks()}</div>
 </div>
 <main id="main" tabindex="-1" data-page="${esc(pathname)}">
 ${body}
 </main>
-<footer class="site-footer">
+<footer class="site-footer" data-i18n-scope>
   <div class="rainbow-rule" aria-hidden="true"></div>
   <div class="container site-footer__top">
     <div class="site-footer__brand">
@@ -405,7 +406,7 @@ ${body}
   <div class="container site-footer__grid">
     <nav aria-label="Studio">
       <h2 class="footer-h">Studio</h2>
-      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/artist-development">Artist Development</a></li><li><a href="/book">Book now</a></li><li><a href="/members">Members area</a></li><li><a href="/submit-project">Send us your project</a></li><li><a href="/feedback">Free AI demo feedback</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
+      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/artist-development">Artist Development</a></li><li><a href="/book">Book now</a></li><li><a href="/members">Members area</a></li><li><a href="/submit-project">Send us your project</a></li><li><a href="/feedback">Free AI demo feedback</a></li><li><a href="/release-planner">Release planner</a></li><li><a href="/hook-starter">Hook &amp; lyric starter</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
     </nav>
     <nav aria-label="Explore Disco Sundays">
       <h2 class="footer-h">Explore Disco Sundays</h2>
@@ -434,8 +435,9 @@ ${body}
   <a class="mini-player__link" href="/radio" aria-label="Open the radio page">Radio</a>
   <button type="button" class="mini-player__close" data-radio-close aria-label="Stop and close the radio player">×</button>
 </div>
-${hideStickyCta ? '' : stickyCta === 'ad' ? `<div class="sticky-cta" data-sticky-cta><a class="btn btn--primary btn--block" href="${config.artistDevelopment.checkoutUrl}" target="_blank" rel="noopener" data-track="ad_checkout_click" data-label="sticky_mobile_ad">Join Artist Development · ${config.artistDevelopment.price}<span class="sr-only"> (opens secure Square checkout)</span></a></div>` : `<div class="sticky-cta" data-sticky-cta><a class="btn btn--primary btn--block" href="/book" data-track="book_cta_click" data-label="sticky_mobile">Book a session</a></div>`}
+${hideStickyCta ? '' : stickyCta === 'ad' ? `<div class="sticky-cta" data-sticky-cta data-i18n-scope><a class="btn btn--primary btn--block" href="${config.artistDevelopment.checkoutUrl}" target="_blank" rel="noopener" data-track="ad_checkout_click" data-label="sticky_mobile_ad">Join Artist Development · ${config.artistDevelopment.price}<span class="sr-only"> (opens secure Square checkout)</span></a></div>` : `<div class="sticky-cta" data-sticky-cta data-i18n-scope><a class="btn btn--primary btn--block" href="/book" data-track="book_cta_click" data-label="sticky_mobile">Book a session</a></div>`}
 <script>window.MRS_RADIO=${JSON.stringify({ stream: config.radio.streamUrl, info: config.radio.liveInfoUrl, name: config.radio.name, tagline: config.radio.tagline })}</script>
+<script src="/assets/js/i18n.js?v=${BUILD_ID}" defer></script>
 <script src="/assets/js/main.js?v=${BUILD_ID}" defer></script>
 <script src="/assets/js/radio.js?v=${BUILD_ID}" defer></script>
 <script src="/assets/js/alive.js?v=${BUILD_ID}" defer></script>
@@ -573,7 +575,7 @@ const tokens = {
   </div>
 </section>`;
   },
-  sessionFinder: () => `<section class="finder reveal" data-finder hidden aria-labelledby="finder-title">
+  sessionFinder: () => `<section class="finder reveal" data-finder data-i18n-scope hidden aria-labelledby="finder-title">
   <div class="finder__head"><span class="ai-orb" aria-hidden="true"></span><div><p class="eyebrow">AI session finder</p><h2 id="finder-title" class="h2">Find your perfect session in 30 seconds.</h2></div></div>
   <form class="finder__form" data-finder-form>
     <fieldset class="finder__q" data-q="goal"><legend>What are you working on?</legend>
@@ -587,7 +589,7 @@ const tokens = {
   </form>
   <div class="finder__result" data-finder-result hidden aria-live="polite"></div>
 </section>`,
-  feedbackCta: () => `<a class="fb-cta reveal" href="/feedback" data-track="ecosystem_click" data-label="feedback_cta"><span class="ai-orb" aria-hidden="true"></span><span><strong>Free AI feedback on your demo</strong><span>Upload a song, get specific mix and performance notes in under a minute.</span></span><span class="fb-cta__go" aria-hidden="true">Try it →</span></a>`,
+  feedbackCta: () => `<a class="fb-cta reveal" data-i18n-scope href="/feedback" data-track="ecosystem_click" data-label="feedback_cta"><span class="ai-orb" aria-hidden="true"></span><span><strong>Free AI feedback on your demo</strong><span>Upload a song, get specific mix and performance notes in under a minute.</span></span><span class="fb-cta__go" aria-hidden="true">Try it →</span></a>`,
   memberSessions: () => `<ul class="member-sessions">${services.filter((s) => s.category === 'member-sessions' && s.slug !== 'visit-studio').map((s) => `<li><a href="/book?service=${s.slug}" data-track="book_cta_click" data-label="members_${s.slug}"><strong>${esc(s.name)}</strong><span>Members only · ${esc(fmtDuration(s.durationMinutes))}</span><span class="member-sessions__go" aria-hidden="true">Book →</span></a></li>`).join('')}</ul>`,
   rewardsUrl: () => ECO.find((e) => e.id === 'rewards').url,
   socialData: () => `<script type="application/json" id="social-data">${JSON.stringify({ instagram: social.instagram, facebook: config.social.facebook.url, instagramProfile: config.social.instagram.url, youtube: config.social.youtube.url, photos: (media.gallery || []).concat(media.studio || []) }).replace(/</g, '\\u003c')}</script>`,

@@ -101,7 +101,7 @@
       const at = +$('[data-fb-start]').value;
       const [{ b64, seconds }, metrics] = await Promise.all([clipWav(at), measure(at).catch(() => null)]);
       const fd = new FormData(e.target); const V = window.mrsVisitor || {};
-      const r = await fetch('/api/ai/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ audio: b64, seconds, metrics, stage: fd.get('stage'), genre: fd.get('genre'), notes: fd.get('notes'), visitor_id: V.vid, source: V.source }) });
+      const r = await fetch('/api/ai/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ audio: b64, seconds, metrics, stage: fd.get('stage'), genre: fd.get('genre'), notes: fd.get('notes'), visitor_id: V.vid, source: V.source, lang: window.mrsLang ? window.mrsLang() : 'en' }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || 'Feedback failed');
       const f = j.feedback; status('');

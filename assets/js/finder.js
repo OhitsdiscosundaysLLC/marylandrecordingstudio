@@ -28,7 +28,7 @@
       out.hidden = false; out.innerHTML = '<div class="finder__loading"><i></i><i></i><i></i></div>';
       try {
         const V = window.mrsVisitor || {};
-        const r = await fetch('/api/ai/plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...Object.fromEntries(fd.entries()), visitor_id: V.vid, source: V.source, page: location.pathname }) });
+        const r = await fetch('/api/ai/plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...Object.fromEntries(fd.entries()), visitor_id: V.vid, source: V.source, lang: window.mrsLang ? window.mrsLang() : 'en', page: location.pathname }) });
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || 'Could not build a plan');
         const p = j.plan;

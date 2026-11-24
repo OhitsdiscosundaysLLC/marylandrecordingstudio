@@ -29,7 +29,7 @@ export default async function handler(req, res) {
   } catch (e) { console.error('db', e.message); }
   await logMessage(conversationId, 'user', last.content, { page: clean(b.page, 300) });
   try {
-    const out = await runAssistant({ settings, history, channel: 'chat', conversationId, interest: clean(b.interest, 40), page: clean(b.page, 300) });
+    const out = await runAssistant({ settings, history, channel: 'chat', conversationId, interest: clean(b.interest, 40), page: clean(b.page, 300), lang: b.lang === 'es' ? 'es' : 'en' });
     await logMessage(conversationId, 'assistant', out.reply, { ui: out.ui.map((u) => ({ type: u.type, cards: u.cards?.map((c) => c.slug) })) });
     send(res, 200, { conversation_id: conversationId, reply: out.reply, ui: out.ui });
   } catch (e) {

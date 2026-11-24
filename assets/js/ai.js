@@ -11,7 +11,7 @@
   const save = () => { try { sessionStorage.setItem('mrs_ai', JSON.stringify({ messages: state.messages.slice(-30), conversation: state.conversation })); } catch {} };
 
   const panel = document.createElement('div');
-  panel.className = 'ai-panel'; panel.hidden = true;
+  panel.className = 'ai-panel'; panel.hidden = true; panel.setAttribute('data-i18n-scope', '');
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'false'); panel.setAttribute('aria-labelledby', 'ai-title');
   panel.innerHTML = `
   <div class="ai-panel__head">
@@ -64,7 +64,7 @@
     try {
       const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
         messages: state.messages.map(({ role, content }) => ({ role, content })), conversation_id: state.conversation,
-        visitor_id: V.vid, source: V.source, interest: state.interest, page: location.pathname,
+        visitor_id: V.vid, source: V.source, interest: state.interest, page: location.pathname, lang: window.mrsLang ? window.mrsLang() : 'en',
       }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) state.messages.push({ role: 'assistant', content: j.error || 'Sorry, I could not answer just now.', ui: j.ui || [] });
@@ -86,7 +86,7 @@
     try {
       mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
       vstatus('Connecting to the AI assistant…');
-      const tok = await fetch('/api/ai/realtime', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ visitor_id: V.vid, source: V.source, interest: state.interest, page: location.pathname }) });
+      const tok = await fetch('/api/ai/realtime', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ visitor_id: V.vid, source: V.source, interest: state.interest, page: location.pathname, lang: window.mrsLang ? window.mrsLang() : 'en' }) });
       const t = await tok.json();
       if (!tok.ok) throw new Error(t.error || 'Voice unavailable');
       voiceConv = t.conversation_id;
