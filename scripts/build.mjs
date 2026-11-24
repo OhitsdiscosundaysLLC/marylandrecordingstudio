@@ -368,7 +368,7 @@ ${analyticsTags()}
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" data-i18n-scope data-header>
   <div class="container site-header__inner">
-    <a class="brand" href="/" aria-label="${esc(config.siteName)} by Disco Sundays, home">
+    <a class="brand" href="/">
       ${logo({ size: 'sm', eager: true })}
       <span class="brand__text"><span class="brand__name">Maryland Recording Studio</span><span class="brand__sub">Hanover, MD · Est. by Disco Sundays</span></span>
     </a>
