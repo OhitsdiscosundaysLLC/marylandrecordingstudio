@@ -246,8 +246,8 @@ function socialLinks(className = 'social-links') {
 
 // ---------- layout ----------
 const NAV = [
-  ['/studio', 'The Studio'], ['/services', 'Services'], ['/gallery', 'Gallery'],
-  ['/radio', 'Radio'], ['/about', 'About'], ['/contact', 'Contact'],
+  ['/studio', 'The Studio'], ['/services', 'Services'], ['/artist-development', 'Artist Development'],
+  ['/gallery', 'Gallery'], ['/about', 'About'], ['/contact', 'Contact'],
 ];
 const ECO = config.ecosystem;
 const extIcon = '<svg class="ext" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
@@ -304,9 +304,11 @@ const businessLD = {
   logo: `${SITE_URL}/assets/brand/icon-512.png`,
   telephone: config.phoneE164,
   email: config.email,
-  address: { '@type': 'PostalAddress', addressLocality: config.locality, addressRegion: config.region, postalCode: config.postalCode, addressCountry: config.country },
+  address: { '@type': 'PostalAddress', ...(config.streetAddress ? { streetAddress: config.streetAddress } : {}), addressLocality: config.locality, addressRegion: config.region, postalCode: config.postalCode, addressCountry: config.country },
+  ...(config.geo ? { geo: { '@type': 'GeoCoordinates', latitude: config.geo.lat, longitude: config.geo.lng }, hasMap: config.google?.mapsUrl } : {}),
+  parentOrganization: { '@type': 'Organization', name: config.brand, url: 'https://discosundays.com/' },
   areaServed: config.areaServed.map((n) => ({ '@type': 'Place', name: n })),
-  sameAs: [...Object.values(config.social).map((s) => s.url), ...ECO.filter(ecoExternal).map((e) => e.url)],
+  sameAs: [...Object.values(config.social).map((s) => s.url), ...(config.google?.cid ? [`https://maps.google.com/?cid=${config.google.cid}`] : []), ...ECO.filter(ecoExternal).map((e) => e.url)],
   potentialAction: { '@type': 'ReserveAction', target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/book`, actionPlatform: ['http://schema.org/DesktopWebPlatform', 'http://schema.org/MobileWebPlatform'] }, result: { '@type': 'Reservation', name: 'Studio session' } },
 };
 
@@ -318,7 +320,7 @@ function analyticsTags() {
   return out;
 }
 
-function layout({ title, description, pathname, body, scripts = [], jsonld = [], bodyClass = '', ogImage, noindex = false, hideStickyCta = false }) {
+function layout({ title, description, pathname, body, scripts = [], jsonld = [], bodyClass = '', ogImage, noindex = false, hideStickyCta = false, stickyCta = '' }) {
   const canonical = SITE_URL + (pathname === '/' ? '/' : pathname);
   const fullTitle = pathname === '/' ? title : `${title} | ${config.siteName}`;
   const img = ogImage || `${SITE_URL}/assets/brand/og-image.jpg`;
@@ -403,7 +405,7 @@ ${body}
   <div class="container site-footer__grid">
     <nav aria-label="Studio">
       <h2 class="footer-h">Studio</h2>
-      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/book">Book now</a></li><li><a href="/members">Members area</a></li><li><a href="/submit-project">Send us your project</a></li><li><a href="/feedback">Free AI demo feedback</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
+      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/artist-development">Artist Development</a></li><li><a href="/book">Book now</a></li><li><a href="/members">Members area</a></li><li><a href="/submit-project">Send us your project</a></li><li><a href="/feedback">Free AI demo feedback</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
     </nav>
     <nav aria-label="Explore Disco Sundays">
       <h2 class="footer-h">Explore Disco Sundays</h2>
@@ -432,7 +434,7 @@ ${body}
   <a class="mini-player__link" href="/radio" aria-label="Open the radio page">Radio</a>
   <button type="button" class="mini-player__close" data-radio-close aria-label="Stop and close the radio player">×</button>
 </div>
-${hideStickyCta ? '' : `<div class="sticky-cta" data-sticky-cta><a class="btn btn--primary btn--block" href="/book" data-track="book_cta_click" data-label="sticky_mobile">Book a session</a></div>`}
+${hideStickyCta ? '' : stickyCta === 'ad' ? `<div class="sticky-cta" data-sticky-cta><a class="btn btn--primary btn--block" href="${config.artistDevelopment.checkoutUrl}" target="_blank" rel="noopener" data-track="ad_checkout_click" data-label="sticky_mobile_ad">Join Artist Development · ${config.artistDevelopment.price}<span class="sr-only"> (opens secure Square checkout)</span></a></div>` : `<div class="sticky-cta" data-sticky-cta><a class="btn btn--primary btn--block" href="/book" data-track="book_cta_click" data-label="sticky_mobile">Book a session</a></div>`}
 <script>window.MRS_RADIO=${JSON.stringify({ stream: config.radio.streamUrl, info: config.radio.liveInfoUrl, name: config.radio.name, tagline: config.radio.tagline })}</script>
 <script src="/assets/js/main.js?v=${BUILD_ID}" defer></script>
 <script src="/assets/js/radio.js?v=${BUILD_ID}" defer></script>
@@ -492,7 +494,7 @@ function showcaseRap() {
     <div class="rap-show__head reveal">
       <p class="rap-show__kicker">Create. Record. Perform. Grow.</p>
       <h2 id="sc-rap" class="rap-show__title">RAP Program</h2>
-      <p class="lead">A music production and artist development program that helps young artists turn talent into professionally recorded music, creative projects and performance opportunities. Your first hour is free (a one-time introductory session).</p>
+      <p class="lead">A music production program that helps young artists turn talent into professionally recorded music, creative projects and performance opportunities. It has its own packages and registration, separate from our Artist Development Program. Your first hour is free (a one-time introductory session).</p>
       <div class="btn-row"><a class="btn btn--rap btn--lg" href="${url}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="rap_showcase">Explore RAP Program<span class="sr-only"> (opens in a new tab)</span></a><a class="btn btn--ghost btn--lg" href="${url}packages" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="rap_packages">View packages<span class="sr-only"> (opens in a new tab)</span></a></div>
     </div>
     <div class="rap-show__stage reveal" aria-label="Screens from the RAP Program website">
@@ -529,6 +531,26 @@ const tokens = {
       <span class="svc-row__go" aria-hidden="true">→</span></a></li>`).join('')}</ol>`,
   quickBook: () => [['unlimited-membership', 'Unlimited membership'], ['recording-session-1-hour', 'Recording session'], ['mixing', 'Mixing']].map(([slug, label]) => [services.find((s) => s.slug === slug), label]).filter(([s]) => s).map(([s, label]) => `<li><a href="${s.purchase ? s.purchase.url : '/book?service=' + s.slug}"${s.purchase ? ' target="_blank" rel="noopener" data-track="membership_checkout_click"' : ' data-track="book_cta_click"'} data-label="hero_quick_${s.slug}"><span class="qb__name">${esc(label)}</span><span class="qb__meta">${esc(priceLine(s))}${s.purchase ? ' · no booking needed' : ''}</span><span class="qb__go" aria-hidden="true">→</span></a></li>`).join(''),
   primaryTrio,
+  adCheckoutUrl: () => config.artistDevelopment.checkoutUrl,
+  adPrice: () => config.artistDevelopment.price,
+  faqAD: () => faqList((faqs.find((g) => g.group === 'Artist Development') || { items: [] }).items),
+  adReview: () => `<section class="section ad-quote" aria-label="What artists say"><div class="container narrow reveal"><figure class="ad-quote__fig"><blockquote><p>“Very professional delivery and awesome Artist Development Program. I’m always learning something new from Melvin and Xavier.”</p></blockquote><figcaption>Dara Kamilah · <a href="${config.google.mapsUrl}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="ad_review_google">Google review<span class="sr-only"> (opens Google Maps in a new tab)</span></a></figcaption></figure></div></section>`,
+  spotlights: () => {
+    const list = (media.spotlights || []).filter((x) => x.approved === true && (x.video || x.image));
+    if (!list.length) return '';
+    return `<section class="section spot" aria-labelledby="spot-title"><div class="container"><div class="section-head reveal"><p class="eyebrow">Artist spotlights</p><h2 id="spot-title" class="display-2">Made with Disco Sundays.</h2></div><div class="spot__row">${list.map((x) => `<figure class="spot__item reveal" data-ad-zoom>${x.video ? `<video muted loop playsinline preload="none" ${x.image ? `poster="${esc(x.image)}"` : ''} data-spot-video aria-label="${esc(x.alt || x.artist)}"><source src="${esc(x.video)}" type="video/mp4"></video>` : picture({ src: x.image, alt: x.alt || x.artist }, { sizes: '(min-width: 900px) 33vw, 90vw' })}<figcaption><strong>${esc(x.artist)}</strong>${x.caption ? `<span>${esc(x.caption)}</span>` : ''}</figcaption></figure>`).join('')}</div></div></section>`;
+  },
+  adFeature: () => `<section class="section ad-feature" data-anim aria-labelledby="adf-title">
+  <div class="container ad-feature__grid">
+    <div class="ad-feature__visual reveal" aria-hidden="true"><div class="ad-hero__lens ad-hero__lens--sm" data-ad-zoom><div class="ad-hero__rings"><i></i><i></i><i></i><i></i></div><div class="ad-hero__words"><span>Logic Pro</span><span>GarageBand</span><span>MIDI</span><span>Production</span><span>Mentorship</span></div></div></div>
+    <div class="ad-feature__copy reveal">
+      <p class="eyebrow">New · Artist Development Program</p>
+      <h2 id="adf-title" class="display-2">Learn the craft behind <em>the record.</em></h2>
+      <p class="lead">Mentorship and hands-on production skills: music production, Logic Pro and GarageBand, MIDI equipment and recording techniques, with creative guidance from the Disco Sundays team.</p>
+      <div class="btn-row"><a class="btn btn--primary btn--lg" href="/artist-development" data-track="ecosystem_click" data-label="home_ad">Explore Artist Development</a><a class="btn btn--ghost btn--lg" href="${config.artistDevelopment.checkoutUrl}" target="_blank" rel="noopener" data-track="ad_checkout_click" data-label="home_ad_join">Join · ${config.artistDevelopment.price}<span class="sr-only"> (opens secure Square checkout)</span></a></div>
+    </div>
+  </div>
+</section>`,
   estimator: () => {
     const bySlug = (x) => services.find((s) => s.slug === x);
     const m = bySlug('unlimited-membership'), r1 = bySlug('recording-session-1-hour'), mix = bySlug('mixing'), mas = bySlug('mastering');
@@ -574,7 +596,7 @@ const tokens = {
   partners: () => `<section class="partners" aria-labelledby="partners-title"><div class="container"><h2 id="partners-title" class="partners__h">${esc(config.partners.heading)}</h2><ul class="partners__list">${config.partners.logos.map((l) => `<li class="partner" style="--pbg:${l.bg}"><img src="${l.src240 || l.src}"${l.src240 ? ` srcset="${l.src240} ${l.src240.includes('-160') ? 160 : 240}w, ${l.src} ${l.w}w" sizes="(min-width: 1024px) 140px, (min-width: 480px) 28vw, 40vw"` : ''} alt="${esc(l.name)}" width="${l.w}" height="${l.h}" loading="lazy" decoding="async"></li>`).join('')}</ul></div></section>`,
   rapProgram: () => { const r = ECO.find((e) => e.id === 'rap'); return `<section class="rap" aria-labelledby="rap-title"><div class="container rap__grid">
     <div class="rap__copy reveal"><p class="eyebrow">RAP Program</p><h2 id="rap-title" class="display-2">Create. Record. <em>Perform. Grow.</em></h2>
-      <p class="lead">A music production and artist development program that helps young artists turn talent into professionally recorded music, creative projects and performance opportunities.</p>
+      <p class="lead">A music production program that helps young artists turn talent into professionally recorded music, creative projects and performance opportunities. It has its own packages and registration, separate from our Artist Development Program.</p>
       <div class="btn-row"><a class="btn btn--primary btn--lg" href="${r.url}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="rap_home">Explore the RAP Program<span class="sr-only"> (opens in a new tab)</span></a></div></div>
     <ol class="rap__steps reveal"><li><span>01</span><strong>Register</strong><p>Tell us about your musical goals.</p></li><li><span>02</span><strong>Free first hour</strong><p>A one-time introductory session to explore your talent.</p></li><li><span>03</span><strong>Choose a package</strong><p>Single, EP, LP, Star Pack or Superstar.</p></li><li><span>04</span><strong>Create &amp; release</strong><p>Develop, record and release with the RAP team.</p></li></ol>
   </div></section>`; },
@@ -648,6 +670,13 @@ for (const f of pageFiles) {
   const body = render(raw.slice(m[0].length));
   const jsonld = [];
   if (meta.faqSchema) jsonld.push({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.flatMap((g) => g.items).map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: x.a.join(' ').replace(/<[^>]+>/g, '') } })) });
+  if (meta.schema === 'artistDevelopment') {
+    const ad = config.artistDevelopment;
+    const adFaq = (faqs.find((g) => g.group === 'Artist Development') || { items: [] }).items;
+    jsonld.push({ '@context': 'https://schema.org', '@type': 'Service', '@id': `${SITE_URL}/artist-development#service`, name: ad.name, serviceType: 'Artist development and music production mentorship', description: 'Mentorship, creative guidance and practical music production education: music production, Logic Pro, GarageBand, MIDI equipment and recording and production techniques.', provider: { '@id': `${SITE_URL}/#business` }, areaServed: config.areaServed.map((n) => ({ '@type': 'Place', name: n })), url: `${SITE_URL}/artist-development`, offers: { '@type': 'Offer', name: ad.checkoutName, price: ad.amount.toFixed(2), priceCurrency: 'USD', url: ad.checkoutUrl, availability: 'https://schema.org/InStock' } });
+    jsonld.push({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: adFaq.map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: x.a.join(' ').replace(/<[^>]+>/g, '') } })) });
+    jsonld.push({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` }, { '@type': 'ListItem', position: 2, name: 'Artist Development', item: `${SITE_URL}/artist-development` }] });
+  }
   if (meta.path === '/services') jsonld.push({ '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: services.map((s, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE_URL}/services/${s.slug}`, name: s.name })) });
   const html = layout({ ...meta, pathname: meta.path, body, jsonld });
   if (meta.path === '/404') await writeFile(path.join(dist, '404.html'), html);

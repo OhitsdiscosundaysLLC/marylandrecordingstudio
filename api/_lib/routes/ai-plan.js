@@ -17,7 +17,7 @@ function baseline({ goal, freq }) {
     master: ['mastering', 'submit-project'],
     podcast: ['video-podcasting', heavy ? 'unlimited-membership' : 'visit-studio'],
     voiceover: ['voice-over', 'visit-studio'],
-    develop: ['crash-test-artist-evaluation', '1-hour-artist-development-session', heavy ? 'unlimited-membership' : 'visit-studio'],
+    develop: ['artist-development', 'crash-test-artist-evaluation', heavy ? 'unlimited-membership' : 'release-planner'],
   };
   return map[goal] || ['visit-studio', 'recording-session-1-hour'];
 }
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       const out = await openai('/chat/completions', {
         model: settings.ai.model || 'gpt-4o-mini', temperature: 0.4, response_format: { type: 'json_object' }, max_tokens: 500,
         messages: [
-          { role: 'system', content: `You recommend services for Maryland Recording Studio by Disco Sundays (Hanover, MD). Use ONLY these services and prices; never invent prices, discounts, availability or outcomes:\n${list}\nAlso available: submit-project (free page to upload files for mixing/mastering), visit-studio (free 30-min visit).\nMembership: $200/month + MD tax, 24/7 access up to 4 hrs/day, A&R review, help booking shows; pays off at about 4+ studio hours a month vs $60/hour. Do not recommend members-only sessions to non-members. Members still book their sessions in Square after joining (don't claim no scheduling).\nReturn JSON: {"headline": short personal headline (max 9 words), "summary": 1-2 sentences why, "steps": [3 short action steps], "slugs": [2-3 slugs from the list, best first], "estimate": ""} (leave estimate empty; it is calculated separately). Friendly, confident, no hype, no fake urgency.` },
+          { role: 'system', content: `You recommend services for Maryland Recording Studio by Disco Sundays (Hanover, MD). Use ONLY these services and prices; never invent prices, discounts, availability or outcomes:\n${list}\nAlso available: submit-project (free page to upload files for mixing/mastering), visit-studio (free 30-min visit), artist-development (Artist Development Program, $100: mentorship, production, Logic Pro, GarageBand, MIDI, recording techniques; separate from membership and from the RAP Program), release-planner (free AI release timeline), hook-starter (free AI songwriting ideas). Do not recommend members-only sessions (1/2 hour artist development session, course training) to non-members.\nMembership: $200/month + MD tax, 24/7 access up to 4 hrs/day, A&R review, help booking shows; pays off at about 4+ studio hours a month vs $60/hour. Do not recommend members-only sessions to non-members. Members still book their sessions in Square after joining (don't claim no scheduling).\nReturn JSON: {"headline": short personal headline (max 9 words), "summary": 1-2 sentences why, "steps": [3 short action steps], "slugs": [2-3 slugs from the list, best first], "estimate": ""} (leave estimate empty; it is calculated separately). Friendly, confident, no hype, no fake urgency.` },
           { role: 'user', content: `Goal: ${GOALS[goal]}. How often: ${FREQ[freq]}. Stage: ${STAGE[stage]}. ${note ? 'Extra: ' + note : ''}` },
         ],
       });

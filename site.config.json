@@ -79,9 +79,9 @@
     {
       "id": "rap",
       "name": "RAP Program",
-      "kicker": "Artist development",
+      "kicker": "Youth music program",
       "url": "https://disco-rap-flow.base44.app/",
-      "description": "Create. Record. Perform. Grow. A production and artist development program for young artists, starting with a free one-hour introductory session.",
+      "description": "Create. Record. Perform. Grow. A music production program for young artists with its own packages, starting with a free one-hour introductory session.",
       "cta": "View the program"
     },
     {
@@ -153,5 +153,27 @@
     "period": "month",
     "checkoutUrl": "https://square.link/u/rJp640Zd",
     "serviceId": "VHW4XWH3IKLBXRJUNNBC37MQ"
+  },
+  "artistDevelopment": {
+    "name": "Artist Development Program",
+    "checkoutName": "Artist Development Plan",
+    "price": "$100",
+    "amount": 100,
+    "checkoutUrl": "https://checkout.square.site/merchant/MLY8PKVN9PH8E/checkout/54URAM24X2QNNBYBC73FZVJ7",
+    "path": "/artist-development",
+    "verified": "2026-11-24: Square checkout shows 'Artist Development Plan', $100.00; billing period not shown before checkout."
+  },
+  "google": {
+    "placeId": "ChIJwyX8yQfht4kRJ1wLAMJ64vI",
+    "cid": "17501686075558157351",
+    "mapsUrl": "https://maps.app.goo.gl/mYL9zgRThxWeSNHd9",
+    "reviewsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJwyX8yQfht4kRJ1wLAMJ64vI",
+    "writeReviewUrl": "https://search.google.com/local/writereview?placeid=ChIJwyX8yQfht4kRJ1wLAMJ64vI",
+    "name": "Disco Sundays, LLC"
+  },
+  "streetAddress": "7661 Arundel Mills Blvd PMB 1033",
+  "geo": {
+    "lat": 39.1516905,
+    "lng": -76.7283312
   }
 }

@@ -41,6 +41,11 @@ export function systemPrompt(settings, { channel = 'chat', interest = '', page =
 
 GOAL: help each visitor find the right service and get booked or joined, by being genuinely helpful (never pushy). Ask one short question at a time to understand what they want to achieve (e.g. record vocals over a beat, need production help, mixing a finished recording, recording often enough that membership saves money). Then recommend specific services. EVERY time you recommend or mention a specific service they could book or join, also call show_booking_options with its slug(s) so they get tappable Book/Join buttons (never paste links in text). The buttons appear right under your message, so never ask "would you like me to show you the options?"; just say the buttons are below.
 
+THREE SEPARATE PROGRAMS — never merge or rename them:
+- ARTIST DEVELOPMENT PROGRAM (slug 'artist-development' for the page, 'artist-development-join' for checkout): Disco Sundays mentorship and practical music education: music production, Logic Pro, GarageBand, MIDI equipment, recording and production techniques, creative guidance and community. "Artist Development Plan" is $100 via Square checkout (billing details shown at checkout). For beginners and growing artists/producers.
+- UNLIMITED MEMBERSHIP: studio access (below). Members can book 1/2-hour artist development sessions and 2-hour course training as member sessions, but the membership is NOT the Artist Development Program.
+- RAP PROGRAM (slug 'rap-program'): a completely separate music production program for young artists with its own packages (Single $125, EP $200, LP $300, Star Pack $500, Superstar Bonus $750) and a free one-time introductory hour; registration on its own website. Do not call it Artist Development.
+FREE TOOLS: 'release-planner' (AI release timeline), 'hook-starter' (original hook and lyric ideas), 'feedback' (AI demo feedback, includes mix vs reference comparison).
 THE THREE MAIN WAYS IN (recommend these first when they fit):
 1. Disco Sundays Unlimited membership: $200/month (plus Maryland sales tax at checkout). 24/7 studio access, up to 4 hours a day, no contracts, music uploaded for A&R review, help booking shows, one location. Joining is a checkout payment: NO appointment or 4-hour booking is needed. Members then book member sessions.
 2. Recording: 1 Hour Session $60, 2 Hour Session $120, 3 Hour Session $180, booked in Square.
@@ -98,6 +103,11 @@ export const TOOLS = [
 const PAGES = {
   'submit-project': { slug: 'submit-project', name: 'Send us your project', price: 'Upload files for mixing or mastering', type: 'page', label: 'Upload files', url: '/submit-project', external: false, page: '/submit-project' },
   feedback: { slug: 'feedback', name: 'Free AI demo feedback', price: 'Free · notes in about a minute', type: 'page', label: 'Try it', url: '/feedback', external: false, page: '/feedback' },
+  'artist-development': { slug: 'artist-development', name: 'Artist Development Program', price: '$100 · mentorship & production education', type: 'page', label: 'See the program', url: '/artist-development', external: false, page: '/artist-development' },
+  'artist-development-join': { slug: 'artist-development-join', name: 'Join Artist Development', price: '$100 · secure Square checkout', type: 'purchase', label: 'Join now', url: 'https://checkout.square.site/merchant/MLY8PKVN9PH8E/checkout/54URAM24X2QNNBYBC73FZVJ7', external: true, page: '/artist-development' },
+  'rap-program': { slug: 'rap-program', name: 'RAP Program (separate youth program)', price: 'Packages from $125 · first hour free', type: 'page', label: 'Visit RAP Program', url: 'https://disco-rap-flow.base44.app/', external: true, page: 'https://disco-rap-flow.base44.app/' },
+  'release-planner': { slug: 'release-planner', name: 'AI release planner', price: 'Free · timeline back from your release date', type: 'page', label: 'Plan my release', url: '/release-planner', external: false, page: '/release-planner' },
+  'hook-starter': { slug: 'hook-starter', name: 'AI hook & lyric starter', price: 'Free · original song ideas', type: 'page', label: 'Start writing', url: '/hook-starter', external: false, page: '/hook-starter' },
   members: { slug: 'members', name: 'Members area', price: 'Portal, member sessions, help', type: 'page', label: 'Open', url: '/members', external: false, page: '/members' },
   rewards: { slug: 'rewards', name: 'Disco Rewards (customer portal)', price: 'Sign in, points and rewards', type: 'page', label: 'Open portal', url: 'https://disco-sundaysllc-club.base44.app/', external: true, page: 'https://disco-sundaysllc-club.base44.app/' },
 };

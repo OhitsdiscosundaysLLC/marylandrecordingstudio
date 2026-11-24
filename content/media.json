@@ -6,5 +6,7 @@
     "alt": "Inside the Disco Sundays recording studio in Hanover, Maryland"
   },
   "studio": [],
-  "gallery": []
+  "gallery": [],
+  "spotlights": [],
+  "_spotlightsHelp": "Add approved artist media only: {artist, caption, image or video (path under /assets/), alt, approved: true}. Entries without approved:true are never shown."
 }

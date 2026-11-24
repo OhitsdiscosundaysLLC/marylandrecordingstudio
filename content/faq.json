@@ -126,12 +126,70 @@
         "services": [
           "membership"
         ]
+      },
+      {
+        "q": "Who are the memberships for?",
+        "a": [
+          "Musicians, producers, DJs and creative entrepreneurs who want to grow their skills and careers through structured courses, community support and practical projects."
+        ]
       }
     ]
   },
   {
-    "group": "Artist development",
+    "group": "Artist Development",
     "items": [
+      {
+        "q": "What is the Artist Development Program?",
+        "a": [
+          "The Disco Sundays Artist Development Program is mentorship and practical music education for artists and producers who want to grow. You explore music production, learn to work in Logic Pro and GarageBand, understand MIDI equipment, and improve your recording and production techniques, with creative guidance and a community around you.",
+          "<a href=\"/artist-development\">See the Artist Development Program</a>."
+        ],
+        "services": [
+          "artist-development",
+          "development"
+        ]
+      },
+      {
+        "q": "How much is the Artist Development Program?",
+        "a": [
+          "The Artist Development Plan is $100 through our secure Square checkout. Any tax and the final total are shown by Square before you pay. <a href=\"/artist-development\">Join the program</a>."
+        ],
+        "services": [
+          "artist-development",
+          "development"
+        ]
+      },
+      {
+        "q": "Is the Artist Development Program the same as the RAP Program?",
+        "a": [
+          "No. They're two separate Disco Sundays programs. Artist Development is mentorship and production education for artists and producers of any level. The RAP Program is its own music production program for young artists, with its own packages and registration on the <a href=\"https://disco-rap-flow.base44.app/\" target=\"_blank\" rel=\"noopener\">RAP Program website</a>."
+        ],
+        "services": [
+          "artist-development",
+          "development"
+        ]
+      },
+      {
+        "q": "Does the Unlimited membership include artist development?",
+        "a": [
+          "Unlimited membership is studio access: 24/7, up to 4 hours a day, with A&amp;R review and help booking shows. Members can also book 1 and 2 hour artist development sessions and 2 hour course training sessions as member sessions. The Artist Development Program is a separate offering with its own checkout, so you can join either one or both."
+        ],
+        "services": [
+          "artist-development",
+          "development",
+          "membership"
+        ]
+      },
+      {
+        "q": "Do I need experience to join Artist Development?",
+        "a": [
+          "No. The program is built for artists who are just starting out as well as those looking to grow. If you'd like an honest assessment first, the one-hour <a href=\"/services/crash-test-artist-evaluation\">Crash Test</a> evaluates your sound, performance and direction and maps out your next steps."
+        ],
+        "services": [
+          "artist-development",
+          "development"
+        ]
+      },
       {
         "q": "What is the Disco Sundays Crash Test?",
         "a": [
@@ -141,12 +199,6 @@
         "services": [
           "hanover-md",
           "crash-test-artist-evaluation"
-        ]
-      },
-      {
-        "q": "Who are the memberships for?",
-        "a": [
-          "Musicians, producers, DJs and creative entrepreneurs who want to grow their skills and careers through structured courses, community support and practical projects."
         ]
       }
     ]

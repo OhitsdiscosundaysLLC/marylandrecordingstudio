@@ -7,7 +7,7 @@
   // ---- Analytics: one function for every provider; always pushes to dataLayer ----
   window.dataLayer = window.dataLayer || [];
   // First-party analytics for the private dashboard: anonymous random IDs, no cookies, no personal data.
-  const SERVER = new Set(['page_view', 'book_cta_click', 'square_booking_visit', 'membership_checkout_click', 'interest_select', 'ai_open', 'voice_start', 'phone_click', 'email_click', 'whatsapp_click', 'radio_play', 'ecosystem_click', 'contact_submit', 'exp_view', 'nudge_shown', 'nudge_click', 'estimator_use', 'quiz_start', 'feedback_start']);
+  const SERVER = new Set(['page_view', 'book_cta_click', 'square_booking_visit', 'membership_checkout_click', 'ad_checkout_click', 'interest_select', 'ai_open', 'voice_start', 'phone_click', 'email_click', 'whatsapp_click', 'radio_play', 'ecosystem_click', 'contact_submit', 'exp_view', 'nudge_shown', 'nudge_click', 'estimator_use', 'quiz_start', 'feedback_start']);
   const rid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
   const store = (s, k) => { try { let v = s.getItem(k); if (!v) { v = rid(); s.setItem(k, v); } return v; } catch { return ''; } };
   const visitorId = store(localStorage, 'mrs_vid'); const sid = store(sessionStorage, 'mrs_sid');
