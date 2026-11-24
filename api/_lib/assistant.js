@@ -24,18 +24,19 @@ export async function runAssistant({ settings, history, channel = 'chat', conver
   if (!ctx.ui.some((u) => u.type === 'booking' || u.type === 'handoff')) {
     const t = reply.toLowerCase(); const slugs = [];
     if (/artist development/.test(t) && !/session/.test(t.split('artist development')[1]?.slice(0, 12) || '')) slugs.push('artist-development');
-    if (/rap program/.test(t)) slugs.push('rap-program');
+    else if (/desarrollo art[ií]stico/.test(t)) slugs.push('artist-development');
+    if (/rap program|programa (de )?rap/.test(t)) slugs.push('rap-program');
     if (/release plan|planificador|plan de lanzamiento/.test(t)) slugs.push('release-planner');
-    if (/\bhooks?\b.*(starter|idea)|lyric/.test(t)) slugs.push('hook-starter');
+    if (/\bhooks?\b.*(starter|idea)|lyric|letras? de canci/.test(t)) slugs.push('hook-starter');
     const member = /(as a|existing|already a) member|member session|sign(ing)? in with your username/.test(t);
     if (member) slugs.push('1-hour-membership-session', '2-hour-membership-session');
     else if (/membership|unlimited|membres[ií]a/.test(t)) slugs.push('unlimited-membership');
-    if (!member && /recording session|record (a|your)|\$60|1 hour session|hour session/.test(t)) slugs.push('recording-session-1-hour');
+    if (!member && /recording session|record (a|your)|\$60|1 hour session|hour session|sesi[oó]n de grabaci/.test(t)) slugs.push('recording-session-1-hour');
     if (/mixing|mezcla/.test(t)) slugs.push('mixing');
     if (/mastering|masterizaci/.test(t)) slugs.push('mastering');
     if (/podcast/.test(t)) slugs.push('video-podcasting');
     if (/voice-?over/.test(t)) slugs.push('voice-over');
-    if (/visit the studio|studio visit|visit first|free visit/.test(t)) slugs.push('visit-studio');
+    if (/visit the studio|studio visit|visit first|free visit|visitar el estudio/.test(t)) slugs.push('visit-studio');
     if (/upload|send (us )?(your|the) (files|stems|project)/.test(t)) slugs.push('submit-project');
     const cards = bookingCards(slugs);
     if (cards.length) ctx.ui.push({ type: 'booking', reason: '', cards });
