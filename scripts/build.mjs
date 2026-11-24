@@ -245,6 +245,12 @@ function socialLinks(className = 'social-links') {
 }
 
 // ---------- layout ----------
+const COST_FAQ = [
+  { q: 'How much is studio time per hour at Disco Sundays?', a: ['Recording is $60 an hour, with 1, 2 and 3 hour sessions at $60, $120 and $180. You book and pay securely through Square.'] },
+  { q: 'Is mixing included in a recording session?', a: ['No. Recording, mixing and mastering are separate. A Mixing Session is $75 for one hour and Mastering is $50. Creator Membership sessions include mixing.'] },
+  { q: 'When is the Unlimited membership cheaper than paying per hour?', a: ['At $60 an hour, the $200 membership (about $212 with Maryland sales tax) costs less once you record roughly 4 or more hours a month. Members can use the studio 24/7, up to 4 hours a day.'] },
+  { q: 'Can I see the studio before I pay?', a: ['Yes. Studio visits are free and take 30 minutes. <a href="/book?service=visit-studio">Book a studio visit</a>.'] },
+];
 const NAV = [
   ['/studio', 'The Studio'], ['/services', 'Services'], ['/artist-development', 'Artist Development'],
   ['/gallery', 'Gallery'], ['/about', 'About'], ['/contact', 'Contact'],
@@ -406,7 +412,7 @@ ${body}
   <div class="container site-footer__grid">
     <nav aria-label="Studio">
       <h2 class="footer-h">Studio</h2>
-      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/artist-development">Artist Development</a></li><li><a href="/book">Book now</a></li><li><a href="/members">Members area</a></li><li><a href="/submit-project">Send us your project</a></li><li><a href="/feedback">Free AI demo feedback</a></li><li><a href="/release-planner">Release planner</a></li><li><a href="/hook-starter">Hook &amp; lyric starter</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
+      <ul><li><a href="/studio">The Studio</a></li><li><a href="/services">Services</a></li><li><a href="/artist-development">Artist Development</a></li><li><a href="/book">Book now</a></li><li><a href="/members">Members area</a></li><li><a href="/submit-project">Send us your project</a></li><li><a href="/feedback">Free AI demo feedback</a></li><li><a href="/release-planner">Release planner</a></li><li><a href="/hook-starter">Hook &amp; lyric starter</a></li><li><a href="/recording-studio-cost-maryland">Studio pricing guide</a></li><li><a href="/gallery">Gallery</a></li><li><a href="/faq">FAQ</a></li></ul>
     </nav>
     <nav aria-label="Explore Disco Sundays">
       <h2 class="footer-h">Explore Disco Sundays</h2>
@@ -535,6 +541,7 @@ const tokens = {
       <span class="svc-row__go" aria-hidden="true">→</span></a></li>`).join('')}</ol>`,
   quickBook: () => [['unlimited-membership', 'Unlimited membership'], ['recording-session-1-hour', 'Recording session'], ['mixing', 'Mixing']].map(([slug, label]) => [services.find((s) => s.slug === slug), label]).filter(([s]) => s).map(([s, label]) => `<li><a href="${s.purchase ? s.purchase.url : '/book?service=' + s.slug}"${s.purchase ? ' target="_blank" rel="noopener" data-track="membership_checkout_click"' : ' data-track="book_cta_click"'} data-label="hero_quick_${s.slug}"><span class="qb__name">${esc(label)}</span><span class="qb__meta">${esc(priceLine(s))}${s.purchase ? ' · no booking needed' : ''}</span><span class="qb__go" aria-hidden="true">→</span></a></li>`).join(''),
   primaryTrio,
+  faqCost: () => faqList(COST_FAQ),
   adCheckoutUrl: () => config.artistDevelopment.checkoutUrl,
   adPrice: () => config.artistDevelopment.price,
   faqAD: () => faqList((faqs.find((g) => g.group === 'Artist Development') || { items: [] }).items),
@@ -682,6 +689,11 @@ for (const f of pageFiles) {
     jsonld.push({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: adFaq.map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: x.a.join(' ').replace(/<[^>]+>/g, '') } })) });
     jsonld.push({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` }, { '@type': 'ListItem', position: 2, name: 'Artist Development', item: `${SITE_URL}/artist-development` }] });
   }
+  if (meta.schema === 'costGuide') {
+    jsonld.push({ '@context': 'https://schema.org', '@type': 'Article', headline: meta.title, description: meta.description, dateModified: new Date().toISOString().slice(0, 10), author: { '@type': 'Organization', name: config.brand, url: 'https://discosundays.com/' }, publisher: { '@id': `${SITE_URL}/#business` }, mainEntityOfPage: `${SITE_URL}${meta.path}`, about: { '@id': `${SITE_URL}/#business` } });
+    jsonld.push({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: COST_FAQ.map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: x.a.join(' ').replace(/<[^>]+>/g, '') } })) });
+  }
+  if (meta.path === '/') jsonld.push({ '@context': 'https://schema.org', '@type': 'WebSite', '@id': `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: config.siteName, alternateName: `${config.siteName} by ${config.brand}`, publisher: { '@id': `${SITE_URL}/#business` }, inLanguage: ['en-US', 'es-US'] });
   if (meta.path === '/services') jsonld.push({ '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: services.map((s, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE_URL}/services/${s.slug}`, name: s.name })) });
   const html = layout({ ...meta, pathname: meta.path, body, jsonld });
   if (meta.path === '/404') await writeFile(path.join(dist, '404.html'), html);
@@ -738,6 +750,7 @@ for (const s of services) {
 }
 
 // Static extras.
+if (config.indexNowKey) await writeFile(path.join(dist, `${config.indexNowKey}.txt`), config.indexNowKey);
 await writeFile(path.join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 const today = new Date().toISOString().slice(0, 10);
 await writeFile(path.join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemap.map((p) => `  <url><loc>${SITE_URL}${p === '/' ? '/' : p}</loc><lastmod>${today}</lastmod><priority>${p === '/' ? '1.0' : p.startsWith('/services/') ? '0.7' : '0.8'}</priority></url>`).join('\n')}\n</urlset>\n`);

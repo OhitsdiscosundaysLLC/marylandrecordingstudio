@@ -2,7 +2,7 @@
   "siteName": "Maryland Recording Studio",
   "brand": "Disco Sundays",
   "legalName": "Disco Sundays LLC",
-  "siteUrl": "https://marylandrecordingstudio.vercel.app",
+  "siteUrl": "https://www.marylandrecordingstudio.com",
   "locality": "Hanover",
   "region": "MD",
   "regionName": "Maryland",
@@ -175,5 +175,6 @@
   "geo": {
     "lat": 39.1516905,
     "lng": -76.7283312
-  }
+  },
+  "indexNowKey": "0e1721cdaa1246d2cb9589423a3edda4"
 }

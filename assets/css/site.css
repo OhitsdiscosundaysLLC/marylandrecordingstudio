@@ -1359,3 +1359,8 @@ html.i18n-pending [data-i18n-scope] { visibility: hidden; }
 .again { display: grid; gap: 10px; } .again form { display: flex; gap: 8px; flex-wrap: wrap; }
 .again input { flex: 1; min-width: 200px; min-height: 46px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--black); color: var(--text); font: 16px var(--font-body); }
 .again__list { display: grid; gap: 8px; }
+.prose > h2:not(:first-child) { margin-top: 1.6em; } .prose h3 { margin: 1.2em 0 .3em; } .prose ul, .prose ol { padding-left: 1.2em; display: grid; gap: 6px; color: #d6d1c8; }
+.price-table { width: 100%; border-collapse: collapse; min-width: 420px; }
+.price-table th, .price-table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--line); }
+.price-table thead th { color: var(--muted); font-size: .82rem; font-weight: 600; } .price-table td { font-variant-numeric: tabular-nums; }
+.price-table a { color: var(--text); }

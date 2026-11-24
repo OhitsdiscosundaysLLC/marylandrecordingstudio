@@ -116,19 +116,22 @@
       "slug": "1-hour-artist-development-session",
       "order": 12,
       "tagline": "Focused development time for members.",
-      "featured": false
+      "featured": false,
+      "seoDescription": "1-hour artist development session for Disco Sundays members in Hanover, MD. Included with your membership: book it after you join, or pay in person."
     },
     "PL254DCUNHJPXW5LNS2IIZML": {
       "slug": "2-hour-artist-development-session",
       "order": 13,
       "tagline": "Extended development time for members.",
-      "featured": false
+      "featured": false,
+      "seoDescription": "2-hour artist development session for Disco Sundays members in Hanover, MD. Included with your membership: book it after you join, or pay in person."
     },
     "AUYQ6AEQBNSMNGQFC42R2V27": {
       "slug": "2-hour-course-training-session",
       "order": 14,
       "tagline": "Extended course training for members.",
-      "featured": false
+      "featured": false,
+      "seoDescription": "2-hour course training session for Disco Sundays members in Hanover, MD, near Baltimore. Included with your membership; non-members pay in person."
     },
     "3DIB4TS5LTGJDECP5F7UZXKA": {
       "slug": "visit-studio",
@@ -142,25 +145,29 @@
       "slug": "1-hour-membership-session",
       "order": 16,
       "tagline": "One hour of studio time for members.",
-      "featured": false
+      "featured": false,
+      "seoDescription": "Book a 1-hour member studio session at Disco Sundays in Hanover, MD. Included with the Unlimited membership ($200/month, up to 4 hours a day)."
     },
     "DWLF64RX6J3NXAOO3M4L6ZJL": {
       "slug": "2-hour-membership-session",
       "order": 17,
       "tagline": "Two hours of studio time for members.",
-      "featured": false
+      "featured": false,
+      "seoDescription": "Book a 2-hour member studio session at Disco Sundays in Hanover, MD. Included with the Unlimited membership ($200/month, up to 4 hours a day)."
     },
     "BBBDB2AAKCZQ3TAMAQ2JVWJU": {
       "slug": "3-hour-membership-session",
       "order": 18,
       "tagline": "Three hours of studio time for members.",
-      "featured": false
+      "featured": false,
+      "seoDescription": "Book a 3-hour member studio session at Disco Sundays in Hanover, MD. Included with the Unlimited membership ($200/month, up to 4 hours a day)."
     },
     "N7VYZDXIL2XIWZRYHP7GJQ7B": {
       "slug": "4-hour-membership-session",
       "order": 19,
       "tagline": "Four hours of studio time for members.",
-      "featured": false
+      "featured": false,
+      "seoDescription": "Book a 4-hour member studio session at Disco Sundays in Hanover, MD. Included with the Unlimited membership ($200/month, up to 4 hours a day)."
     },
     "5BUHF6IGSFB5TAN6X7AERV7J": {
       "slug": "creator-membership",

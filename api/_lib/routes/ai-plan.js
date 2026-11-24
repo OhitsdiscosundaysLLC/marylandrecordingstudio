@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   let plan = null;
   if (settings.ai.enabled && openaiConfigured()) {
     const { services } = catalogue();
-    const list = services.map((s) => `${s.slug}: ${s.name}, ${s.price || 'free'}${s.durationMinutes ? `, ${s.durationMinutes} min` : ''}${s.action.type === 'purchase' ? ', monthly membership, no appointment' : ''}${s.category === 'member-sessions' ? ' (members only)' : ''}`).join('\n');
+    const list = services.filter((s) => s.category !== 'member-sessions' && !(s.category === 'development' && /free/i.test(s.price || ''))).map((s) => `${s.slug}: ${s.name}, ${s.price || 'free'}${s.durationMinutes ? `, ${s.durationMinutes} min` : ''}${s.action.type === 'purchase' ? ', monthly membership, no appointment' : ''}${s.category === 'member-sessions' ? ' (members only)' : ''}`).join('\n');
     try {
       const out = await openai('/chat/completions', {
         model: settings.ai.model || 'gpt-4o-mini', temperature: 0.4, response_format: { type: 'json_object' }, max_tokens: 500,
@@ -42,7 +42,9 @@ export default async function handler(req, res) {
         ],
       });
       plan = JSON.parse(out.choices[0].message.content);
-      const valid = (plan.slugs || []).filter((x) => bookingCards([x]).length);
+      const { services } = catalogue();
+      const membersOnly = new Set(services.filter((x) => x.category === 'member-sessions' || (x.category === 'development' && /free/i.test(x.price || ''))).map((x) => x.slug));
+      const valid = (plan.slugs || []).filter((x) => bookingCards([x]).length && !membersOnly.has(x) && !/^creator-membership/.test(x));
       if (valid.length) slugs = valid.slice(0, 3);
     } catch (e) { console.error('plan', e.message); }
   }

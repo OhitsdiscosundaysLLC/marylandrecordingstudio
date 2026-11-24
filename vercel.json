@@ -83,6 +83,26 @@
   ],
   "redirects": [
     {
+      "source": "/s/:slug*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/pages/:slug*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/collections/:slug*",
+      "destination": "/services",
+      "permanent": true
+    },
+    {
+      "source": "/products/:slug*",
+      "destination": "/services",
+      "permanent": true
+    },
+    {
       "source": "/booking",
       "destination": "/book",
       "permanent": true
