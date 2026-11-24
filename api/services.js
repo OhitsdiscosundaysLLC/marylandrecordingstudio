@@ -44,7 +44,7 @@ export default async function handler(req, res) {
   if (op === 'availability') {
     try {
       const out = await availability(String(u.searchParams.get('service') || ''), { from: u.searchParams.get('from') || undefined, days: Math.min(31, parseInt(u.searchParams.get('days') || '14', 10) || 14) });
-      return send(res, out.configured ? 200 : 503, out, { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=60, max-age=0' });
+      return send(res, 200, out, { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=60, max-age=0' });
     } catch (e) {
       console.error('[availability]', e.message);
       return send(res, 502, { configured: true, error: 'square_unavailable', slots: [] }, { 'Cache-Control': 'no-store' });
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
   }
   // /api/reviews : genuine Google reviews through the Places API (cached)
   if (op === 'reviews') {
-    try { const out = await getReviews(); return send(res, out.configured ? 200 : 503, out, { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400, max-age=300' }); }
+    try { const out = await getReviews(); return send(res, 200, out, { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400, max-age=300' }); }
     catch (e) { console.error('[reviews]', e.message); return send(res, 502, { configured: true, error: 'google_unavailable' }, { 'Cache-Control': 'no-store' }); }
   }
   if (squareConfigured()) {

@@ -51,7 +51,7 @@
       <p class="rp__dates">${p.start === p.end ? esc(fmt(p.start)) : `${esc(fmt(p.start))} → ${esc(fmt(p.end))} · ${p.days} ${esc(T('days'))}`}</p>
       <p>${esc(T(WHAT[p.key]))}</p>
       ${ai.phaseTips?.[p.key] ? `<p class="rp__tip"><strong>${esc(T('Tip'))}:</strong> ${esc(ai.phaseTips[p.key])}</p>` : ''}
-      ${p.status !== 'done' && p.services.length ? `<div class="rp__svc">${p.services.map((s) => `<a class="btn btn--ghost btn--sm" href="${esc(s.url)}"${s.external ? ' target="_blank" rel="noopener"' : ''} data-track="${s.type === 'purchase' ? 'membership_checkout_click' : s.type === 'page' ? 'ecosystem_click' : 'book_cta_click'}" data-via="ai" data-label="planner_${esc(s.slug)}">${esc(T(s.label))}: ${esc(s.name)}${s.price ? ` · ${esc(s.price)}` : ''}</a>`).join('')}</div><div class="rp__slots" data-slots="${esc(p.services.find((s) => s.type === 'book')?.slug || '')}"></div>` : ''}
+      ${p.status !== 'done' && p.services.length ? `<div class="rp__svc">${p.services.map((s) => `<a class="btn btn--ghost btn--sm" href="${esc(s.url)}"${s.external ? ' target="_blank" rel="noopener"' : ''} data-track="${s.type === 'purchase' ? 'membership_checkout_click' : s.type === 'page' ? 'ecosystem_click' : 'book_cta_click'}" data-via="ai" data-label="planner_${esc(s.slug)}">${esc(T(s.label))}: ${esc(s.name)}${s.price && s.type !== 'page' ? ` · ${esc(s.price)}` : ''}</a>`).join('')}</div><div class="rp__slots" data-slots="${esc(p.services.find((s) => s.type === 'book')?.slug || '')}"></div>` : ''}
     </li>`).join('')}</ol>
     ${(ai.risks || []).length ? `<div class="rp__risks"><h3>${esc(T('Watch out for'))}</h3><ul>${ai.risks.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>` : ''}
     <div class="rp__actions">

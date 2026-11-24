@@ -8,8 +8,7 @@
     if (!el || !slug || off) return;
     try {
       const r = await fetch(`/api/availability?service=${encodeURIComponent(slug)}${from ? `&from=${from}` : ''}&days=14`);
-      if (r.status === 503) { off = true; return; }
-      const j = await r.json(); if (!r.ok) return;
+      const j = await r.json(); if (!r.ok) return; if (!j.configured) { off = true; return; }
       const loc = lang() === 'es' ? 'es-US' : 'en-US';
       const days = {};
       for (const s of j.slots) { const d = new Date(s.startAt).toLocaleDateString(loc, { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/New_York' }); (days[d] ||= []).push(s); }

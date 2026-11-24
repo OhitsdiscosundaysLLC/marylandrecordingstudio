@@ -73,7 +73,8 @@
   const getInterest = () => { try { return localStorage.getItem('mrs_interest') || ''; } catch { return ''; } };
   function personalise(interest) {
     const box = document.querySelector('[data-interest]');
-    if (!box || S.personalization?.enabled === false) return;
+    if (!box) return;
+    if (S.personalization?.enabled === false) { box.hidden = true; return; }
     box.hidden = false;
     box.querySelectorAll('button[data-pick]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.pick === interest)));
     const cta = document.querySelector('[data-hero-cta]');

@@ -379,7 +379,7 @@ ${analyticsTags()}
         </li>
       </ul>
     </nav>
-    <button type="button" class="lang-toggle" data-lang-toggle aria-label="Ver en español" lang="es">ES</button>
+    <button type="button" class="lang-toggle" data-lang-toggle aria-label="ES: ver en español" lang="es">ES</button>
     <a class="btn btn--primary btn--sm site-header__cta" href="/book" data-track="book_cta_click" data-label="header">Book now</a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle><span class="sr-only">Open menu</span><span class="menu-toggle__bars" aria-hidden="true"></span></button>
   </div>
@@ -391,7 +391,7 @@ ${analyticsTags()}
     <p class="mobile-menu__h">Explore Disco Sundays</p>
     <ul class="mobile-menu__eco">${ecoMenu}</ul>
   </nav>
-  <div class="mobile-menu__contact"><button type="button" class="lang-toggle lang-toggle--wide" data-lang-toggle aria-label="Ver en español" lang="es">Español</button><a href="tel:${config.phoneE164}" data-track="phone_click">${config.phone}</a>${socialLinks()}</div>
+  <div class="mobile-menu__contact"><button type="button" class="lang-toggle lang-toggle--wide" data-lang-toggle lang="es">Español</button><a href="tel:${config.phoneE164}" data-track="phone_click">${config.phone}</a>${socialLinks()}</div>
 </div>
 <main id="main" tabindex="-1" data-page="${esc(pathname)}">
 ${body}
@@ -585,7 +585,7 @@ const tokens = {
   </div>
 </section>`;
   },
-  sessionFinder: () => `<section class="finder reveal" data-finder data-i18n-scope hidden aria-labelledby="finder-title">
+  sessionFinder: () => `<section class="finder reveal" data-finder data-i18n-scope aria-labelledby="finder-title">
   <div class="finder__head"><span class="ai-orb" aria-hidden="true"></span><div><p class="eyebrow">AI session finder</p><h2 id="finder-title" class="h2">Find your perfect session in 30 seconds.</h2></div></div>
   <form class="finder__form" data-finder-form>
     <fieldset class="finder__q" data-q="goal"><legend>What are you working on?</legend>

@@ -31,7 +31,7 @@
     document.querySelectorAll('[data-lang-toggle]').forEach((b) => {
       const wide = b.classList.contains('lang-toggle--wide');
       b.textContent = lang === 'es' ? (wide ? 'English' : 'EN') : (wide ? 'Español' : 'ES');
-      b.setAttribute('aria-label', lang === 'es' ? 'View in English' : 'Ver en español');
+      if (wide) b.removeAttribute('aria-label'); else b.setAttribute('aria-label', lang === 'es' ? 'EN: view in English' : 'ES: ver en español');
       b.setAttribute('lang', lang === 'es' ? 'en' : 'es');
       b.onclick = () => { try { localStorage.setItem('mrs_lang', lang === 'es' ? 'en' : 'es'); } catch {} const u = new URL(location.href); u.searchParams.delete('lang'); location.href = u.toString(); };
     });
