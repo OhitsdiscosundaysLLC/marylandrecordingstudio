@@ -107,3 +107,13 @@
       render();
     });
 })();
+
+// A time chosen from the live slots: remind the visitor which one to tap in Square's calendar.
+(() => {
+  const at = new URLSearchParams(location.search).get('at'); const el = document.querySelector('[data-slot-pick]');
+  if (!at || !el || isNaN(Date.parse(at))) return;
+  const es = window.mrsLang && window.mrsLang() === 'es';
+  const d = new Date(at).toLocaleString(es ? 'es-US' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
+  el.textContent = es ? `Elegiste ${d} (hora del Este). Selecciónalo en el calendario de abajo para confirmar.` : `You picked ${d} (Eastern). Select it in the calendar below to confirm. Times can be taken quickly, so if it's gone, pick the next one.`;
+  el.hidden = false;
+})();

@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { send, readJSONBody } from './_lib/http.js';
 import { rpc, dbConfigured } from './_lib/db.js';
 import { files, MAX_FILE, OK_EXT } from './_lib/files.js';
-import { notify } from './_lib/notify.js';
+import { leadAlert } from './_lib/notify.js';
 
 const clean = (v, n) => String(v ?? '').replace(/[\u0000-\u001F]/g, ' ').trim().slice(0, n);
 const hits = new Map();
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
     try {
       const id = await rpc('mrs_project_create', { p });
       await rpc('mrs_lead', { p: { name: p.name, email: p.email, phone: p.phone, service: p.service, project: `${p.title ? p.title + ': ' : ''}${p.notes}`.slice(0, 2000), preferred_date: p.deadline, stage: 'project_enquiry', priority: 'medium', consent_contact: true, consent_marketing: p.consent_marketing, source: 'project_upload', notes: `Project ${id}` } });
-      notify(`New project upload: ${p.name} (${p.service})`, [['Name', p.name], ['Email', p.email], ['Phone', p.phone], ['Service', p.service], ['Title', p.title], ['Deadline', p.deadline], ['Files', p.files.map((f) => f.name).join(', ') || '-'], ['Link', p.link || '-'], ['Notes', p.notes]], p.email).catch(() => {});
+      await leadAlert({ type: 'Project upload', dedupKey: `project:${id}`, name: p.name, email: p.email, phone: p.phone, service: p.service, details: p.notes, tab: 'projects', extra: [['Title', p.title], ['Deadline', p.deadline], ['Files', p.files.map((f) => f.name).join(', ') || '-'], ['Shared link', p.link ? 'Yes (see dashboard)' : '-']] }).catch((e) => console.error('alert', e.message));
       return send(res, 200, { ok: true, id });
     } catch (e) { console.error(e.message); return send(res, 502, { error: 'Could not save your project. Please try again or email us.' }); }
   }

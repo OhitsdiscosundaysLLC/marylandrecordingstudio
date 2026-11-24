@@ -22,6 +22,8 @@ const DEFAULTS = {
   personalization: { enabled: true },
   conversion: { quiz: true, feedback: true, nudges: true, welcomeBack: true, planner: true, hook: true, compare: true },
   experiment: { enabled: false, id: '', variants: [] },
+  reports: { weekly: true },
+  reviewsInvites: { auto: false },
 };
 let cache = { at: 0, value: null };
 export async function getSettings({ fresh = false } = {}) {

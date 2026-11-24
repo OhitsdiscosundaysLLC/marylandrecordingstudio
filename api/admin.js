@@ -4,11 +4,16 @@ import { rpc, getSettings, clearSettingsCache } from './_lib/db.js';
 import { isAuthed, checkPassword, sessionCookie, clearCookie, adminConfigured } from './_lib/admin.js';
 import { openai, openaiConfigured } from './_lib/openai.js';
 import { files } from './_lib/files.js';
-import { emailConfigured } from './_lib/notify.js';
 import { catalogue } from './_lib/knowledge.js';
 import { whatsappMissing } from './_lib/routes/whatsapp.js';
 import { phoneMissing } from './_lib/routes/phone.js';
 import hqPage from './_lib/routes/hq.js';
+import { buildWeeklyReport } from './_lib/report.js';
+import { sendEmail, layoutEmail, emailConfigured, dashboardUrl } from './_lib/notify.js';
+import { sendReviewInvite, verifyOptout, optOut, customerEmailReady } from './_lib/invites.js';
+import { squareHealth, endedBookings, customer, availability } from './_lib/availability.js';
+import { getReviews, reviewsConfigured } from './_lib/reviews.js';
+import { squareConfigured } from './_lib/square.js';
 
 const facts = () => {
   const { services, config } = catalogue();
@@ -40,6 +45,37 @@ export default async function handler(req, res) {
     if (!checkPassword(body.password)) { t.n++; tries.set(ip, t); return send(res, 401, { error: 'Wrong password' }, H); }
     return send(res, 200, { ok: true }, { ...H, 'Set-Cookie': sessionCookie() });
   }
+  // Public: one-click unsubscribe from review emails (signed link).
+  if (action === 'unsubscribe') {
+    const e = verifyOptout(url.searchParams.get('e'), url.searchParams.get('s'));
+    if (e) await optOut(e).catch(() => {});
+    res.statusCode = e ? 200 : 400; res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.end(`<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Email preferences</title><body style="font:16px/1.5 system-ui;padding:40px;max-width:520px;margin:auto"><h1>${e ? 'You are unsubscribed' : 'Link not valid'}</h1><p>${e ? 'We will not send you review emails again.' : 'This link is invalid or expired.'}</p><p><a href="/">Back to the website</a></p></body>`);
+  }
+  // Daily scheduled job (Vercel Cron sends Authorization: Bearer CRON_SECRET).
+  if (action === 'cron') {
+    if (!process.env.CRON_SECRET || req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) return send(res, 401, { error: 'unauthorized' }, H);
+    const settings = await getSettings({ fresh: true });
+    const log = { at: new Date().toISOString() };
+    const etDay = new Date().toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/New_York' });
+    if (etDay === 'Mon' && settings.reports?.weekly !== false) { try { const r = await buildWeeklyReport(settings, { send: true }); log.weekly = r.email.status; } catch (e) { log.weekly = 'error: ' + e.message; } }
+    if (reviewsConfigured()) { try { await getReviews({ refresh: true }); log.reviews = 'refreshed'; } catch (e) { log.reviews = 'error: ' + e.message; } }
+    if (settings.reviewsInvites?.auto && squareConfigured() && customerEmailReady()) {
+      try {
+        const until = Date.now() - 2 * 3600_000, since = until - 24 * 3600_000;
+        const bookings = await endedBookings(since, until); let sent = 0;
+        for (const b of bookings.slice(0, 40)) {
+          const c = await customer(b.customer_id).catch(() => null);
+          if (!c?.email_address) continue;
+          const r = await sendReviewInvite({ email: c.email_address, name: [c.given_name, c.family_name].filter(Boolean).join(' '), dedupKey: `review:booking:${b.id}`, source: 'square_auto' });
+          if (r.status === 'sent') sent++;
+        }
+        log.invites = `${sent}/${bookings.length}`;
+      } catch (e) { log.invites = 'error: ' + e.message; }
+    }
+    await rpc('mrs_record_create', { p_kind: 'cron_log', p_token_hash: null, p_visitor: null, p: log }).catch(() => {});
+    return send(res, 200, log, H);
+  }
   if (action === 'logout') return send(res, 200, { ok: true }, { ...H, 'Set-Cookie': clearCookie() });
   if (!isAuthed(req)) return send(res, 401, { error: 'Sign in' }, H);
 
@@ -53,7 +89,7 @@ export default async function handler(req, res) {
       }
       case 'settings': {
         if (req.method === 'POST') {
-          const allowed = ['ai', 'motion', 'personalization', 'conversion', 'experiment'];
+          const allowed = ['ai', 'motion', 'personalization', 'conversion', 'experiment', 'reports', 'reviewsInvites'];
           if (!allowed.includes(body.key) || typeof body.value !== 'object') return send(res, 400, { error: 'Bad setting' }, H);
           await rpc('mrs_settings_set', { p_key: body.key, p_value: body.value });
           clearSettingsCache();
@@ -131,6 +167,36 @@ export default async function handler(req, res) {
         let v = []; try { v = JSON.parse(text).variants || []; } catch {}
         return send(res, 200, { variants: v.slice(0, 3).map((x, i) => ({ id: 'v' + (i + 1), headline: String(x.headline || '').slice(0, 120), sub: String(x.sub || '').slice(0, 240), angle: String(x.angle || '').slice(0, 40) })) }, H);
       }
+      case 'reports': {
+        if (req.method === 'POST') { const r = await buildWeeklyReport(await getSettings({ fresh: true }), { send: body.email === true, reason: 'manual-' + Date.now() }); return send(res, 200, { report: r.report, email: r.email.status }, H); }
+        return send(res, 200, { items: await rpc('mrs_record_list', { p_kind: 'weekly_report', p_limit: 20, p_days: 400 }) }, H);
+      }
+      case 'alerts': {
+        if (req.method === 'POST' && body.test) {
+          const r = await sendEmail({ dedupKey: `test:${Date.now()}`, kind: 'test', subject: 'Test alert from your website', html: layoutEmail('Test alert from your website', [['Status', 'If you can read this, lead alerts work.']], { cta: { label: 'Open dashboard', url: dashboardUrl() } }), text: 'If you can read this, lead alerts work.' });
+          return send(res, 200, r, H);
+        }
+        return send(res, 200, { items: await rpc('mrs_notify_list', { p_limit: 150 }), configured: emailConfigured(), customerReady: customerEmailReady() }, H);
+      }
+      case 'invites': {
+        if (req.method === 'POST') {
+          const list = (Array.isArray(body.recipients) ? body.recipients : []).slice(0, 25);
+          const results = [];
+          for (const r of list) results.push({ email: r.email, ...(await sendReviewInvite({ email: r.email, name: r.name, service: r.service, source: 'manual' })) });
+          return send(res, 200, { results }, H);
+        }
+        return send(res, 200, { items: await rpc('mrs_record_list', { p_kind: 'review_invite', p_limit: 200, p_days: 400 }), ready: customerEmailReady(), square: squareConfigured() }, H);
+      }
+      case 'records': {
+        const kind = url.searchParams.get('kind');
+        if (!['release_plan', 'song_idea', 'mix_compare', 'cron_log'].includes(kind)) return send(res, 400, { error: 'bad kind' }, H);
+        return send(res, 200, { items: await rpc('mrs_record_list', { p_kind: kind, p_limit: 100, p_days: days }) }, H);
+      }
+      case 'square': {
+        const health = await squareHealth();
+        let sample = null; if (health.ok) { try { sample = await availability('recording-session-1-hour', { days: 7 }); } catch (e) { sample = { error: e.message }; } }
+        return send(res, 200, { health, sample }, H);
+      }
       case 'integrations': {
         return send(res, 200, { items: [
           { name: 'OpenAI (AI assistant, voice, insights)', ok: openaiConfigured(), note: openaiConfigured() ? 'OPENAI_API_KEY is set (server-side only).' : 'Set OPENAI_API_KEY in Vercel → Project → Settings → Environment Variables.' },
@@ -138,7 +204,10 @@ export default async function handler(req, res) {
           { name: 'Email alerts for new leads/projects', ok: emailConfigured(), note: emailConfigured() ? 'Resend is set up.' : 'Optional: add RESEND_API_KEY and CONTACT_TO_EMAIL in Vercel to get an email for every enquiry and upload. Everything is saved here either way.' },
           { name: 'WhatsApp assistant', ok: !whatsappMissing().length, note: whatsappMissing().length ? `Ready to connect. Add ${whatsappMissing().join(', ')} in Vercel, then set the Meta webhook to /api/integrations/whatsapp.` : 'Connected.' },
           { name: 'AI phone receptionist', ok: !phoneMissing().length, note: phoneMissing().length ? 'Ready to connect. Point a Twilio Elastic SIP trunk at OpenAI Realtime SIP, create an OpenAI webhook to /api/integrations/phone, and add OPENAI_WEBHOOK_SECRET in Vercel.' : 'Connected.' },
-          { name: 'Square bookings & payments data', ok: Boolean(process.env.SQUARE_ACCESS_TOKEN), note: process.env.SQUARE_ACCESS_TOKEN ? 'Token present.' : 'Needed for completed bookings, revenue, repeat bookings and automated retention/booking-recovery messages (with customer consent).' },
+          { name: 'Square live availability & bookings', ok: squareConfigured(), note: squareConfigured() ? 'SQUARE_ACCESS_TOKEN is set. See the Square check below.' : 'Add SQUARE_ACCESS_TOKEN (production, scopes APPOINTMENTS_READ, ITEMS_READ, CUSTOMERS_READ) in Vercel to show real open times, power automatic review invitations and booking data.' },
+          { name: 'Google reviews on the website', ok: reviewsConfigured(), note: reviewsConfigured() ? 'GOOGLE_PLACES_API_KEY is set; reviews refresh daily.' : 'Add GOOGLE_PLACES_API_KEY (Google Cloud, Places API (New) enabled, restricted to this API) to show your genuine Google reviews. Your Google Business Profile is not changed.' },
+          { name: 'Emails to customers (review invitations)', ok: customerEmailReady(), note: customerEmailReady() ? 'Sender domain set.' : 'Needs RESEND_API_KEY plus CONTACT_FROM_EMAIL on a domain verified in Resend (e.g. hello@marylandrecordingstudio.com).' },
+          { name: 'Scheduled jobs (weekly report, review invites)', ok: Boolean(process.env.CRON_SECRET), note: process.env.CRON_SECRET ? 'Runs daily at about 8 am Eastern; weekly report on Mondays.' : 'CRON_SECRET not set.' },
         ] }, H);
       }
       default: return send(res, 400, { error: 'Unknown action' }, H);

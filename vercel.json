@@ -6,7 +6,7 @@
   "trailingSlash": false,
   "functions": {
     "api/services.js": {
-      "includeFiles": "data/**",
+      "includeFiles": "{data/**,content/**,site.config.json}",
       "maxDuration": 15
     },
     "api/contact.js": {
@@ -96,9 +96,28 @@
       "source": "/social",
       "destination": "/gallery",
       "permanent": true
+    },
+    {
+      "source": "/:path((?!api/).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "marylandrecordingstudio.vercel.app"
+        }
+      ],
+      "destination": "https://www.marylandrecordingstudio.com/:path",
+      "permanent": true
     }
   ],
   "rewrites": [
+    {
+      "source": "/api/reviews",
+      "destination": "/api/services?op=reviews"
+    },
+    {
+      "source": "/api/availability",
+      "destination": "/api/services?op=availability"
+    },
     {
       "source": "/:slug(hq-[a-z0-9]+)",
       "destination": "/api/admin?op=page&slug=:slug"
@@ -110,6 +129,12 @@
     {
       "source": "/api/integrations/:op",
       "destination": "/api/integrations?op=:op"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/admin?action=cron",
+      "schedule": "0 13 * * *"
     }
   ]
 }

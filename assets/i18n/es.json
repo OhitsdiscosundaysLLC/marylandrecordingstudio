@@ -271,7 +271,6 @@
 "e.g. darker, more hopeful, shorter hook, add a call-and-response": "p. ej., más oscuro, más esperanzador, un hook más corto, agrega pregunta y respuesta",
 "song": "canción",
 "songs": "canciones",
-"Recording": "Grabación",
 "Editing & production": "Edición y producción",
 "Mastering": "Masterización",
 "Artwork & visuals": "Arte y visuales",
@@ -433,5 +432,17 @@
 "No open times found in the next two weeks.": "No hay horarios disponibles en las próximas dos semanas.",
 "Live availability from our Square calendar.": "Disponibilidad en vivo de nuestro calendario de Square.",
 "Pick a day": "Elige un día",
-"Back": "Volver"
+"Back": "Volver",
+"Google reviews": "reseñas en Google",
+"Reviews from Google.": "Reseñas de Google.",
+"Read all reviews": "Leer todas las reseñas",
+"Write a review": "Escribir una reseña",
+"See what artists say about us on Google.": "Mira lo que dicen los artistas de nosotros en Google.",
+"Read our Google reviews": "Leer nuestras reseñas en Google",
+"What artists say": "Lo que dicen los artistas",
+"Book again": "Reservar de nuevo",
+"Been here before?": "¿Ya nos visitaste?",
+"Enter the email you booked with and we'll send you a link to rebook your past sessions in one tap.": "Escribe el correo con el que reservaste y te enviaremos un enlace para volver a reservar tus sesiones anteriores en un toque.",
+"Send my link": "Enviarme el enlace",
+"Your past sessions": "Tus sesiones anteriores"
 }

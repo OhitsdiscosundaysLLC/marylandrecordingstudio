@@ -441,6 +441,8 @@ ${hideStickyCta ? '' : stickyCta === 'ad' ? `<div class="sticky-cta" data-sticky
 <script src="/assets/js/main.js?v=${BUILD_ID}" defer></script>
 <script src="/assets/js/radio.js?v=${BUILD_ID}" defer></script>
 <script src="/assets/js/alive.js?v=${BUILD_ID}" defer></script>
+<script src="/assets/js/slots.js?v=${BUILD_ID}" defer></script>
+${body.includes('data-google-reviews') ? `<script src="/assets/js/greviews.js?v=${BUILD_ID}" defer></script>` : ''}
 ${scripts.map((s) => `<script src="/assets/js/${s}?v=${BUILD_ID}" defer data-page-script></script>`).join('\n')}
 </body>
 </html>`;
@@ -536,6 +538,7 @@ const tokens = {
   adCheckoutUrl: () => config.artistDevelopment.checkoutUrl,
   adPrice: () => config.artistDevelopment.price,
   faqAD: () => faqList((faqs.find((g) => g.group === 'Artist Development') || { items: [] }).items),
+  googleReviews: () => `<section class="section gr" aria-labelledby="gr-title" data-google-reviews data-reviews-url="${config.google.mapsUrl}" data-write-url="${config.google.writeReviewUrl}" data-i18n-scope><div class="container narrow"><p class="eyebrow">Google reviews</p><h2 id="gr-title" class="display-2">What artists say</h2><div data-gr-body aria-live="polite"><div class="skeleton-card" style="height:120px"></div></div></div></section>`,
   adReview: () => `<section class="section ad-quote" aria-label="What artists say"><div class="container narrow reveal"><figure class="ad-quote__fig"><blockquote><p>“Very professional delivery and awesome Artist Development Program. I’m always learning something new from Melvin and Xavier.”</p></blockquote><figcaption>Dara Kamilah · <a href="${config.google.mapsUrl}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="ad_review_google">Google review<span class="sr-only"> (opens Google Maps in a new tab)</span></a></figcaption></figure></div></section>`,
   spotlights: () => {
     const list = (media.spotlights || []).filter((x) => x.approved === true && (x.video || x.image));
@@ -695,6 +698,7 @@ for (const s of services) {
   const body = render(svcTpl, {
     svcName: esc(s.name),
     svcSlug: s.slug,
+    svcSlots: !s.purchase && s.price?.amount ? `<div class="svc-slots" data-slots="${s.slug}"></div>` : '',
     svcId: s.id,
     svcCategory: esc(s.categoryLabel),
     svcTagline: esc(s.tagline || ''),

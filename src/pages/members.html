@@ -1,4 +1,4 @@
-<!-- {"path":"/members","title":"Members Area","description":"Disco Sundays members area: sign in to the Disco Rewards customer portal, book member sessions, send your project files and manage your Unlimited membership.","scripts":["estimator.js"]} -->
+<!-- {"path":"/members","title":"Members Area","description":"Disco Sundays members area: sign in to the Disco Rewards customer portal, book member sessions, send your project files and manage your Unlimited membership.","scripts":["estimator.js","again.js"]} -->
 <section class="page-hero page-hero--compact">
   <div class="container">
     <p class="eyebrow">Members area</p>
@@ -27,6 +27,14 @@
       <span>Upload stems, rough mixes or reference tracks for mixing and mastering. Files go to a private folder only the studio team can open.</span>
       <span class="portal__go">Upload files <span aria-hidden="true">→</span></span>
     </a>
+    <div class="portal__card reveal again" data-again data-i18n-scope>
+      <span class="portal__kicker">Book again</span>
+      <h2 class="portal__title">Been here before?</h2>
+      <p>Enter the email you booked with and we'll send you a link to rebook your past sessions in one tap.</p>
+      <form data-again-form><label class="sr-only" for="again-email">Email</label><input id="again-email" type="email" name="email" autocomplete="email" required placeholder="you@example.com"><button class="btn btn--primary btn--sm">Send my link</button></form>
+      <p class="muted" role="status" data-again-msg></p>
+      <div class="again__list" data-again-list hidden><h3 class="h3">Your past sessions</h3></div>
+    </div>
     <div class="portal__card reveal">
       <span class="portal__kicker">Your bookings &amp; payments</span>
       <h2 class="portal__title">Change a booking or find a receipt</h2>

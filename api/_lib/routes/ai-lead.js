@@ -2,6 +2,7 @@
 import { send, readJSONBody } from '../http.js';
 import { rpc, dbConfigured } from '../db.js';
 import { scoreLead } from '../knowledge.js';
+import { leadAlert } from '../notify.js';
 export default async function handler(req, res) {
   if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
   const origin = req.headers.origin;
@@ -15,5 +16,6 @@ export default async function handler(req, res) {
   if (!dbConfigured()) return send(res, 503, { error: 'not_configured' });
   Object.assign(lead, scoreLead(lead));
   await rpc('mrs_lead', { p: lead });
+  await leadAlert({ type: lead.source === 'ai_quiz' ? 'Session finder lead' : 'AI tool lead', dedupKey: `toollead:${lead.email || lead.phone}:${lead.project.slice(0, 60)}`, name: lead.name, email: lead.email, phone: lead.phone, service: lead.service, details: lead.project }).catch((e) => console.error('alert', e.message));
   send(res, 200, { ok: true });
 }

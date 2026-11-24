@@ -10,7 +10,7 @@ function apiBase() {
     : 'https://connect.squareup.com';
 }
 
-async function squareFetch(path, body) {
+export async function squareFetch(path, body) {
   const res = await fetch(apiBase() + path, {
     method: body ? 'POST' : 'GET',
     headers: {

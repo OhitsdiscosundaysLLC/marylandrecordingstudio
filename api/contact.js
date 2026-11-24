@@ -3,7 +3,9 @@
 // If email isn't configured it returns 503, and the form tells the visitor to email or call instead.
 // It never pretends a message was sent.
 import { send, readJSONBody } from './_lib/http.js';
+import crypto from 'node:crypto';
 import { rpc, dbConfigured } from './_lib/db.js';
+import { leadAlert } from './_lib/notify.js';
 
 const hits = new Map(); // best-effort per-instance rate limit
 const WINDOW = 10 * 60 * 1000, MAX = 5;
@@ -60,32 +62,14 @@ export default async function handler(req, res) {
       saved = true;
     } catch (e) { console.error('[api/contact] db', e.message); }
   }
-  if (!key || !to) return saved ? send(res, 200, { ok: true }) : send(res, 503, { ok: false, error: 'not_configured' });
-
   recent.push(now);
   hits.set(ip, recent);
-
-  const rows = [['Name', data.name], ['Email', data.email], ['Phone', data.phone || '-'], ['Service', data.service || '-'], ['Preferred date', data.preferredDate || '-']];
-  const html = `<h2>New studio enquiry</h2><table cellpadding="6">${rows.map(([k, v]) => `<tr><td><strong>${k}</strong></td><td>${escHtml(v)}</td></tr>`).join('')}</table><p style="white-space:pre-wrap">${escHtml(data.message)}</p>`;
-  const text = `${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\n${data.message}`;
-
+  // Instant alert to the studio (deduplicated, logged in the dashboard under Alerts).
+  let alert = { status: 'not_configured' };
   try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: process.env.CONTACT_FROM_EMAIL || 'Maryland Recording Studio <onboarding@resend.dev>',
-        to: to.split(',').map((s) => s.trim()),
-        reply_to: data.email,
-        subject: `Studio enquiry: ${data.name}${data.service ? ` (${data.service})` : ''}`,
-        html,
-        text,
-      }),
-    });
-    if (!r.ok) throw new Error(`Resend ${r.status}: ${(await r.text()).slice(0, 200)}`);
-    return send(res, 200, { ok: true });
-  } catch (err) {
-    console.error('[api/contact]', err.message);
-    return saved ? send(res, 200, { ok: true }) : send(res, 502, { ok: false, error: 'send_failed' });
-  }
+    alert = await leadAlert({ type: 'Contact form enquiry', dedupKey: `contact:${data.email}:${crypto.createHash('sha256').update(data.message).digest('hex').slice(0, 16)}`, name: data.name, email: data.email, phone: data.phone, service: data.service, details: data.message, extra: [['Preferred date', data.preferredDate]] });
+  } catch (err) { console.error('[api/contact] alert', err.message); }
+  if (saved || alert.status === 'sent') return send(res, 200, { ok: true });
+  if (!key || !to) return send(res, 503, { ok: false, error: 'not_configured' });
+  return send(res, 502, { ok: false, error: 'send_failed' });
 }

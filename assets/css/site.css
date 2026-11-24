@@ -1341,3 +1341,21 @@ html.no-ambient .ad-hero__words span { animation: none; } html.no-ambient .ad-he
 .lang-toggle--wide { min-width: 0; padding: 0 16px; }
 html.i18n-pending [data-i18n-scope] { visibility: hidden; }
 @media (max-width: 1080px) { .site-header .lang-toggle:not(.lang-toggle--wide) { display: none; } }
+
+/* ===== v12: live slots, Google reviews, book again ===== */
+.slots { display: grid; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.slots__h { margin: 0; font-weight: 700; font-size: .9rem; } .slots__note, .slots__none { margin: 0; font-size: .76rem; color: var(--dim); }
+.slots__day { display: grid; gap: 6px; } .slots__day > span { font-size: .8rem; color: var(--muted); }
+.slots__day > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.slots__t { display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text); text-decoration: none; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.slots__t:hover { border-color: var(--amber); color: var(--amber); }
+.slot-pick { margin: 0 0 12px; padding: 12px 14px; border-radius: var(--radius-sm); background: rgba(255,166,48,.1); border: 1px solid rgba(255,166,48,.4); }
+.slot-pick[hidden] { display: none; }
+.gr__sum { font-size: 1.05rem; margin: 0 0 16px; } .gr__stars { color: var(--amber); letter-spacing: 2px; }
+.gr__list { display: grid; gap: 12px; }
+.gr__item { margin: 0; padding: 18px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--graphite); }
+.gr__item blockquote { margin: 0 0 10px; } .gr__item figcaption { font-size: .85rem; color: var(--muted); } .gr__item a { color: var(--text); }
+.gr__attr { font-size: .82rem; color: var(--muted); margin-top: 14px; }
+.again { display: grid; gap: 10px; } .again form { display: flex; gap: 8px; flex-wrap: wrap; }
+.again input { flex: 1; min-width: 200px; min-height: 46px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--black); color: var(--text); font: 16px var(--font-body); }
+.again__list { display: grid; gap: 8px; }
