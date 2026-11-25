@@ -20,7 +20,11 @@ Google Business Profile: **out of scope; never edited.** The listing data (name,
 - **URL inspection (2026-11-25):**
   - `/`: URL is on Google, page indexed, HTTPS. **Indexing requested** (priority crawl queue).
   - `/artist-development`: URL is on Google, page indexed. **Indexing requested.**
-  - `/services/mixing` and the rest: not done. Chrome disconnected mid-session; finish once it reconnects.
+  - Indexing requested 2026-11-25, each confirmed with "URL was added to a priority crawl queue":
+    - Already on Google: `/services/mixing`, `/services/mastering`, `/recording-studio-cost-maryland`, `/studio`, `/guides/prepare-for-recording-session`.
+    - Not yet on Google (new pages): `/guides/choose-recording-studio-near-baltimore`, `/guides/mixing-vs-mastering`.
+  - `/services`: **URL is not on Google** (no last crawl). The request hit Google's daily quota ("Quota Exceeded"), so retry on 2026-11-26. The page is in the submitted sitemap, so Google can find it there meanwhile.
+  - Running total: **9 pages queued for priority crawl** (/, /artist-development and the 7 above).
 - Performance and Indexing reports say "Processing data", as expected for a property verified today. There are no impressions or clicks figures yet.
 
 ### Manually observed rankings (Firecrawl Google results, top 30, 2026-11-25; not Search Console data)
@@ -86,8 +90,8 @@ Google Business Profile: **out of scope; never edited.** The listing data (name,
 3. Baltimore music outlets and community groups that compile studio lists (for example independentradio.fm's Baltimore studio list).
 
 ### Next steps
-1. Reconnect Chrome, then request indexing for: `/services/mixing`, `/services/mastering`, `/recording-studio-cost-maryland`, `/services`, `/studio`, `/guides/*`.
-2. Import the property into Bing Webmaster Tools.
+1. On 2026-11-26, request indexing for `/services` and `/guides` (daily quota), then `/book`, `/faq` and `/contact`.
+2. Bing Webmaster Tools: Chrome isn't signed in, and it needs a new account ("Sign in with Google", then Import from Google Search Console). Waiting for the owner's OK to create the account.
 3. Re-check this table weekly, and record Search Console impressions and positions once its data appears (about 2 to 3 days).
 
 ## Ranking check (2026-11-24, Google results via public search, top 20)
