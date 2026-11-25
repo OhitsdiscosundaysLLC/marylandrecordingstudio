@@ -45,7 +45,8 @@
         "url": "https://square.link/u/rJp640Zd",
         "label": "Join for $200/month",
         "note": "Secure Square checkout. No appointment needed. Maryland sales tax is added at checkout."
-      }
+      },
+      "seoTitle": "Unlimited Recording Studio Membership in Maryland"
     },
     "KFW5FLXFO6VHQ2WIMFYS6CAO": {
       "slug": "recording-session-1-hour",
@@ -53,13 +54,15 @@
       "primary": "recording",
       "order": 2,
       "tagline": "One hour of studio time to record.",
-      "seoDescription": "Book a 1-hour recording session at the Disco Sundays studio in Hanover, MD for $60."
+      "seoDescription": "Book a 1-hour recording session at the Disco Sundays studio in Hanover, MD for $60.",
+      "seoTitle": "1-Hour Recording Session in Hanover, MD"
     },
     "QR6IEWLFU7ZVMZ4G5M37DLLK": {
       "slug": "recording-session-2-hours",
       "order": 3,
       "tagline": "Two hours of studio time to record.",
-      "seoDescription": "Book a 2-hour recording session in Hanover, MD for $120."
+      "seoDescription": "Book a 2-hour recording session in Hanover, MD for $120.",
+      "seoTitle": "2-Hour Recording Session in Hanover, MD"
     },
     "UKPJOFT65WRBJT62MRY7WQPA": {
       "slug": "recording-session-3-hours",
@@ -73,13 +76,15 @@
       "primary": "mixing",
       "order": 5,
       "tagline": "Professional mixing for your recordings.",
-      "seoDescription": "Book a mixing session at the Disco Sundays studio in Hanover, MD. $75 per hour."
+      "seoDescription": "Book a mixing session at the Disco Sundays studio in Hanover, MD. $75 per hour.",
+      "seoTitle": "Music Mixing Services in Maryland (Hanover, MD)"
     },
     "2IMWD3HQTHV7GK3W57FHRQLF": {
       "slug": "mastering",
       "order": 6,
       "tagline": "Loud and clear for radio and streaming.",
-      "seoDescription": "Mastering at Disco Sundays in Hanover, MD: make your song loud and clear for radio and streaming. $50."
+      "seoDescription": "Mastering at Disco Sundays in Hanover, MD: make your song loud and clear for radio and streaming. $50.",
+      "seoTitle": "Music Mastering in Maryland (Hanover, MD)"
     },
     "CJQQUF36A5UV7VQEETQQHQD5": {
       "slug": "video-podcasting",
