@@ -1375,3 +1375,11 @@ html.i18n-pending [data-i18n-scope] { visibility: hidden; }
 .gr__more > summary:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
 /* v14 guide link on service pages */
 .svc-guide { margin: 14px 0 0; font-size: .95rem; } .svc-guide a { color: var(--amber); font-weight: 600; }
+/* v15 printable checklist */
+.checklist ul { list-style: none; padding-left: 0; } .checklist li { position: relative; padding-left: 30px; margin: 8px 0; }
+.checklist li::before { content: ""; position: absolute; left: 0; top: .3em; width: 16px; height: 16px; border: 2px solid var(--amber); border-radius: 4px; }
+@media print {
+  .site-header, .site-footer, .cta-band, .sticky-cta, .ai-launcher, .chat, .mini-player, [data-i18n-toggle], .btn { display: none !important; }
+  body { background: #fff !important; color: #000 !important; } .prose a { color: #000; text-decoration: underline; }
+  .checklist li::before { border-color: #000; }
+}

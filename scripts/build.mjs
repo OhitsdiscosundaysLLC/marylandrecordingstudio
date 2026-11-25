@@ -754,7 +754,7 @@ for (const s of services) {
     svcExtra: s.primary === 'membership' ? `<section class="section section--tight"><div class="container">${tokens.estimator()}</div></section>` : '',
   });
   const jsonld = [
-    { '@context': 'https://schema.org', '@type': 'Service', name: s.name, description: s.description, serviceType: 'Recording studio service', provider: { '@id': `${SITE_URL}/#business` }, areaServed: `${config.locality}, ${config.regionName}`, url: `${SITE_URL}/services/${s.slug}`, ...(typeof s.price?.amount === 'number' ? { offers: { '@type': 'Offer', price: (s.price.amount / 100).toFixed(2), priceCurrency: s.price.currency, url: `${SITE_URL}/book?service=${s.slug}` } } : {}) },
+    { '@context': 'https://schema.org', '@type': 'Service', name: s.name, description: s.description, serviceType: 'Recording studio service', provider: { '@id': `${SITE_URL}/#business` }, areaServed: config.areaServed.map((n) => ({ '@type': 'Place', name: n })), url: `${SITE_URL}/services/${s.slug}`, ...(typeof s.price?.amount === 'number' ? { offers: { '@type': 'Offer', price: (s.price.amount / 100).toFixed(2), priceCurrency: s.price.currency, url: `${SITE_URL}/book?service=${s.slug}` } } : {}) },
     { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL + '/' }, { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}/services` }, { '@type': 'ListItem', position: 3, name: s.name, item: `${SITE_URL}/services/${s.slug}` }] },
   ];
   const html = layout({
