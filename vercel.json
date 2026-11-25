@@ -79,9 +79,84 @@
           "value": "SAMEORIGIN"
         }
       ]
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(?<sub>.*)\\.vercel\\.app"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ],
   "redirects": [
+    {
+      "source": "/pages/contact:rest(.*)",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/pages/about:rest(.*)",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/pages/services:rest(.*)",
+      "destination": "/services",
+      "permanent": true
+    },
+    {
+      "source": "/pages/gallery:rest(.*)",
+      "destination": "/gallery",
+      "permanent": true
+    },
+    {
+      "source": "/pages/projects:rest(.*)",
+      "destination": "/gallery",
+      "permanent": true
+    },
+    {
+      "source": "/pages/remote-mixing:rest(.*)",
+      "destination": "/submit-project",
+      "permanent": true
+    },
+    {
+      "source": "/pages/faq:rest(.*)",
+      "destination": "/faq",
+      "permanent": true
+    },
+    {
+      "source": "/blogs/:path*",
+      "destination": "https://discosundays.com/blogs/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/policies/:path*",
+      "destination": "https://discosundays.com/policies/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/cart:rest(.*)",
+      "destination": "/book",
+      "permanent": true
+    },
+    {
+      "source": "/account:rest(.*)",
+      "destination": "/members",
+      "permanent": true
+    },
+    {
+      "source": "/search",
+      "destination": "/services",
+      "permanent": true
+    },
     {
       "source": "/s/:slug*",
       "destination": "/",

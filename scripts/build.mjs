@@ -8,6 +8,7 @@ import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
+import { execFileSync } from 'node:child_process';
 const readJSON = async (p) => JSON.parse(await readFile(path.join(root, p), 'utf8'));
 
 const config = await readJSON('site.config.json');
@@ -683,6 +684,7 @@ const publicCatalogue = {
 };
 await writeFile(path.join(dist, 'data/services.json'), JSON.stringify(publicCatalogue));
 
+const gitDateFor = (files) => { try { const out = execFileSync('git', ['log', '-1', '--format=%cs', '--', ...files], { cwd: root, stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); return /^\d{4}-\d{2}-\d{2}$/.test(out) ? out : null; } catch { return null; } };
 const sitemap = [];
 const pageFiles = (await readdir(path.join(root, 'src/pages'))).filter((f) => f.endsWith('.html'));
 for (const f of pageFiles) {
@@ -701,14 +703,14 @@ for (const f of pageFiles) {
     jsonld.push({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` }, { '@type': 'ListItem', position: 2, name: 'Artist Development', item: `${SITE_URL}/artist-development` }] });
   }
   if (meta.schema === 'costGuide') {
-    jsonld.push({ '@context': 'https://schema.org', '@type': 'Article', headline: meta.title, description: meta.description, dateModified: new Date().toISOString().slice(0, 10), author: { '@type': 'Organization', name: config.brand, url: 'https://discosundays.com/' }, publisher: { '@id': `${SITE_URL}/#business` }, mainEntityOfPage: `${SITE_URL}${meta.path}`, about: { '@id': `${SITE_URL}/#business` } });
+    jsonld.push({ '@context': 'https://schema.org', '@type': 'Article', headline: meta.title, description: meta.description, dateModified: gitDateFor([`src/pages/${f}`]) || new Date().toISOString().slice(0, 10), author: { '@type': 'Organization', name: config.brand, url: 'https://discosundays.com/' }, publisher: { '@id': `${SITE_URL}/#business` }, mainEntityOfPage: `${SITE_URL}${meta.path}`, about: { '@id': `${SITE_URL}/#business` } });
     jsonld.push({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: COST_FAQ.map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: x.a.join(' ').replace(/<[^>]+>/g, '') } })) });
   }
   if (meta.path === '/') jsonld.push({ '@context': 'https://schema.org', '@type': 'WebSite', '@id': `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: config.siteName, alternateName: `${config.siteName} by ${config.brand}`, publisher: { '@id': `${SITE_URL}/#business` }, inLanguage: ['en-US', 'es-US'] });
   if (meta.path === '/services') jsonld.push({ '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: services.map((s, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE_URL}/services/${s.slug}`, name: s.name })) });
   const html = layout({ ...meta, pathname: meta.path, body, jsonld });
   if (meta.path === '/404') await writeFile(path.join(dist, '404.html'), html);
-  else { await writePage(meta.path, html); if (!meta.noindex) sitemap.push(meta.path); }
+  else { await writePage(meta.path, html); if (!meta.noindex) sitemap.push({ path: meta.path, sources: [`src/pages/${f}`, ...(meta.sources || [])], html }); }
 }
 
 // Individual service pages, generated from the Square catalogue.
@@ -757,14 +759,25 @@ for (const s of services) {
     scripts: s.primary === 'membership' ? ['service.js', 'estimator.js'] : ['service.js'],
   });
   await writePage(`/services/${s.slug}`, html);
-  sitemap.push(`/services/${s.slug}`);
+  sitemap.push({ path: `/services/${s.slug}`, sources: ['src/templates/service.html', 'data/services.json', 'content/services-editorial.json'], html });
 }
 
 // Static extras.
 if (config.indexNowKey) await writeFile(path.join(dist, `${config.indexNowKey}.txt`), config.indexNowKey);
 await writeFile(path.join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
-const today = new Date().toISOString().slice(0, 10);
-await writeFile(path.join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemap.map((p) => `  <url><loc>${SITE_URL}${p === '/' ? '/' : p}</loc><lastmod>${today}</lastmod><priority>${p === '/' ? '1.0' : p.startsWith('/services/') ? '0.7' : '0.8'}</priority></url>`).join('\n')}\n</urlset>\n`);
+// Sitemap: lastmod = when that page's own source last changed (git history; falls back to the committed
+// content/lastmod.json when the build machine has no git history). Images = real photos used on the page.
+let lastmodCache = {}; try { lastmodCache = JSON.parse(await readFile(path.join(root, 'content/lastmod.json'), 'utf8')); } catch {}
+const gitDate = gitDateFor;
+const xmlEsc = (u) => u.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const lastmods = {};
+const entries = sitemap.map(({ path: p, sources, html }) => {
+  const d = gitDate(sources) || lastmodCache[p] || null; if (d) lastmods[p] = d;
+  const imgs = [...new Set([...html.matchAll(/(?:src|content)="((?:https:\/\/www\.marylandrecordingstudio\.com)?\/assets\/photos[^"?\s]*\.(?:jpe?g|png|webp))/g)].map((m) => (m[1].startsWith('http') ? m[1] : SITE_URL + m[1])))].slice(0, 10);
+  return `  <url><loc>${SITE_URL}${p === '/' ? '/' : p}</loc>${d ? `<lastmod>${d}</lastmod>` : ''}${imgs.map((u) => `<image:image><image:loc>${xmlEsc(u)}</image:loc></image:image>`).join('')}</url>`;
+});
+if (Object.keys(lastmods).length === sitemap.length) await writeFile(path.join(root, 'content/lastmod.json'), JSON.stringify(Object.fromEntries(Object.entries(lastmods).sort()), null, 1) + '\n');
+await writeFile(path.join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${entries.join('\n')}\n</urlset>\n`);
 await writeFile(path.join(dist, 'site.webmanifest'), JSON.stringify({ name: config.siteName, short_name: 'Disco Sundays', start_url: '/', display: 'standalone', background_color: '#0a0a0b', theme_color: '#0a0a0b', icons: [{ src: '/assets/brand/icon-512.png', sizes: '512x512', type: 'image/png' }] }));
 
 console.log(`[build] ${pageFiles.length} pages + ${services.length} service pages → dist/ (site URL ${SITE_URL})`);

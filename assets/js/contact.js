@@ -6,7 +6,7 @@
   const btn = form.querySelector('[data-submit]');
   const started = form.querySelector('[data-started-at]');
   started.value = String(Date.now());
-  const PHONE = '(443) 401-5425';
+  const PHONE = '+1 (833) 559-7876';
   const EMAIL = 'ohitsdiscosundays@gmail.com';
 
   const rules = {
@@ -51,11 +51,11 @@
         Object.entries(data.fields).forEach(([k, msg]) => { const i = form.elements[k]; if (i) { i.setAttribute('aria-invalid', 'true'); const el = form.querySelector(`#${i.id}-err`); if (el) el.textContent = msg; } });
         show('error', 'Please check the highlighted fields.');
       } else {
-        show('error', `<strong>We couldn't send your message right now.</strong> Please <a href="${mailto}">email us</a> or call or text <a href="tel:+14434015425">${PHONE}</a>.`);
+        show('error', `<strong>We couldn't send your message right now.</strong> Please <a href="${mailto}">email us</a> or call or text <a href="tel:+18335597876">${PHONE}</a>.`);
         window.mrsTrack && window.mrsTrack('contact_form_error', { status: res.status });
       }
     } catch {
-      show('error', `<strong>You appear to be offline.</strong> Please <a href="${mailto}">email us</a> or call or text <a href="tel:+14434015425">${PHONE}</a>.`);
+      show('error', `<strong>You appear to be offline.</strong> Please <a href="${mailto}">email us</a> or call or text <a href="tel:+18335597876">${PHONE}</a>.`);
     } finally {
       btn.disabled = false;
       btn.textContent = label;
