@@ -11,6 +11,38 @@ Google Business Profile: **out of scope; never edited.** The listing data (name,
 - Lighthouse, mobile, before this week's fixes: every page except the home page scored 98–100 on SEO, best practices and accessibility. The home page scored 84 because of layout shift (CLS 0.21) and a console error. Both have been fixed and re-measured; see the latest entry.
 - There is no Search Console access yet, so there is no baseline for impressions, clicks or average position.
 
+## 2026-11-25 (afternoon): ranking-improvement and authority campaign
+
+### Verified status
+- **Search Console Performance:** "Processing data, please check again in a day or so", with **no query data yet** (property verified this morning). Impressions, clicks and queries are not available, so none are reported.
+- **Indexing:** before this morning's requests, 6 of the 10 key pages inspected were already "URL is on Google". `/services`, `/guides/mixing-vs-mastering` and `/guides/choose-recording-studio-near-baltimore` were not on Google, and the last two have since been queued. Google's daily request quota was reached; `/services` and the new guides are queued for tomorrow's follow-up (scheduled 2026-11-26 07:00 PT).
+- **Bing:** 47 URLs submitted today (the 42 sitemap URLs plus the 5 new or updated pages). Bing Backlinks for our site says "No data available" (site added today).
+- **Rankings:** last measured this morning (table above), not in the top 30 for any of the 8 target searches. Not re-measured this afternoon because no recrawl has happened yet; the next measurement is in tomorrow's follow-up.
+
+### Why competitors outrank us (evidence)
+1. **They are indexed with history; we were re-indexed today.** The old vercel.app copy still holds the Hanover #7 spot until Google processes the 308 and the noindex.
+2. **Authority:** Omega has 163 referring domains and Stages 194 (top ones look spammy). The **beatable** ones are Wright Way (24) and Lineup Room (only 6, including wypr.org and studiorecord.world). Our verified referring domains: **0**.
+3. **Exact-match titles and informational pages:** GDA ("Recording Studio in Maryland" title plus "What Is Mastering?"). We now have equivalent or deeper guides.
+4. **Directory presence:** Yelp, Thumbtack, SoundBetter and Peerspace take many result slots. We appear only through the existing Yelp listing.
+
+### Work completed this session (deployed and verified in production)
+- **2 new link-worthy resources:** `/guides/release-checklist` (printable, save as PDF) and `/guides/logic-pro-garageband-for-beginners`. Logic Pro pricing was verified on Apple's App Store: Mac $199.99; iPad $4.99/mo or $49/yr. Both return 200 with correct titles, are linked from `/guides`, `/release-planner` and `/artist-development`, and were submitted to Bing.
+- **Maryland relevance without fake locations:** the service area in the business details (`areaServed`) now includes Howard County and Maryland, and every service page uses the full list instead of just "Hanover, Maryland". No location pages were created.
+- **Sitemap:** 44 URLs. Internal-link crawl: 0 broken links. Tests pass.
+- **Backlink campaign files:**
+  - `docs/backlink-prospects.csv`: **104 real prospects** (30 high priority), every one found via web search and checked.
+  - `docs/outreach-messages.md`: **30 personalized messages**, **0 sent**, waiting for owner approval and a sending account.
+  - `docs/backlink-acquisition-log.md`: baseline (**0 verified referring domains**), competitor gap analysis from Bing data, and **20 competitor-derived opportunities**.
+
+### Ongoing ranking-improvement plan
+| Cadence | Action |
+|---|---|
+| Daily, until all are indexed | Search Console URL inspection and requests (quota of about 10/day): `/services`, `/guides`, `/guides/release-checklist`, `/guides/logic-pro-garageband-for-beginners`, `/book`, `/faq`, `/contact`, then the service pages |
+| Weekly (Monday) | Record the 8 target searches (Google, manual observation) plus Search Console queries, impressions and positions once available; check Bing rankings and backlinks; run the outreach batch from the acquisition log |
+| Weekly | Check new referring domains (Bing Backlinks, Search Console Links) and verify each acquired link |
+| Monthly | Lighthouse and broken-link audit, refresh prices and facts, improve one page per the top Search Console queries |
+| Next content (when the data supports it) | Expand pages Search Console shows impressions for; no thin pages |
+
 ## 2026-11-25: SEO recovery campaign
 
 ### Search Console (actual data source; property owner seunakinloye01@gmail.com)
