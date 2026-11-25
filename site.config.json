@@ -48,7 +48,7 @@
     "streamUrl": "https://discosundaysradio.out.airtime.pro/discosundaysradio_a",
     "liveInfoUrl": "https://discosundaysradio.airtime.pro/api/live-info",
     "appUrl": "https://discosundays-radio-drops.base44.app/",
-    "tagline": "Music \u00b7 Artists \u00b7 Live Shows \u00b7 Podcasts"
+    "tagline": "Music · Artists · Live Shows · Podcasts"
   },
   "ecosystem": [
     {
@@ -176,5 +176,8 @@
     "lat": 39.1516905,
     "lng": -76.7283312
   },
-  "indexNowKey": "0e1721cdaa1246d2cb9589423a3edda4"
+  "indexNowKey": "0e1721cdaa1246d2cb9589423a3edda4",
+  "googleSiteVerification": [
+    "3fycaPQO6RFpFqOGMnFii2E-fcEzFA95J_o77_Ho6zc"
+  ]
 }

@@ -341,6 +341,7 @@ function layout({ title, description, pathname, body, scripts = [], jsonld = [],
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+${(config.googleSiteVerification || []).map((v) => `<meta name="google-site-verification" content="${esc(v)}">`).join('\n')}
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${canonical}">
