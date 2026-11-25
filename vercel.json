@@ -1,0 +1,235 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "functions": {
+    "api/services.js": {
+      "includeFiles": "{data/**,content/**,site.config.json}",
+      "maxDuration": 15
+    },
+    "api/contact.js": {
+      "maxDuration": 15
+    },
+    "api/youtube.js": {
+      "maxDuration": 10
+    },
+    "api/instagram.js": {
+      "maxDuration": 10
+    },
+    "api/admin.js": {
+      "includeFiles": "{data/**,content/**,site.config.json}",
+      "maxDuration": 60
+    },
+    "api/track.js": {
+      "maxDuration": 10
+    },
+    "api/settings.js": {
+      "maxDuration": 10
+    },
+    "api/projects.js": {
+      "maxDuration": 20
+    },
+    "api/ai.js": {
+      "includeFiles": "{data/**,content/**,site.config.json}",
+      "maxDuration": 60
+    },
+    "api/integrations.js": {
+      "includeFiles": "{data/**,content/**,site.config.json}",
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/assets/(css|js)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(brand|photos|partners|fonts)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(self), geolocation=()"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(?<sub>.*)\\.vercel\\.app"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/pages/contact:rest(.*)",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/pages/about:rest(.*)",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/pages/services:rest(.*)",
+      "destination": "/services",
+      "permanent": true
+    },
+    {
+      "source": "/pages/gallery:rest(.*)",
+      "destination": "/gallery",
+      "permanent": true
+    },
+    {
+      "source": "/pages/projects:rest(.*)",
+      "destination": "/gallery",
+      "permanent": true
+    },
+    {
+      "source": "/pages/remote-mixing:rest(.*)",
+      "destination": "/submit-project",
+      "permanent": true
+    },
+    {
+      "source": "/pages/faq:rest(.*)",
+      "destination": "/faq",
+      "permanent": true
+    },
+    {
+      "source": "/blogs/:path*",
+      "destination": "https://discosundays.com/blogs/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/policies/:path*",
+      "destination": "https://discosundays.com/policies/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/cart:rest(.*)",
+      "destination": "/book",
+      "permanent": true
+    },
+    {
+      "source": "/account:rest(.*)",
+      "destination": "/members",
+      "permanent": true
+    },
+    {
+      "source": "/search",
+      "destination": "/services",
+      "permanent": true
+    },
+    {
+      "source": "/s/:slug*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/pages/:slug*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/collections/:slug*",
+      "destination": "/services",
+      "permanent": true
+    },
+    {
+      "source": "/products/:slug*",
+      "destination": "/services",
+      "permanent": true
+    },
+    {
+      "source": "/booking",
+      "destination": "/book",
+      "permanent": true
+    },
+    {
+      "source": "/the-studio",
+      "destination": "/studio",
+      "permanent": true
+    },
+    {
+      "source": "/social",
+      "destination": "/gallery",
+      "permanent": true
+    },
+    {
+      "source": "/:path((?!api/).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "marylandrecordingstudio.vercel.app"
+        }
+      ],
+      "destination": "https://www.marylandrecordingstudio.com/:path",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/reviews",
+      "destination": "/api/services?op=reviews"
+    },
+    {
+      "source": "/api/availability",
+      "destination": "/api/services?op=availability"
+    },
+    {
+      "source": "/:slug(hq-[a-z0-9]+)",
+      "destination": "/api/admin?op=page&slug=:slug"
+    },
+    {
+      "source": "/api/ai/:op",
+      "destination": "/api/ai?op=:op"
+    },
+    {
+      "source": "/api/integrations/:op",
+      "destination": "/api/integrations?op=:op"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/admin?action=cron",
+      "schedule": "0 13 * * *"
+    }
+  ]
+}

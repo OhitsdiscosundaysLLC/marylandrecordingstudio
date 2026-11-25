@@ -1,0 +1,53 @@
+// Shared assistant brain for every text channel (website chat now; WhatsApp once credentials exist).
+import { rpc, dbConfigured } from './db.js';
+import { openai } from './openai.js';
+import { systemPrompt, TOOLS, bookingCards } from './knowledge.js';
+import { runTool } from './actions.js';
+
+export async function runAssistant({ settings, history, channel = 'chat', conversationId = null, interest = '', page = '', lang = 'en' }) {
+  const ctx = { ui: [], channel, conversationId };
+  const messages = [{ role: 'system', content: systemPrompt(settings, { channel, interest, page, lang }) }, ...history];
+  const tools = TOOLS.map((t) => ({ type: 'function', function: t }));
+  let reply = '';
+  for (let round = 0; round < 4; round++) {
+    const out = await openai('/chat/completions', { model: settings.ai.model || 'gpt-4o-mini', messages, tools, temperature: 0.4, max_tokens: 400 });
+    const msg = out.choices[0].message;
+    if (!msg.tool_calls?.length) { reply = msg.content || ''; break; }
+    messages.push(msg);
+    for (const call of msg.tool_calls) {
+      let args = {}; try { args = JSON.parse(call.function.arguments || '{}'); } catch {}
+      const result = await runTool(call.function.name, args, ctx, settings).catch((e) => ({ error: e.message }));
+      messages.push({ role: 'tool', tool_call_id: call.id, content: JSON.stringify(result) });
+    }
+  }
+  // If the reply names services but the model skipped the buttons, attach them (real catalogue only).
+  if (!ctx.ui.some((u) => u.type === 'booking' || u.type === 'handoff')) {
+    const t = reply.toLowerCase(); const slugs = [];
+    if (/artist development/.test(t) && !/session/.test(t.split('artist development')[1]?.slice(0, 12) || '')) slugs.push('artist-development');
+    else if (/desarrollo art[ií]stico/.test(t)) slugs.push('artist-development');
+    if (/rap program|programa (de )?rap/.test(t)) slugs.push('rap-program');
+    if (/release plan|planificador|plan de lanzamiento/.test(t)) slugs.push('release-planner');
+    if (/\bhooks?\b.*(starter|idea)|lyric|letras? de canci/.test(t)) slugs.push('hook-starter');
+    const member = /(as a|existing|already a) member|member session|sign(ing)? in with your username/.test(t);
+    if (member) slugs.push('1-hour-membership-session', '2-hour-membership-session');
+    else if (/membership|unlimited|membres[ií]a/.test(t)) slugs.push('unlimited-membership');
+    if (!member && /recording session|record (a|your)|\$60|1 hour session|hour session|sesi[oó]n de grabaci/.test(t)) slugs.push('recording-session-1-hour');
+    if (/mixing|mezcla/.test(t)) slugs.push('mixing');
+    if (/mastering|masterizaci/.test(t)) slugs.push('mastering');
+    if (/podcast/.test(t)) slugs.push('video-podcasting');
+    if (/voice-?over/.test(t)) slugs.push('voice-over');
+    if (/visit the studio|studio visit|visit first|free visit|visitar el estudio/.test(t)) slugs.push('visit-studio');
+    if (/upload|send (us )?(your|the) (files|stems|project)/.test(t)) slugs.push('submit-project');
+    const cards = bookingCards(slugs);
+    if (cards.length) ctx.ui.push({ type: 'booking', reason: '', cards });
+  }
+  if (ctx.ui.some((u) => u.type === 'booking') && channel !== 'whatsapp') {
+    reply = reply.replace(/\s*(Would|Do) you (like|want) me to (show|share|give)[^?]*(options|links?|buttons)[^?]*\?/i, lang === 'es' ? ' Los botones están abajo.' : ' The buttons are below.').trim();
+  }
+  return { reply, ui: ctx.ui, conversationId: ctx.conversationId };
+}
+
+export async function logMessage(conversationId, role, content, meta = {}) {
+  if (!dbConfigured() || !conversationId) return;
+  try { await rpc('mrs_message', { p_conversation: conversationId, p_role: role, p_content: content, p_meta: meta }); } catch (e) { console.error('db', e.message); }
+}

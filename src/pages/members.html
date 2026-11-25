@@ -1,0 +1,59 @@
+<!-- {"path":"/members","title":"Members Area","description":"Disco Sundays members area: sign in to the Disco Rewards customer portal, book member sessions, send your project files and manage your Unlimited membership.","scripts":["estimator.js","again.js"]} -->
+<section class="page-hero page-hero--compact">
+  <div class="container">
+    <p class="eyebrow">Members area</p>
+    <h1 class="display-1">Everything for members, in one place.</h1>
+    <p class="lead">Sign in to your portal, book member sessions, send us your files and get help, whether you've been with us for years or you're joining today.</p>
+  </div>
+</section>
+
+<section class="section section--flush-top">
+  <div class="container portal">
+    <a class="portal__card portal__card--main reveal" href="{{rewardsUrl}}" target="_blank" rel="noopener" data-track="ecosystem_click" data-label="portal_rewards">
+      <span class="portal__kicker">Customer portal</span>
+      <strong class="portal__title">Sign in to Disco Rewards</strong>
+      <span>Your member profile and rewards: earn points on sessions, memberships, events and referrals, then redeem them for studio credit and experiences.</span>
+      <span class="portal__go">Open the portal <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></span>
+    </a>
+    <div class="portal__card reveal">
+      <span class="portal__kicker">Members</span>
+      <h2 class="portal__title">Book a member session</h2>
+      <p>Use the username and password you created when you joined, then pick your time in Square.</p>
+      {{memberSessions}}
+    </div>
+    <a class="portal__card reveal" href="/submit-project" data-track="ecosystem_click" data-label="portal_submit">
+      <span class="portal__kicker">Projects</span>
+      <strong class="portal__title">Send us your project</strong>
+      <span>Upload stems, rough mixes or reference tracks for mixing and mastering. Files go to a private folder only the studio team can open.</span>
+      <span class="portal__go">Upload files <span aria-hidden="true">→</span></span>
+    </a>
+    <div class="portal__card reveal again" data-again data-i18n-scope>
+      <span class="portal__kicker">Book again</span>
+      <h2 class="portal__title">Been here before?</h2>
+      <p>Enter the email you booked with and we'll send you a link to rebook your past sessions in one tap.</p>
+      <form data-again-form><label class="sr-only" for="again-email">Email</label><input id="again-email" type="email" name="email" autocomplete="email" required placeholder="you@example.com"><button class="btn btn--primary btn--sm">Send my link</button></form>
+      <p class="muted" role="status" data-again-msg></p>
+      <div class="again__list" data-again-list hidden><h3 class="h3">Your past sessions</h3></div>
+    </div>
+    <div class="portal__card reveal">
+      <span class="portal__kicker">Your bookings &amp; payments</span>
+      <h2 class="portal__title">Change a booking or find a receipt</h2>
+      <p>Bookings, confirmations and receipts are handled by Square and emailed to you. To change or cancel a session, use your Square confirmation email or contact us, and we'll sort it out.</p>
+      <div class="btn-row"><a class="btn btn--ghost btn--sm" href="tel:{{phoneE164}}" data-track="phone_click" data-label="portal">Call or text {{phone}}</a><a class="btn btn--ghost btn--sm" href="mailto:{{email}}" data-track="email_click" data-label="portal">Email us</a></div>
+    </div>
+    <div class="portal__card reveal">
+      <span class="portal__kicker">Need something?</span>
+      <h2 class="portal__title">Request a service</h2>
+      <p>Tell our AI studio assistant what you need (a session, mixing, a feature, a show) and it will point you to the right booking or pass it to the team.</p>
+      <div class="btn-row"><button type="button" class="btn btn--primary btn--sm" data-ai-open="chat" data-ai-topic="I'm a member and I'd like to request a service.">Ask the AI assistant</button><a class="btn btn--ghost btn--sm" href="/contact">Message the team</a></div>
+    </div>
+    <div class="portal__card reveal">
+      <span class="portal__kicker">Not a member yet?</span>
+      <h2 class="portal__title">Unlimited membership · $200/month</h2>
+      <ul class="ticks"><li>24/7 studio access, no contracts</li><li>Use up to 4 hours a day (one location)</li><li>Your music uploaded for A&amp;R review</li><li>Help booking shows</li></ul>
+      <div class="btn-row"><a class="btn btn--primary btn--sm" href="https://square.link/u/rJp640Zd" target="_blank" rel="noopener" data-track="membership_checkout_click" data-label="portal_join">Join now<span class="sr-only"> (opens secure Square checkout)</span></a><a class="btn btn--ghost btn--sm" href="/services/unlimited-membership">Details</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--flush-top"><div class="container">{{estimator}}</div></section>

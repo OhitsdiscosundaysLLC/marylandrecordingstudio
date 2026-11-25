@@ -1,0 +1,22 @@
+<!-- {"path":"/services","title":"Recording Studio Services & Memberships","description":"Unlimited membership ($200/month), recording sessions from $60 and mixing at Disco Sundays in Hanover, MD, plus podcasting, voice-over, artist development and free studio visits.","scripts":["services.js","estimator.js","finder.js"]} -->
+<section class="page-hero page-hero--compact">
+  <div class="container">
+    <p class="eyebrow">Services</p>
+    <h1 class="display-1">Find your session.</h1>
+    <p class="lead">Start with our three most popular ways in: membership, recording and mixing. Prices come straight from our live booking system.</p>
+  </div>
+</section>
+<section class="section section--flush-top" aria-label="Most booked">
+  <div class="container">{{primaryTrio}}</div>
+  <div class="container" style="margin-top:clamp(32px,5vw,56px)">{{sessionFinder}}</div>
+  <div class="container" style="margin-top:clamp(32px,5vw,56px)">{{estimator}}</div>
+</section>
+<section class="section section--flush-top" aria-labelledby="all-services">
+  <div class="container">
+    <h2 id="all-services" class="h2 catalogue__h">All services</h2>
+    {{catalogue}}
+    <p class="muted" style="margin-top:24px">Comparing studios? Read our <a href="/recording-studio-cost-maryland">Maryland recording studio pricing guide</a>, or see the separate <a href="/artist-development">Artist Development Program</a> for mentorship and production education.</p>
+  </div>
+</section>
+{{googleReviews}}
+{{ctaVisit}}

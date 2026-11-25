@@ -1,0 +1,109 @@
+{
+  "capturedAt": "2026-11-15T18:12:36.947Z",
+  "sources": {
+    "app": "https://disco-sundays-app.base44.app/",
+    "rewards": "https://disco-sundaysllc-club.base44.app/",
+    "rap-program": "https://disco-rap-flow.base44.app/"
+  },
+  "shots": [
+    {
+      "product": "app",
+      "name": "app-home",
+      "device": "phone",
+      "alt": "Disco Sundays app home screen: choose recording, mixing, mastering or membership",
+      "source": "https://disco-sundays-app.base44.app/",
+      "width": 780,
+      "height": 1688,
+      "webp": "/assets/ecosystem/app/app-home.webp",
+      "avif": "/assets/ecosystem/app/app-home.avif"
+    },
+    {
+      "product": "app",
+      "name": "app-rap-and-radio",
+      "device": "phone",
+      "alt": "Disco Sundays app showing the RAP Program and Disco Sundays Radio",
+      "source": "https://disco-sundays-app.base44.app/",
+      "width": 780,
+      "height": 1688,
+      "webp": "/assets/ecosystem/app/app-rap-and-radio.webp",
+      "avif": "/assets/ecosystem/app/app-rap-and-radio.avif"
+    },
+    {
+      "product": "app",
+      "name": "app-rewards-tab",
+      "device": "phone",
+      "alt": "Rewards tab in the Disco Sundays app",
+      "source": "https://disco-sundays-app.base44.app/",
+      "width": 780,
+      "height": 1688,
+      "webp": "/assets/ecosystem/app/app-rewards-tab.webp",
+      "avif": "/assets/ecosystem/app/app-rewards-tab.avif"
+    },
+    {
+      "product": "rewards",
+      "name": "rewards-home",
+      "device": "phone",
+      "alt": "Disco Rewards: where studio time pays you back",
+      "source": "https://disco-sundaysllc-club.base44.app/",
+      "width": 780,
+      "height": 1688,
+      "webp": "/assets/ecosystem/rewards/rewards-home.webp",
+      "avif": "/assets/ecosystem/rewards/rewards-home.avif"
+    },
+    {
+      "product": "rewards",
+      "name": "rewards-levels",
+      "device": "phone",
+      "alt": "Disco Rewards levels, from Newcomer to Disco Legend",
+      "source": "https://disco-sundaysllc-club.base44.app/",
+      "width": 780,
+      "height": 1688,
+      "webp": "/assets/ecosystem/rewards/rewards-levels.webp",
+      "avif": "/assets/ecosystem/rewards/rewards-levels.avif"
+    },
+    {
+      "product": "rewards",
+      "name": "rewards-desktop",
+      "device": "desktop",
+      "alt": "Disco Rewards website on desktop",
+      "source": "https://disco-sundaysllc-club.base44.app/",
+      "width": 1600,
+      "height": 1000,
+      "webp": "/assets/ecosystem/rewards/rewards-desktop.webp",
+      "avif": "/assets/ecosystem/rewards/rewards-desktop.avif"
+    },
+    {
+      "product": "rap-program",
+      "name": "rap-home",
+      "device": "phone",
+      "alt": "RAP Program home: Create. Record. Perform. Grow.",
+      "source": "https://disco-rap-flow.base44.app/",
+      "width": 780,
+      "height": 1688,
+      "webp": "/assets/ecosystem/rap-program/rap-home.webp",
+      "avif": "/assets/ecosystem/rap-program/rap-home.avif"
+    },
+    {
+      "product": "rap-program",
+      "name": "rap-packages",
+      "device": "phone",
+      "alt": "RAP Program packages: Single, EP, LP, Star Pack",
+      "source": "https://disco-rap-flow.base44.app/",
+      "width": 780,
+      "height": 1688,
+      "webp": "/assets/ecosystem/rap-program/rap-packages.webp",
+      "avif": "/assets/ecosystem/rap-program/rap-packages.avif"
+    },
+    {
+      "product": "rap-program",
+      "name": "rap-desktop",
+      "device": "desktop",
+      "alt": "RAP Program website on desktop",
+      "source": "https://disco-rap-flow.base44.app/",
+      "width": 1600,
+      "height": 1000,
+      "webp": "/assets/ecosystem/rap-program/rap-desktop.webp",
+      "avif": "/assets/ecosystem/rap-program/rap-desktop.avif"
+    }
+  ]
+}

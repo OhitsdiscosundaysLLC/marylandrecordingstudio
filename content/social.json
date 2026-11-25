@@ -1,0 +1,15 @@
+{
+  "_comment": "Selected Instagram posts shown with Instagram's official embed until INSTAGRAM_ACCESS_TOKEN is set (then the live API feed replaces them automatically). Add or remove post/reel links here. Every item links to the original post. Facebook shows the official Page plugin. YouTube is always live from the channel feed.",
+  "instagram": [
+    "https://www.instagram.com/reel/DeFAlZZS2EZ/",
+    "https://www.instagram.com/reel/DfmxE7zTD1k/",
+    "https://www.instagram.com/reel/DfYMTv1OrXH/",
+    "https://www.instagram.com/reel/DfH8Ng8zMrh/",
+    "https://www.instagram.com/reel/DfDHLd0prly/",
+    "https://www.instagram.com/reel/De9luWiTpdV/",
+    "https://www.instagram.com/reel/De4idxfzFzn/",
+    "https://www.instagram.com/reel/De2YsaZhgTK/",
+    "https://www.instagram.com/p/DeUrvnnpbH2/",
+    "https://www.instagram.com/reel/DeNAeTPh1wn/"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "_comment": "Real studio photography and video. Drop files in assets/photos/ and list them here; the build picks them up everywhere (hero, studio page, gallery, service cards). Leave a slot empty and the site uses its designed brand artwork instead, never stock photos. See README.md (Photos and video).",
+  "hero": {
+    "image": null,
+    "video": null,
+    "alt": "Inside the Disco Sundays recording studio in Hanover, Maryland"
+  },
+  "studio": [],
+  "gallery": [],
+  "spotlights": [],
+  "_spotlightsHelp": "Add approved artist media only: {artist, caption, image or video (path under /assets/), alt, approved: true}. Entries without approved:true are never shown."
+}

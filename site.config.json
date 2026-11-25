@@ -1,0 +1,185 @@
+{
+  "siteName": "Maryland Recording Studio",
+  "brand": "Disco Sundays",
+  "legalName": "Disco Sundays LLC",
+  "siteUrl": "https://www.marylandrecordingstudio.com",
+  "locality": "Hanover",
+  "region": "MD",
+  "regionName": "Maryland",
+  "postalCode": "21076",
+  "country": "US",
+  "areaServed": [
+    "Hanover",
+    "Anne Arundel County",
+    "Baltimore",
+    "Howard County",
+    "Washington, DC",
+    "the DMV",
+    "Maryland"
+  ],
+  "phone": "+1 (833) 559-7876",
+  "phoneE164": "+18335597876",
+  "email": "ohitsdiscosundays@gmail.com",
+  "whatsapp": null,
+  "square": {
+    "merchantId": "rot9qejuixvuzc",
+    "locationId": "LBRQ3J5MYKNYX",
+    "bookingBase": "https://book.squareup.com/appointments/rot9qejuixvuzc/location/LBRQ3J5MYKNYX/services"
+  },
+  "social": {
+    "instagram": {
+      "url": "https://www.instagram.com/discosundays",
+      "handle": "@discosundays"
+    },
+    "facebook": {
+      "url": "https://www.facebook.com/discosundaysofficial/",
+      "handle": "discosundaysofficial"
+    },
+    "youtube": {
+      "url": "https://www.youtube.com/channel/UCuiLXxntyyMegzINhvDn0aw",
+      "channelId": "UCuiLXxntyyMegzINhvDn0aw"
+    }
+  },
+  "analytics": {
+    "_comment": "Set one of these to turn on analytics. Events are always pushed to window.dataLayer.",
+    "plausibleDomain": "",
+    "ga4MeasurementId": ""
+  },
+  "radio": {
+    "name": "Disco Sundays Radio",
+    "streamUrl": "https://discosundaysradio.out.airtime.pro/discosundaysradio_a",
+    "liveInfoUrl": "https://discosundaysradio.airtime.pro/api/live-info",
+    "appUrl": "https://discosundays-radio-drops.base44.app/",
+    "tagline": "Music · Artists · Live Shows · Podcasts"
+  },
+  "ecosystem": [
+    {
+      "id": "app",
+      "name": "The Disco Sundays App",
+      "kicker": "Our app",
+      "url": "https://disco-sundays-app.base44.app/",
+      "description": "Book sessions, renew your membership, catch the latest drops and keep the whole studio in your pocket. Add it to your home screen.",
+      "cta": "Open the app"
+    },
+    {
+      "id": "rewards",
+      "name": "Disco Rewards",
+      "kicker": "Rewards program",
+      "url": "https://disco-sundaysllc-club.base44.app/",
+      "description": "Where studio time pays you back. Earn points on sessions, memberships, events and referrals, then redeem them for studio credit and experiences.",
+      "cta": "Start earning"
+    },
+    {
+      "id": "radio",
+      "name": "Disco Sundays Radio",
+      "kicker": "Radio",
+      "url": "https://discosundays-radio-drops.base44.app/",
+      "description": "Live 24/7: music, artists, live shows and podcasts from the studio. Listen right here or on Radio Drops.",
+      "cta": "Listen live",
+      "internal": "/radio"
+    },
+    {
+      "id": "rap",
+      "name": "RAP Program",
+      "kicker": "Youth music program",
+      "url": "https://disco-rap-flow.base44.app/",
+      "description": "Create. Record. Perform. Grow. A music production program for young artists with its own packages, starting with a free one-hour introductory session.",
+      "cta": "View the program"
+    },
+    {
+      "id": "studio",
+      "name": "Maryland Recording Studio",
+      "kicker": "You are here",
+      "url": "/",
+      "description": "Our recording studio in Hanover, MD. Browse every service and book your session online.",
+      "cta": "Book a session",
+      "internal": "/book"
+    }
+  ],
+  "partners": {
+    "heading": "Brands we've worked with",
+    "logos": [
+      {
+        "name": "NASCAR",
+        "src": "/assets/partners/nascar.webp",
+        "w": 480,
+        "h": 236,
+        "bg": "#000000",
+        "src240": "/assets/partners/nascar-240.webp"
+      },
+      {
+        "name": "SiriusXM",
+        "src": "/assets/partners/siriusxm.webp",
+        "w": 480,
+        "h": 570,
+        "bg": "#ffffff",
+        "src240": "/assets/partners/siriusxm-240.webp"
+      },
+      {
+        "name": "PBS Kids",
+        "src": "/assets/partners/pbs-kids.webp",
+        "w": 400,
+        "h": 400,
+        "bg": "#ffffff",
+        "src240": "/assets/partners/pbs-kids-240.webp"
+      },
+      {
+        "name": "Coca-Cola",
+        "src": "/assets/partners/coca-cola.webp",
+        "w": 480,
+        "h": 150,
+        "bg": "#ffffff",
+        "src240": "/assets/partners/coca-cola-240.webp"
+      },
+      {
+        "name": "Volition Sound Branding",
+        "src": "/assets/partners/volition-sound-branding.webp",
+        "w": 480,
+        "h": 498,
+        "bg": "#ffffff",
+        "src240": "/assets/partners/volition-sound-branding-240.webp"
+      },
+      {
+        "name": "Cashmere B Productions",
+        "src": "/assets/partners/cashmere-b-productions.webp",
+        "w": 225,
+        "h": 225,
+        "bg": "#010101",
+        "src240": "/assets/partners/cashmere-b-productions-160.webp"
+      }
+    ]
+  },
+  "membership": {
+    "name": "Disco Sundays Unlimited membership",
+    "price": "$200",
+    "period": "month",
+    "checkoutUrl": "https://square.link/u/rJp640Zd",
+    "serviceId": "VHW4XWH3IKLBXRJUNNBC37MQ"
+  },
+  "artistDevelopment": {
+    "name": "Artist Development Program",
+    "checkoutName": "Artist Development Plan",
+    "price": "$100",
+    "amount": 100,
+    "checkoutUrl": "https://checkout.square.site/merchant/MLY8PKVN9PH8E/checkout/54URAM24X2QNNBYBC73FZVJ7",
+    "path": "/artist-development",
+    "verified": "2026-11-24: Square checkout shows 'Artist Development Plan', $100.00; billing period not shown before checkout."
+  },
+  "google": {
+    "placeId": "ChIJwyX8yQfht4kRJ1wLAMJ64vI",
+    "cid": "17501686075558157351",
+    "mapsUrl": "https://maps.app.goo.gl/mYL9zgRThxWeSNHd9",
+    "reviewsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJwyX8yQfht4kRJ1wLAMJ64vI",
+    "writeReviewUrl": "https://search.google.com/local/writereview?placeid=ChIJwyX8yQfht4kRJ1wLAMJ64vI",
+    "name": "Disco Sundays, LLC"
+  },
+  "streetAddress": "7661 Arundel Mills Blvd PMB 1033",
+  "geo": {
+    "lat": 39.1516905,
+    "lng": -76.7283312
+  },
+  "indexNowKey": "0e1721cdaa1246d2cb9589423a3edda4",
+  "googleSiteVerification": [
+    "3fycaPQO6RFpFqOGMnFii2E-fcEzFA95J_o77_Ho6zc"
+  ]
+}
