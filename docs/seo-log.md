@@ -27,6 +27,9 @@ Google Business Profile: **out of scope; never edited.** The listing data (name,
   - Running total: **9 pages queued for priority crawl** (/, /artist-development and the 7 above).
 - Performance and Indexing reports say "Processing data", as expected for a property verified today. There are no impressions or clicks figures yet.
 
+- **Users:** ohitsdiscosundays@gmail.com added as an **Owner** on 2026-11-25, with the owner's approval.
+- **Follow-up:** a reminder is scheduled for 2026-11-26 07:00 PT to request indexing for `/services`, `/guides` and others once the daily quota resets.
+
 ### Manually observed rankings (Firecrawl Google results, top 30, 2026-11-25; not Search Console data)
 | # | Search | Location | www.marylandrecordingstudio.com | Notes |
 |---|---|---|---|---|
@@ -91,7 +94,7 @@ Google Business Profile: **out of scope; never edited.** The listing data (name,
 
 ### Next steps
 1. On 2026-11-26, request indexing for `/services` and `/guides` (daily quota), then `/book`, `/faq` and `/contact`.
-2. Bing Webmaster Tools: Chrome isn't signed in, and it needs a new account ("Sign in with Google", then Import from Google Search Console). Waiting for the owner's OK to create the account.
+2. ~~Bing Webmaster Tools~~: done on 2026-11-25. The property was imported from Google Search Console, so it's verified and the sitemap came with it. **All 42 sitemap URLs were submitted** through URL Submission ("Success: 42 URLs submitted successfully"; quota 100/day).
 3. Re-check this table weekly, and record Search Console impressions and positions once its data appears (about 2 to 3 days).
 
 ## Ranking check (2026-11-24, Google results via public search, top 20)
