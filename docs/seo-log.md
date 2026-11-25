@@ -11,6 +11,16 @@ Google Business Profile: **out of scope; never edited.** The listing data (name,
 - Lighthouse, mobile, before this week's fixes: every page except the home page scored 98–100 on SEO, best practices and accessibility. The home page scored 84 because of layout shift (CLS 0.21) and a console error. Both have been fixed and re-measured; see the latest entry.
 - There is no Search Console access yet, so there is no baseline for impressions, clicks or average position.
 
+## Ranking check (2026-11-24, Google results via public search, top 20)
+| Search | Location | Where we appear |
+|---|---|---|
+| recording studio Hanover MD | Hanover | #7, but as the old **marylandrecordingstudio.vercel.app** copy (now 308-redirects to www). Linktree is #5, Yelp list (includes Disco Sundays) #3 |
+| recording studio near Baltimore | Baltimore | not in top 20 |
+| Maryland Recording Studio | Maryland | not in top 20 (competitors with "Maryland Recording Studio" in their titles rank) |
+| site:marylandrecordingstudio.com | — | 16 www pages indexed; home snippet is still the OLD description; 1 old Shopify product URL (now 308) |
+
+Notes: discosundays.com (Shopify) does not link to marylandrecordingstudio.com. The Google listing's website field points to linktr.ee/discosundays (owner decision; listing not touched). IndexNow resubmitted 38 URLs (HTTP 200).
+
 ## Completed
 | Date | Change | Why |
 |---|---|---|
